@@ -1,0 +1,46 @@
+WonderWraps Clone - Home Page Sections Breakdown
+================================================
+
+Based on the reference website (wonderwraps.com), the exact sections present on the "Home" page, in order from top to bottom, are:
+
+1. Hero Section
+   - Overhead Title: "CREATE UNIQUE STORYBOOK"
+   - Main Headline: "Craft magical tales where you're the hero"
+   - Content: Split layout with auto-playing video/image on the left and gradient background with Call-to-Action buttons on the right.
+
+2. Bestsellers Section
+   - Title: "Personalise a bestseller"
+   - Content: A grid/carousel of book cards that have a "-50%" discount drop-shadow badge.
+
+3. New Releases Section
+   - Title: "Discover What’s New"
+   - Content: Showcases the latest newly released magical stories.
+
+4. How It Works Section
+   - Content: A step-by-step visual workflow showing: 
+     - Step 1: "Pick Storybook"
+     - Step 2: "Add your Child's Picture"
+     - Step 3: "Preview & Order"
+
+5. Girls' Books Section
+   - Title: "Books for Your Little Girl!"
+   - Content: A tailored grid of recommended books for girls.
+
+6. Photo Upload Informational Banner
+   - Title: "To bring your character to life!"
+   - Content: A wide promotional banner illustrating how the photo-to-illustration personalization process works.
+
+7. Boys' Books Section
+   - Title: "Books for Your Little Boy!"
+   - Content: A tailored grid of recommended books for boys.
+
+8. Career Adventures Section
+   - Title: "Inspire Their Dreams with Hyper-personalised Career Adventures!"
+   - Content: Career-themed books allowing children to imagine themselves in various professions.
+
+9. Browse Stories by Age
+   - Title: "Browse Stories by Age"
+   - Content: Navigation component categorizing books by target age groups.
+
+10. Footer
+    - Content: Main site navigation, "About WonderWraps", "Customer Area", and a "Subscribe to Our Newsletter" form.

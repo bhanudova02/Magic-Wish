@@ -36,6 +36,13 @@ export default function Navbar() {
         return () => window.removeEventListener('popstate', handlePopState);
     }, [isMenuOpen, isSearchOpen]);
 
+    // Clear search query when modal opens
+    useEffect(() => {
+        if (isSearchOpen) {
+            setSearchQuery('');
+        }
+    }, [isSearchOpen]);
+
     // Close menu/search when route changes
     useEffect(() => {
         setIsMenuOpen(false);
@@ -108,7 +115,7 @@ export default function Navbar() {
             </nav>
 
             {/* Search Modal */}
-            <div className={`fixed inset-0 z-[100] transition-all duration-300 ${isSearchOpen ? 'visible' : 'invisible'}`}>
+            <div className={`fixed inset-0 z-[150] transition-all duration-300 ${isSearchOpen ? 'visible' : 'invisible'}`}>
                 {/* Backdrop (Only for Desktop) */}
                 <div 
                     className={`absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 hidden md:block ${isSearchOpen ? 'opacity-100' : 'opacity-0'}`}
@@ -195,7 +202,7 @@ export default function Navbar() {
             </div>
 
             {/* Mobile Side Navigation Menu */}
-            <div className={`fixed inset-0 z-[100] md:hidden transition-all duration-300 ${isMenuOpen ? 'visible' : 'invisible'}`}>
+            <div className={`fixed inset-0 z-[150] md:hidden transition-all duration-300 ${isMenuOpen ? 'visible' : 'invisible'}`}>
                 {/* Backdrop */}
                 <div 
                     className={`absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${isMenuOpen ? 'opacity-100' : 'opacity-0'}`}

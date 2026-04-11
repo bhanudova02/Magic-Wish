@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 import { Search, SlidersHorizontal, ArrowUpDown, ChevronDown } from 'lucide-react';
 import BookCard from '../components/BookCard';
 import { books } from '../data/books';
-import headerBg from '../assets/images/books_header_bg.jpg';
 
 const FilterDropdown = ({ label, options, selected, onSelect, icon: Icon, isMulti = false }) => {
     const [isOpen, setIsOpen] = useState(false);

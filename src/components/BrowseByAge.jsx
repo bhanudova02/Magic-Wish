@@ -1,4 +1,7 @@
 import React from 'react';
+import age2to4 from '../assets/images/age_2_4_toddler.jpg';
+import age4to6 from '../assets/images/age_4_6_explorer.png';
+import age6to8 from '../assets/images/age_6_8_adventure.jpg';
 
 const AgeCard = ({ age, img }) => (
     <div className="relative rounded-2xl overflow-hidden shadow-xl group hover:shadow-2xl transition-all duration-300 w-full aspect-[3/4.5]">
@@ -42,15 +45,15 @@ export default function BrowseByAge() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
                     <AgeCard
                         age="2-4"
-                        img="/assets/images/Age2-4ToddlerStyle.jpg"
+                        img={age2to4}
                     />
                     <AgeCard
                         age="4-6"
-                        img="/assets/images/Age 4-6YoungExplorer.jpg"
+                        img={age4to6}
                     />
                     <AgeCard
                         age="6-8"
-                        img="/assets/images/Age 6-8BigKidAdventure.jpg"
+                        img={age6to8}
                     />
                 </div>
             </div>

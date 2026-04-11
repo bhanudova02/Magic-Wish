@@ -1,5 +1,35 @@
 import React from 'react';
 
+/**
+ * PHOTO UPLOAD BANNER - IMAGE GENERATION PROMPTS
+ * Use these prompts in an external AI generator to replace current placeholders with 9 unique images.
+ * 
+ * --- MANY STYLES (Themes & Costumes) ---
+ * 1. MAGICAL PRINCESS: "A charming 5-year-old girl in a beautiful emerald green royal dress, standing in an enchanted castle forest with a small cat and fox. Pixar-style 3D, magical lighting, cinematic."
+ * 2. PINK FAIRY: "A young girl with wings dressed as a pink magical fairy, in a dreamy glowing garden with butterflies. 3D animated style, vibrant and whimsical."
+ * 3. HALLOWEEN FUN: "A young child in a cute pumpkin/Halloween costume, standing in a spooky but friendly moonlit yard with Jack-o'-lanterns. 3D Pixar-style."
+ * 
+ * --- FULL OF EXPRESSIONS (Dynamic Settings) ---
+ * 4. CARNIVAL JOY: "A young girl with a look of pure excitement and joy, laughing at a colorful carnival circus with red and white tents in the background. 3D animated style, high energy."
+ * 5. JUNGLE EXPLORER: "A young boy with a curious expression, standing in a lush green jungle with giant leaves and glowing plants. Pixar-style, cinematic depth."
+ * 6. WINTER WONDER: "A young girl wearing a warm red winter coat, catching a snowflake with a look of wonder. Snowy forest background, 3D animated style."
+ * 
+ * --- DIFFERENT ANGLES (Poses & Actions) ---
+ * 7. OVER-THE-SHOULDER: "A young girl looking back over her shoulder with a sweet smile, standing in a lush terrace garden with greenery. 3D Pixar-style, soft lighting."
+ * 8. BOTANICAL GARDEN: "A young girl in a yellow dress standing in a vibrant botanical garden filled with flowers and parrots. 3D animated style, bright colors."
+ * 9. LITTLE BUILDER: "A young boy in an orange construction vest and hat, helping a friendly builder on a sunny construction site with yellow machinery. Dynamic 3D Pixar-style."
+ */
+
+import imgPrincess from '../assets/images/banner/banner_princess.jpg';
+import imgFairy from '../assets/images/banner/banner_fairy.jpg';
+import imgHalloween from '../assets/images/banner/banner_halloween.jpg';
+import imgCarnival from '../assets/images/banner/banner_carnival.jpg';
+import imgJungle from '../assets/images/banner/banner_jungle.jpg';
+import imgWinter from '../assets/images/banner/banner_winter.jpg';
+import imgGardenSide from '../assets/images/banner/banner_shoulder.jpg';
+import imgGardenFront from '../assets/images/banner/banner_garden.jpg';
+import imgBuilder from '../assets/images/banner/banner_builder.jpg';
+
 const HandDrawnArrow = ({ className, rotation = "0" }) => (
     <svg 
         viewBox="0 0 100 100" 
@@ -40,20 +70,20 @@ export default function PhotoUploadBanner() {
                     
                     {/* Column 1: A Universe of Styles */}
                     <div className="relative flex flex-col items-center">
-                        <div className="relative w-56 h-56">
+                        <div className="relative w-72 h-72">
                             <StyledImage 
-                                src="/assets/images/avatar_style_1.png" 
-                                size="w-32 h-32" 
+                                src={imgPrincess} 
+                                size="w-40 h-40" 
                                 className="absolute top-0 left-0 z-20"
                             />
                             <StyledImage 
-                                src="/assets/images/Dino-LandExpedition.jpg" 
-                                size="w-20 h-20" 
+                                src={imgFairy} 
+                                size="w-28 h-28" 
                                 className="absolute top-8 right-0 z-10"
                             />
                             <StyledImage 
-                                src="/assets/images/avatar_expression_1.png" 
-                                size="w-24 h-24" 
+                                src={imgHalloween} 
+                                size="w-32 h-32" 
                                 className="absolute bottom-0 left-10 z-30"
                             />
                         </div>
@@ -66,21 +96,21 @@ export default function PhotoUploadBanner() {
                     {/* Column 2: Pure Emotion */}
                     <div className="relative flex flex-col items-center">
                         <p className="font-[Shadows_Into_Light] text-2xl md:text-3xl tracking-wide mb-4">Pure Emotion</p>
-                        <div className="relative w-56 h-64">
+                        <div className="relative w-72 h-80">
                             <HandDrawnArrow className="absolute -top-4 left-1/2 -translate-x-1/2 rotate-[120deg] !stroke-[#2b124c]" />
                             <StyledImage 
-                                src="/assets/images/avatar_expression_2.png" 
-                                size="w-16 h-16" 
+                                src={imgCarnival} 
+                                size="w-32 h-32" 
                                 className="absolute top-8 left-0 z-10"
                             />
                             <StyledImage 
-                                src="/assets/images/avatar_expression_1.png" 
-                                size="w-20 h-20" 
-                                className="absolute top-16 right-0 z-20"
+                                src={imgJungle} 
+                                size="w-36 h-36" 
+                                className="absolute top-4 -right-4 z-20"
                             />
                             <StyledImage 
-                                src="/assets/images/avatar_style_1.png" 
-                                size="w-36 h-36" 
+                                src={imgWinter} 
+                                size="w-44 h-44" 
                                 className="absolute bottom-0 left-1/2 -translate-x-1/2 z-30"
                             />
                         </div>
@@ -88,20 +118,20 @@ export default function PhotoUploadBanner() {
 
                     {/* Column 3: Dynamic Views */}
                     <div className="relative flex flex-col items-center justify-end">
-                        <div className="relative w-56 h-56">
+                        <div className="relative w-72 h-72">
                             <StyledImage 
-                                src="/assets/images/avatar_angle_1.png" 
-                                size="w-16 h-16" 
-                                className="absolute top-0 right-10 z-10"
+                                src={imgGardenSide} 
+                                size="w-32 h-32" 
+                                className="absolute -top-10 right-10 z-10"
                             />
                             <StyledImage 
-                                src="/assets/images/TheSpeedsterofNeonCity.jpg" 
-                                size="w-20 h-20" 
+                                src={imgGardenFront} 
+                                size="w-28 h-28" 
                                 className="absolute bottom-1/2 left-0 z-20"
                             />
                             <StyledImage 
-                                src="/assets/images/TheGalacticCommander.jpg" 
-                                size="w-40 h-40" 
+                                src={imgBuilder} 
+                                size="w-48 h-48" 
                                 className="absolute bottom-0 right-0 z-30"
                             />
                         </div>

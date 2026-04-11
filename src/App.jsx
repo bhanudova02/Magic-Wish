@@ -1,30 +1,26 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import Bestsellers from './components/Bestsellers';
-import NewReleases from './components/NewReleases';
-import HowItWorks from './components/HowItWorks';
-import GirlsBooks from './components/GirlsBooks';
-import BoysBooks from './components/BoysBooks';
-import BrowseByAge from './components/BrowseByAge';
-import Faq from './components/Faq';
-import PhotoUploadBanner from './components/PhotoUploadBanner';
 import Footer from './components/Footer';
+import HomePage from './pages/HomePage';
+import BooksPage from './pages/BooksPage';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
     return (
-        <div className="text-gray-800 antialiased overflow-x-hidden">
-            <Navbar />
-            <Hero />
-            <Bestsellers />
-            <NewReleases />
-            <HowItWorks />
-            <GirlsBooks />
-            <PhotoUploadBanner />
-            <BoysBooks />
-            <BrowseByAge />
-            <Faq />
-            <Footer />
-        </div>
+        <Router>
+            <ScrollToTop />
+            <div className="text-gray-800 antialiased min-h-screen flex flex-col">
+                <Navbar />
+                <main className="flex-grow">
+                    <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/books" element={<BooksPage />} />
+                    </Routes>
+                </main>
+                <Footer />
+            </div>
+        </Router>
     );
 }
 

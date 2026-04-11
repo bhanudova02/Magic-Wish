@@ -1,11 +1,14 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import BookCard from './BookCard';
+import bookExplorer from '../assets/images/book_explorer.png';
+import bookOcean from '../assets/images/book_ocean.png';
+import bookPaintbrush from '../assets/images/book_paintbrush.png';
 
 const newReleasesData = [
     {
         id: 1,
-        image: "/assets/images/book_cover_explorer_1to1_1775804386152.png",
+        image: bookExplorer,
         title: "The Brave Little Explorer",
         description: "A daring journey through the Whispering Woods to find the lost star.",
         price: "$14.99",
@@ -14,7 +17,7 @@ const newReleasesData = [
     },
     {
         id: 2,
-        image: "/assets/images/book_cover_ocean_1to1_1775804407706.png",
+        image: bookOcean,
         title: "Guardians of the Ocean",
         description: "Dive deep into the blue and save the coral kingdom with your friends.",
         price: "$14.99",
@@ -23,7 +26,7 @@ const newReleasesData = [
     },
     {
         id: 3,
-        image: "/assets/images/book_cover_paintbrush_1to1_1775804459864.png",
+        image: bookPaintbrush,
         title: "The Magic Paintbrush",
         description: "Everything you paint comes to life! What will you create today?",
         price: "$14.99",

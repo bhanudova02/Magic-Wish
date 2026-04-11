@@ -1,11 +1,14 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import BookCard from './BookCard';
+import bookPrincess from '../assets/images/book_princess.png';
+import bookDino from '../assets/images/book_dinosaur.png';
+import bookSpace from '../assets/images/book_space.png';
 
 const bestsellerData = [
     {
         id: 1,
-        image: "/assets/images/book_cover_princess_1775798310197.png",
+        image: bookPrincess,
         title: "Princess and the Glowing Flower",
         description: "A magical journey of kindness and bravery in an enchanted forest.",
         price: "$14.99",
@@ -14,7 +17,7 @@ const bestsellerData = [
     },
     {
         id: 2,
-        image: "/assets/images/book_cover_dino_1775798338077.png",
+        image: bookDino,
         title: "Boy The Dinos Need You",
         description: "Bravery and friendship roar in this thrilling prehistoric adventure!",
         price: "$14.99",
@@ -23,7 +26,7 @@ const bestsellerData = [
     },
     {
         id: 3,
-        image: "/assets/images/book_cover_space_1775798361032.png",
+        image: bookSpace,
         title: "The Boy and the Cosmic Journey",
         description: "Explore stars and planets with a friendly glowing space dragon.",
         price: "$14.99",

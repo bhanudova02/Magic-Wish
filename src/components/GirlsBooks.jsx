@@ -1,11 +1,14 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import BookCard from './BookCard';
+import bookFairy from '../assets/images/book_fairy.png';
+import bookUnicorn from '../assets/images/book_unicorn.png';
+import bookAlchemist from '../assets/images/book_alchemist.png';
 
 const girlsBooksData = [
     {
         id: 1,
-        image: "/assets/images/book_cover_fairy_1to1.png",
+        image: bookFairy,
         title: "The Fairy Princess of Moonlit Woods",
         description: "A whimsical journey where your little girl discovers her own magical wings.",
         price: "$14.99",
@@ -14,7 +17,7 @@ const girlsBooksData = [
     },
     {
         id: 2,
-        image: "/assets/images/book_cover_unicorn_1to1.png",
+        image: bookUnicorn,
         title: "Maya and the Rainbow Unicorn",
         description: "Join forces with a majestic unicorn to bring color back to the kingdom.",
         price: "$14.99",
@@ -23,7 +26,7 @@ const girlsBooksData = [
     },
     {
         id: 3,
-        image: "/assets/images/book_cover_alchemist_1to1.png",
+        image: bookAlchemist,
         title: "The Curious Little Alchemist",
         description: "Spark a love for science and magic in this bubbly laboratory adventure.",
         price: "$14.99",

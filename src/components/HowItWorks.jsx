@@ -1,31 +1,35 @@
 import React from 'react';
+import stepPick from '../assets/images/steps/step_pick.png';
+import stepPhoto from '../assets/images/steps/step_photo.png';
+import stepPreview from '../assets/images/steps/step_preview.png';
+import stepDelivery from '../assets/images/steps/step_delivery.png';
 
 const steps = [
     {
         id: 1,
         title: "Pick Storybook",
-        image: "/assets/images/steps/step_pick.png",
+        image: stepPick,
         color: "#E0EBFF",
         badge: "bg-blue-100 text-blue-600"
     },
     {
         id: 2,
         title: "Add your Child's Picture",
-        image: "/assets/images/steps/step_photo.png",
+        image: stepPhoto,
         color: "#FDE2FF",
         badge: "bg-pink-100 text-pink-600"
     },
     {
         id: 3,
         title: "Preview & Order",
-        image: "/assets/images/steps/step_preview.png",
+        image: stepPreview,
         color: "#FFE2E2",
         badge: "bg-red-100 text-red-600"
     },
     {
         id: 4,
         title: "Joyful Delivery",
-        image: "/assets/images/steps/step_delivery.png",
+        image: stepDelivery,
         color: "#E2E0FF",
         badge: "bg-purple-100 text-purple-600"
     }

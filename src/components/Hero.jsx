@@ -1,4 +1,5 @@
 import React from 'react';
+import heroMain from '../assets/images/hero_main.jpg';
 
 export default function Hero() {
     return (
@@ -6,7 +7,7 @@ export default function Hero() {
             {/* Left Area (Edge-to-Edge Premium Image Showcase) */}
             <div className="flex w-full lg:w-[55%] flex-shrink-0 lg:h-full h-[50vh] relative overflow-hidden bg-gray-100">
                 <img 
-                    src="/assets/images/hero_img.jpg" 
+                    src={heroMain} 
                     alt="Magical reading experience" 
                     className="w-full h-full object-cover"
                 />

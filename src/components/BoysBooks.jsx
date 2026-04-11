@@ -1,11 +1,14 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import BookCard from './BookCard';
+import adventuresSpace from '../assets/images/adventures_space.jpg';
+import adventuresDino from '../assets/images/adventures_dino.jpg';
+import adventuresRace from '../assets/images/adventures_race.jpg';
 
 const boysBooksData = [
     {
         id: 1,
-        image: "/assets/images/TheGalacticCommander.jpg",
+        image: adventuresSpace,
         title: "The Galactic Commander",
         description: "Zoom past planets and stars in a high-tech rocket ship built just for you.",
         price: "$14.99",
@@ -14,7 +17,7 @@ const boysBooksData = [
     },
     {
         id: 2,
-        image: "/assets/images/Dino-LandExpedition.jpg",
+        image: adventuresDino,
         title: "Dino-Land Expedition",
         description: "Become a brave explorer and discover hidden fossils in a prehistoric world.",
         price: "$14.99",
@@ -23,7 +26,7 @@ const boysBooksData = [
     },
     {
         id: 3,
-        image: "/assets/images/TheSpeedsterofNeonCity.jpg",
+        image: adventuresRace,
         title: "The Speedster of Neon City",
         description: "Race against the clock in the world's fastest car to win the Grand Prix.",
         price: "$14.99",

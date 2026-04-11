@@ -65,7 +65,7 @@ export default function Footer() {
                         <p className="text-gray-400 text-sm mb-4">Don’t miss out on the newest books and exclusive discounts.</p>
                         <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
                             <input type="email" placeholder="Email address" className="bg-white/10 border border-white/10 outline-none focus:ring-2 focus:ring-[#2e71eb] text-white rounded-lg px-4 py-3 w-full placeholder-white/40" required />
-                            <button type="submit" className="bg-[#2e71eb] hover:bg-[#2563eb] text-white px-6 py-3 rounded-lg font-bold transition w-full">
+                            <button type="submit" className="bg-[#2e71eb] hover:bg-[#2f6fe7] text-white px-6 py-3 rounded-lg font-bold transition w-full">
                                 Subscribe
                             </button>
                         </form>

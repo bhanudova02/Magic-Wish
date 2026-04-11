@@ -129,7 +129,7 @@ export default function ProductDetailsPage() {
 
                         {/* CTA Section */}
                         <div className="space-y-6" ref={ctaRef}>
-                            <button className="w-full bg-[#2e71eb] hover:bg-[#2563eb] text-white py-5 px-8 rounded-sm font-black text-xl transition-all transform hover:scale-[1.02] shadow-xl shadow-blue-500/20 active:scale-95">
+                            <button className="w-full bg-[#2e71eb] hover:bg-[#2f6fe7] text-white py-5 px-8 rounded-sm font-black text-xl transition-all transform hover:scale-[1.02] shadow-xl shadow-blue-500/20 active:scale-95">
                                 Personalise my book
                             </button>
                             

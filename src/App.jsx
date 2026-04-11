@@ -24,7 +24,7 @@ function App() {
                         <Route path="/terms" element={<TermsPage />} />
                         <Route path="/privacy" element={<PrivacyPage />} />
                         <Route path="/contact" element={<ContactPage />} />
-                        <Route path="/book/:id" element={<ProductDetailsPage />} />
+                        <Route path="/books/:id" element={<ProductDetailsPage />} />
                     </Routes>
                 </main>
                 <Footer />

@@ -16,11 +16,11 @@ export default function ImaginationBanner() {
                 </div>
 
                 {/* Right side: Content with Indigo Background */}
-                <div className="w-full md:w-7/12 bg-[#2563EB] relative flex items-center py-16 px-10 md:px-16 lg:px-24">
+                <div className="w-full md:w-7/12 bg-[#2f6fe7] relative flex items-center py-16 px-10 md:px-16 lg:px-24">
                     
                     {/* Clean Slanted Edge (Visible only on Desktop) */}
                     <div className="hidden md:block absolute top-0 bottom-0 left-0 w-6 -translate-x-[99%] overflow-hidden pointer-events-none">
-                        <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full text-[#2563EB] fill-current">
+                        <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full text-[#2f6fe7] fill-current">
                             <polygon points="100,0 100,100 0,100" />
                         </svg>
                     </div>
@@ -36,7 +36,7 @@ export default function ImaginationBanner() {
                         
                         <Link 
                             to="/books" 
-                            className="inline-block bg-white text-[#2563EB] font-bold text-lg px-12 py-4 rounded-md focus:outline-none focus:ring-4 focus:ring-white/30 hover:bg-gray-50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+                            className="inline-block bg-white text-[#2f6fe7] font-bold text-lg px-12 py-4 rounded-md focus:outline-none focus:ring-4 focus:ring-white/30 hover:bg-gray-50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
                         >
                             View All Books
                         </Link>

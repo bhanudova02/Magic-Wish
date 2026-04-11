@@ -154,7 +154,7 @@ export default function Navbar() {
                                 </div>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                                     {books.slice(0, 8).map(book => (
-                                        <Link key={book.id} to={`/book/${book.id}`} className="group space-y-2 block">
+                                        <Link key={book.id} to={`/books/${book.id}`} className="group space-y-2 block">
                                             <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden border border-gray-100 shadow-sm relative">
                                                 <img src={book.image} alt={book.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
                                             </div>
@@ -178,7 +178,7 @@ export default function Navbar() {
                                     {filteredBooks.length > 0 ? (
                                         <div className="grid grid-cols-2 gap-4">
                                             {filteredBooks.map(book => (
-                                                <Link key={book.id} to={`/book/${book.id}`} className="group block mb-4">
+                                                <Link key={book.id} to={`/books/${book.id}`} className="group block mb-4">
                                                     <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden border border-gray-100 mb-2">
                                                         <img src={book.image} alt={book.title} className="w-full h-full object-cover group-hover:scale-105 transition" />
                                                     </div>

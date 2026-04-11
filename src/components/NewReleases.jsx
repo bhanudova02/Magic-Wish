@@ -1,9 +1,9 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import BookCard from './BookCard';
-import bookExplorer from '../assets/images/book_explorer.png';
-import bookOcean from '../assets/images/book_ocean.png';
-import bookPaintbrush from '../assets/images/book_paintbrush.png';
+import bookExplorer from '../assets/images/book_explorer.webp';
+import bookOcean from '../assets/images/book_ocean.webp';
+import bookPaintbrush from '../assets/images/book_paintbrush.webp';
 
 const newReleasesData = [
     {

@@ -9,7 +9,7 @@ export default function ImaginationBanner() {
                 <div className="w-full md:w-5/12 relative bg-gray-100 min-h-[350px] md:min-h-auto">
                     {/* Using the newly generated image for a child reading */}
                     <img 
-                        src="/images/child_reading_banner.png" 
+                        src="/images/child_reading_banner.webp" 
                         alt="Child reading a Magical Storybook" 
                         className="absolute inset-0 w-full h-full object-cover"
                     />

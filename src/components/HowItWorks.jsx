@@ -1,8 +1,8 @@
 import React from 'react';
-import stepPick from '../assets/images/steps/step_pick.png';
-import stepPhoto from '../assets/images/steps/step_photo.png';
-import stepPreview from '../assets/images/steps/step_preview.png';
-import stepDelivery from '../assets/images/steps/step_delivery.png';
+import stepPick from '../assets/images/steps/step_pick.webp';
+import stepPhoto from '../assets/images/steps/step_photo.webp';
+import stepPreview from '../assets/images/steps/step_preview.webp';
+import stepDelivery from '../assets/images/steps/step_delivery.webp';
 
 const steps = [
     {

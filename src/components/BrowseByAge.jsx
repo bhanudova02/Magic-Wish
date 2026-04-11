@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import age2to4 from '../assets/images/age_2_4_toddler.jpg';
-import age4to6 from '../assets/images/age_4_6_explorer.png';
-import age6to8 from '../assets/images/age_6_8_adventure.jpg';
+import age2to4 from '../assets/images/age_2_4_toddler.webp';
+import age4to6 from '../assets/images/age_4_6_explorer.webp';
+import age6to8 from '../assets/images/age_6_8_adventure.webp';
 
 const AgeCard = ({ age, img }) => {
     const navigate = useNavigate();

@@ -1,9 +1,9 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import BookCard from './BookCard';
-import bookPrincess from '../assets/images/book_princess.png';
-import bookDino from '../assets/images/book_dinosaur.png';
-import bookSpace from '../assets/images/book_space.png';
+import bookPrincess from '../assets/images/book_princess.webp';
+import bookDino from '../assets/images/book_dinosaur.webp';
+import bookSpace from '../assets/images/book_space.webp';
 
 const bestsellerData = [
     {

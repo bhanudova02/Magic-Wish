@@ -1,9 +1,9 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import BookCard from './BookCard';
-import bookFairy from '../assets/images/book_fairy.png';
-import bookUnicorn from '../assets/images/book_unicorn.png';
-import bookAlchemist from '../assets/images/book_alchemist.png';
+import bookFairy from '../assets/images/book_fairy.webp';
+import bookUnicorn from '../assets/images/book_unicorn.webp';
+import bookAlchemist from '../assets/images/book_alchemist.webp';
 
 const girlsBooksData = [
     {

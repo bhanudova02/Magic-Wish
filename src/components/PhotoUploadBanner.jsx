@@ -20,15 +20,15 @@ import React from 'react';
  * 9. LITTLE BUILDER: "A young boy in an orange construction vest and hat, helping a friendly builder on a sunny construction site with yellow machinery. Dynamic 3D Pixar-style."
  */
 
-import imgPrincess from '../assets/images/banner/banner_princess.jpg';
-import imgFairy from '../assets/images/banner/banner_fairy.jpg';
-import imgHalloween from '../assets/images/banner/banner_halloween.jpg';
-import imgCarnival from '../assets/images/banner/banner_carnival.jpg';
-import imgJungle from '../assets/images/banner/banner_jungle.jpg';
-import imgWinter from '../assets/images/banner/banner_winter.jpg';
-import imgGardenSide from '../assets/images/banner/banner_shoulder.jpg';
-import imgGardenFront from '../assets/images/banner/banner_garden.jpg';
-import imgBuilder from '../assets/images/banner/banner_builder.jpg';
+import imgPrincess from '../assets/images/banner/banner_princess.webp';
+import imgFairy from '../assets/images/banner/banner_fairy.webp';
+import imgHalloween from '../assets/images/banner/banner_halloween.webp';
+import imgCarnival from '../assets/images/banner/banner_carnival.webp';
+import imgJungle from '../assets/images/banner/banner_jungle.webp';
+import imgWinter from '../assets/images/banner/banner_winter.webp';
+import imgGardenSide from '../assets/images/banner/banner_shoulder.webp';
+import imgGardenFront from '../assets/images/banner/banner_garden.webp';
+import imgBuilder from '../assets/images/banner/banner_builder.webp';
 
 const HandDrawnArrow = ({ className, rotation = "0" }) => (
     <svg 

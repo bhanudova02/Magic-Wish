@@ -1,9 +1,9 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import BookCard from './BookCard';
-import adventuresSpace from '../assets/images/adventures_space.jpg';
-import adventuresDino from '../assets/images/adventures_dino.jpg';
-import adventuresRace from '../assets/images/adventures_race.jpg';
+import adventuresSpace from '../assets/images/adventures_space.webp';
+import adventuresDino from '../assets/images/adventures_dino.webp';
+import adventuresRace from '../assets/images/adventures_race.webp';
 
 const boysBooksData = [
     {

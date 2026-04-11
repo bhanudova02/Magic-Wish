@@ -1,15 +1,15 @@
-import adventuresSpace from '../assets/images/adventures_space.jpg';
-import adventuresDino from '../assets/images/adventures_dino.jpg';
-import adventuresRace from '../assets/images/adventures_race.jpg';
-import bookFairy from '../assets/images/book_fairy.png';
-import bookUnicorn from '../assets/images/book_unicorn.png';
-import bookAlchemist from '../assets/images/book_alchemist.png';
-import bookPrincess from '../assets/images/book_princess.png';
-import bookDino from '../assets/images/book_dinosaur.png';
-import bookSpace from '../assets/images/book_space.png';
-import bookExplorer from '../assets/images/book_explorer.png';
-import bookOcean from '../assets/images/book_ocean.png';
-import bookPaintbrush from '../assets/images/book_paintbrush.png';
+import adventuresSpace from '../assets/images/adventures_space.webp';
+import adventuresDino from '../assets/images/adventures_dino.webp';
+import adventuresRace from '../assets/images/adventures_race.webp';
+import bookFairy from '../assets/images/book_fairy.webp';
+import bookUnicorn from '../assets/images/book_unicorn.webp';
+import bookAlchemist from '../assets/images/book_alchemist.webp';
+import bookPrincess from '../assets/images/book_princess.webp';
+import bookDino from '../assets/images/book_dinosaur.webp';
+import bookSpace from '../assets/images/book_space.webp';
+import bookExplorer from '../assets/images/book_explorer.webp';
+import bookOcean from '../assets/images/book_ocean.webp';
+import bookPaintbrush from '../assets/images/book_paintbrush.webp';
 
 export const books = [
     {

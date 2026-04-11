@@ -14,7 +14,7 @@ const Twitter = ({ className }) => (
 );
 export default function Footer() {
     return (
-        <footer className="bg-gray-900 border-t border-gray-800 text-gray-300 pt-16 pb-10">
+        <footer className="bg-[#1a0b2e] border-t border-purple-900/30 text-gray-300 pt-16 pb-10">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
                     {/* Brand Info */}
@@ -26,13 +26,13 @@ export default function Footer() {
                             Creating magical, personalised storybooks where your child is the hero. Printed with care, delivered with joy.
                         </p>
                         <div className="flex space-x-4">
-                            <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-purple-600 hover:text-white transition duration-300">
+                            <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-purple-600 hover:text-white transition duration-300">
                                 <Instagram className="w-5 h-5" />
                             </a>
-                            <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-500 hover:text-white transition duration-300">
+                            <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#2e71eb] hover:text-white transition duration-300">
                                 <Facebook className="w-5 h-5" />
                             </a>
-                            <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-sky-500 hover:text-white transition duration-300">
+                            <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-sky-500 hover:text-white transition duration-300">
                                 <Twitter className="w-5 h-5" />
                             </a>
                         </div>
@@ -64,8 +64,8 @@ export default function Footer() {
                         <h3 className="text-white font-bold text-lg mb-6 tracking-wide">Subscribe to Our Newsletter</h3>
                         <p className="text-gray-400 text-sm mb-4">Don’t miss out on the newest books and exclusive discounts.</p>
                         <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
-                            <input type="email" placeholder="Email address" className="bg-gray-800 border-none outline-none focus:ring-2 focus:ring-purple-600 text-white rounded-lg px-4 py-3 w-full" required />
-                            <button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-bold transition w-full">
+                            <input type="email" placeholder="Email address" className="bg-white/10 border border-white/10 outline-none focus:ring-2 focus:ring-[#2e71eb] text-white rounded-lg px-4 py-3 w-full placeholder-white/40" required />
+                            <button type="submit" className="bg-[#2e71eb] hover:bg-[#2563eb] text-white px-6 py-3 rounded-lg font-bold transition w-full">
                                 Subscribe
                             </button>
                         </form>

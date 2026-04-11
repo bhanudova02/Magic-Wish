@@ -3,21 +3,13 @@ import React from 'react';
 export default function Hero() {
     return (
         <section className="flex flex-col lg:flex-row h-auto lg:h-[640px] w-full pt-16 bg-white overflow-hidden relative border-b-8 border-gray-100">
-            {/* Left Area (Edge-to-Edge Premium Video Showcase) */}
+            {/* Left Area (Edge-to-Edge Premium Image Showcase) */}
             <div className="flex w-full lg:w-[55%] flex-shrink-0 lg:h-full h-[50vh] relative overflow-hidden bg-gray-100">
-                <video 
-                    autoPlay 
-                    loop 
-                    muted 
-                    playsInline 
+                <img 
+                    src="/assets/images/hero_img.jpg" 
+                    alt="Magical reading experience" 
                     className="w-full h-full object-cover"
-                    poster="/assets/images/video-poster.png"
-                >
-                    {/* Mee own video file ni public/assets/videos/hero-video.mp4 lo pettandi */}
-                    <source src="/assets/videos/hero-video.mp4" type="video/mp4" />
-                    {/* Fallback external video (optional) */}
-                    <source src="https://resources.wonderwraps.com/4d513a0b-e8b5-475a-8f96-1321a5e76141/video/video-preview.mp4" type="video/mp4" />
-                </video>
+                />
             </div>
             
             {/* Right Area (Ultra-Modern Slant Split with Border Highlight) */}

@@ -51,7 +51,7 @@ export default function Navbar() {
                         <div className="hidden md:flex ml-10 space-x-8 items-center font-medium">
                             <NavLink to="/" className={linkClass}>Home</NavLink>
                             <NavLink to="/books" className={linkClass}>Books</NavLink>
-                            <a href="#support" className="text-gray-600 hover:text-pink-500 transition-colors">Support</a>
+                            <NavLink to="/support" className={linkClass}>Support</NavLink>
                         </div>
 
                         <div className="flex items-center space-x-5 border-l border-gray-200 pl-6 ml-4">
@@ -102,7 +102,7 @@ export default function Navbar() {
                             <nav className="flex flex-col">
                                 <NavLink to="/" className={mobileLinkClass}>Home</NavLink>
                                 <NavLink to="/books" className={mobileLinkClass}>Books</NavLink>
-                                <a href="#support" className="block py-4 text-xl font-bold border-b border-gray-100 text-gray-800 hover:text-pink-500">Support</a>
+                                <NavLink to="/support" className={mobileLinkClass}>Support</NavLink>
                             </nav>
                         </div>
                     </div>

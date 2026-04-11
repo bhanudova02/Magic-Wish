@@ -33,15 +33,6 @@ const bestsellerData = [
         originalPrice: "$39.99",
         badge: "-50% OFF"
     },
-    {
-        id: 4,
-        title: "Personalised Sticker Packs",
-        description: "Add a magical custom touch to their school bags and belongings.",
-        price: "$9.99",
-        originalPrice: "$19.99",
-        buttonText: "View Packs",
-        isStickerPack: true
-    }
 ];
 
 export default function Bestsellers() {

@@ -30,16 +30,16 @@ export default function Navbar() {
     }, [isMenuOpen]);
 
     const linkClass = ({ isActive }) => 
-        `transition-colors font-medium ${isActive ? 'text-pink-600' : 'text-gray-600 hover:text-pink-500'}`;
+        `transition-colors font-medium ${isActive ? 'text-purple-700' : 'text-gray-600 hover:text-purple-600'}`;
 
     const mobileLinkClass = ({ isActive }) => 
-        `block py-4 text-xl font-bold border-b border-gray-100 ${isActive ? 'text-pink-600' : 'text-gray-800 hover:text-pink-500'}`;
+        `block py-4 text-xl font-bold border-b border-gray-100 ${isActive ? 'text-purple-700' : 'text-gray-800 hover:text-purple-600'}`;
 
     return (
         <>
             <nav 
                 id="navbar" 
-                className={`fixed w-full z-50 glass-nav transition-all duration-300 ${scrolled ? 'shadow-sm bg-white/95' : 'bg-white/85'}`}
+                className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'shadow-sm bg-white/95' : 'bg-white/85'}`}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
@@ -55,19 +55,19 @@ export default function Navbar() {
                         </div>
 
                         <div className="flex items-center space-x-5 border-l border-gray-200 pl-6 ml-4">
-                            <button className="text-gray-800 hover:text-pink-500 transition-colors focus:outline-none">
+                            <button className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none">
                                 <Search className="w-6 h-6" />
                             </button>
-                            <button className="text-gray-800 hover:text-pink-500 transition-colors focus:outline-none">
+                            <button className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none">
                                 <ShoppingBag className="w-6 h-6" />
                             </button>
-                            <button className="text-gray-800 hover:text-pink-500 transition-colors focus:outline-none">
+                            <button className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none">
                                 <User className="w-6 h-6" />
                             </button>
                             <div className="md:hidden flex items-center ml-2 border-l border-gray-200 pl-4">
                                 <button 
                                     onClick={() => setIsMenuOpen(true)}
-                                    className="text-gray-800 hover:text-pink-500 focus:outline-none"
+                                    className="text-gray-800 hover:text-purple-600 focus:outline-none"
                                 >
                                     <Menu className="w-7 h-7" />
                                 </button>
@@ -92,7 +92,7 @@ export default function Navbar() {
                             <span className="font-heading font-extrabold text-xl text-[#2b124c]">Menu</span>
                             <button 
                                 onClick={() => setIsMenuOpen(false)}
-                                className="p-2 text-gray-500 hover:text-pink-500"
+                                className="p-2 text-gray-500 hover:text-purple-600"
                             >
                                 <X className="w-6 h-6" />
                             </button>

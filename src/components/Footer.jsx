@@ -26,7 +26,7 @@ export default function Footer() {
                             Creating magical, personalised storybooks where your child is the hero. Printed with care, delivered with joy.
                         </p>
                         <div className="flex space-x-4">
-                            <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-pink-500 hover:text-white transition duration-300">
+                            <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-purple-600 hover:text-white transition duration-300">
                                 <Instagram className="w-5 h-5" />
                             </a>
                             <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-500 hover:text-white transition duration-300">
@@ -64,8 +64,8 @@ export default function Footer() {
                         <h3 className="text-white font-bold text-lg mb-6 tracking-wide">Subscribe to Our Newsletter</h3>
                         <p className="text-gray-400 text-sm mb-4">Don’t miss out on the newest books and exclusive discounts.</p>
                         <form className="flex flex-col sm:flex-row gap-2" onSubmit={(e) => e.preventDefault()}>
-                            <input type="email" placeholder="Email address" className="bg-gray-800 border-none outline-none focus:ring-2 focus:ring-pink-500 text-white rounded-lg px-4 py-3 w-full" required />
-                            <button type="submit" className="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-lg font-bold transition">
+                            <input type="email" placeholder="Email address" className="bg-gray-800 border-none outline-none focus:ring-2 focus:ring-purple-600 text-white rounded-lg px-4 py-3 w-full" required />
+                            <button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-bold transition">
                                 Subscribe
                             </button>
                         </form>

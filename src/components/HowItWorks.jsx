@@ -17,7 +17,7 @@ const steps = [
         title: "Add your Child's Picture",
         image: stepPhoto,
         color: "#FDE2FF",
-        badge: "bg-pink-100 text-pink-600"
+        badge: "bg-purple-100 text-purple-700"
     },
     {
         id: 3,
@@ -39,8 +39,8 @@ export default function HowItWorks() {
     return (
         <section id="how-it-works" className="relative pt-14 pb-14 md:pt-20 md:pb-24 bg-white overflow-hidden border-b-2 border-gray-100">
             {/* Suitable Magical Background Shade */}
-            <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-indigo-100/70 via-purple-50/40 to-transparent pointer-events-none" />
-            <div className="absolute top-0 left-0 right-0 h-px bg-indigo-200/20" />
+            <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-blue-100/70 via-purple-50/40 to-transparent pointer-events-none" />
+            <div className="absolute top-0 left-0 right-0 h-px bg-blue-200/20" />
 
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}

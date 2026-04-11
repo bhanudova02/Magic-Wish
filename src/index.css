@@ -6,6 +6,22 @@
   --font-family-outfit: "Outfit", sans-serif;
   --font-family-quicksand: "Quicksand", sans-serif;
   --font-family-handwriting: "Shadows Into Light", cursive;
+
+  /* App Core Colors */
+  --color-blue-50: #E0EBFF;
+  --color-blue-100: #E0EBFF;
+  --color-blue-600: #2563EB;
+  
+  --color-purple-50: #E2E0FF;
+  --color-purple-100: #E2E0FF;
+  --color-purple-600: #9333EA;
+  --color-purple-700: #9333EA;
+
+  --color-pink-50: #FDE2FF;
+  --color-pink-100: #FDE2FF;
+  
+  --color-red-50: #FFE2E2;
+  --color-red-100: #FFE2E2;
 }
 
 body {

@@ -46,7 +46,7 @@ export default function NewReleases() {
                         </h2>
                         <p className="text-gray-500 text-lg">Fresh stories waiting for your magical touch.</p>
                     </div>
-                    <a href="#" className="hidden md:flex text-pink-500 font-bold hover:text-pink-600 transition items-center gap-1 group">
+                    <a href="#" className="hidden md:flex text-purple-600 font-bold hover:text-purple-700 transition items-center gap-1 group">
                         View All <ArrowRight className="w-5 h-5 transform group-hover:translate-x-1 transition" />
                     </a>
                 </div>
@@ -58,7 +58,7 @@ export default function NewReleases() {
                 </div>
 
                 <div className="mt-8 text-center md:hidden">
-                    <a href="#" className="inline-flex text-pink-500 font-bold hover:text-pink-600 transition items-center gap-1 bg-pink-50 px-6 py-3 rounded-full">
+                    <a href="#" className="inline-flex text-purple-600 font-bold hover:text-purple-700 transition items-center gap-1 bg-purple-50 px-6 py-3 rounded-full">
                         View All Books <ArrowRight className="w-5 h-5" />
                     </a>
                 </div>

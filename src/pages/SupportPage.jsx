@@ -17,8 +17,8 @@ export default function SupportPage() {
         <div className="min-h-screen">
             <div className="relative bg-white pt-24 pb-20 overflow-hidden">
                 {/* Suitable Magical Background Shade (HowItWorks style) */}
-                <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-indigo-100/70 via-purple-50/40 to-transparent pointer-events-none" />
-                <div className="absolute top-0 left-0 right-0 h-px bg-indigo-200/20" />
+                <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-blue-100/70 via-purple-50/40 to-transparent pointer-events-none" />
+                <div className="absolute top-0 left-0 right-0 h-px bg-blue-200/20" />
 
                 <div className="relative max-w-4xl mx-auto px-4 sm:px-6 py-10 flex flex-col items-center z-10">
                     <h1 className="font-heading text-4xl lg:text-5xl mb-8 text-gray-900 font-bold leading-tight w-full text-center">
@@ -52,11 +52,11 @@ export default function SupportPage() {
                                         Have a question or need assistance? We're always here to help make your experience magical.
                                     </p>
 
-                                    <div className="flex items-center justify-center md:justify-start gap-3 text-[#4338ca] font-medium mt-6">
+                                    <div className="flex items-center justify-center md:justify-start gap-3 text-[#2563EB] font-medium mt-6">
                                         <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                         </svg>
-                                        <a href="mailto:support@magicwish.in" className="hover:text-indigo-800 transition-colors">
+                                        <a href="mailto:support@magicwish.in" className="hover:text-blue-800 transition-colors">
                                             support@magicwish.in
                                         </a>
                                     </div>
@@ -70,7 +70,7 @@ export default function SupportPage() {
                                                 required
                                                 value={category}
                                                 onChange={(e) => setCategory(e.target.value)}
-                                                className={`w-full bg-gray-50/50 border border-gray-200 rounded-md px-4 py-3.5 appearance-none focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all cursor-pointer ${category === '' ? 'text-gray-400' : 'text-gray-900'}`}
+                                                className={`w-full bg-gray-50/50 border border-gray-200 rounded-md px-4 py-3.5 appearance-none focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition-all cursor-pointer ${category === '' ? 'text-gray-400' : 'text-gray-900'}`}
                                             >
                                                 <option value="" disabled>Select a category...</option>
                                                 <option value="order">Order Status</option>
@@ -89,7 +89,7 @@ export default function SupportPage() {
                                                 placeholder="Enter your message here..."
                                                 value={message}
                                                 onChange={(e) => setMessage(e.target.value)}
-                                                className="w-full bg-gray-50/50 border border-gray-200 rounded-sm px-4 py-3.5 text-gray-900 focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all resize-none placeholder-gray-400"
+                                                className="w-full bg-gray-50/50 border border-gray-200 rounded-sm px-4 py-3.5 text-gray-900 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition-all resize-none placeholder-gray-400"
                                             />
                                         </div>
 

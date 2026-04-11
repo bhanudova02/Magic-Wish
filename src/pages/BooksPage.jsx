@@ -12,7 +12,7 @@ const FilterDropdown = ({ label, options, selected, onSelect, icon: Icon, isMult
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-                className="flex items-center justify-between min-w-[140px] px-5 py-2.5 bg-white border border-gray-200 rounded-lg hover:border-indigo-400 transition-all text-sm font-bold text-gray-700 shadow-sm"
+                className="flex items-center justify-between min-w-[140px] px-5 py-2.5 bg-white border border-gray-200 rounded-lg hover:border-blue-400 transition-all text-sm font-bold text-gray-700 shadow-sm"
             >
                 <div className="flex items-center gap-2">
                     {Icon && <Icon className="w-3.5 h-3.5 text-gray-400" />}
@@ -36,13 +36,13 @@ const FilterDropdown = ({ label, options, selected, onSelect, icon: Icon, isMult
                                 if (!isMulti) setIsOpen(false);
                             }}
                             className={`w-full text-left px-5 py-2.5 text-sm font-bold transition-colors flex items-center justify-between ${(isMulti ? selected.includes(opt.value) : selected === opt.value)
-                                    ? 'bg-indigo-50 text-indigo-600'
+                                    ? 'bg-blue-50 text-blue-600'
                                     : 'text-gray-600 hover:bg-gray-50'
                                 }`}
                         >
                             <span>{opt.label}</span>
                             {(isMulti ? selected.includes(opt.value) : selected === opt.value) && (
-                                <div className="w-1.5 h-1.5 rounded-full bg-indigo-600"></div>
+                                <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
                             )}
                         </button>
                     ))}
@@ -71,11 +71,11 @@ const FilterSection = ({ title, options, selectedList, setList }) => (
                             type="checkbox"
                             checked={selectedList.includes(opt.value)}
                             onChange={() => toggleFilter(selectedList, setList, opt.value)}
-                            className="peer appearance-none w-5 h-5 border-2 border-gray-200 rounded-sm checked:bg-indigo-600 checked:border-indigo-600 transition-all cursor-pointer"
+                            className="peer appearance-none w-5 h-5 border-2 border-gray-200 rounded-sm checked:bg-blue-600 checked:border-blue-600 transition-all cursor-pointer"
                         />
                         <svg className="absolute w-3 h-3 text-white pointer-events-none hidden peer-checked:block left-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                     </div>
-                    <span className="ml-3 text-sm font-bold text-gray-600 group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{opt.label}</span>
+                    <span className="ml-3 text-sm font-bold text-gray-600 group-hover:text-blue-600 transition-colors uppercase tracking-tight">{opt.label}</span>
                 </label>
             ))}
         </div>
@@ -195,10 +195,10 @@ export default function BooksPage() {
                             <button
                                 key={option.value}
                                 onClick={() => { setSortBy(option.value); closeAllDrawers(); }}
-                                className={`w-full flex items-center justify-between p-4 rounded-xl text-sm font-bold transition-all ${sortBy === option.value ? 'bg-indigo-50 text-indigo-600' : 'text-gray-600 bg-gray-50'}`}
+                                className={`w-full flex items-center justify-between p-4 rounded-xl text-sm font-bold transition-all ${sortBy === option.value ? 'bg-blue-50 text-blue-600' : 'text-gray-600 bg-gray-50'}`}
                             >
                                 <span>{option.label}</span>
-                                {sortBy === option.value && <div className="w-2 h-2 rounded-full bg-indigo-600"></div>}
+                                {sortBy === option.value && <div className="w-2 h-2 rounded-full bg-blue-600"></div>}
                             </button>
                         ))}
                     </div>
@@ -224,13 +224,13 @@ export default function BooksPage() {
                     <div className="w-32 bg-gray-100/50 border-r border-gray-200 flex flex-col">
                         <button
                             onClick={() => setActiveMobileTab('gender')}
-                            className={`px-4 py-6 text-left text-sm font-bold transition-all ${activeMobileTab === 'gender' ? 'bg-white text-indigo-600 border-l-4 border-indigo-600' : 'text-gray-500'}`}
+                            className={`px-4 py-6 text-left text-sm font-bold transition-all ${activeMobileTab === 'gender' ? 'bg-white text-blue-600 border-l-4 border-blue-600' : 'text-gray-500'}`}
                         >
                             Gender
                         </button>
                         <button
                             onClick={() => setActiveMobileTab('age')}
-                            className={`px-4 py-6 text-left text-sm font-bold transition-all ${activeMobileTab === 'age' ? 'bg-white text-indigo-600 border-l-4 border-indigo-600' : 'text-gray-500'}`}
+                            className={`px-4 py-6 text-left text-sm font-bold transition-all ${activeMobileTab === 'age' ? 'bg-white text-blue-600 border-l-4 border-blue-600' : 'text-gray-500'}`}
                         >
                             Age Group
                         </button>
@@ -251,7 +251,7 @@ export default function BooksPage() {
                                                 type="checkbox"
                                                 checked={selectedGenders.includes(opt.value)}
                                                 onChange={() => toggleFilter(selectedGenders, setSelectedGenders, opt.value)}
-                                                className="peer appearance-none w-6 h-6 border-2 border-gray-200 rounded-sm checked:bg-indigo-600 checked:border-indigo-600 transition-all cursor-pointer"
+                                                className="peer appearance-none w-6 h-6 border-2 border-gray-200 rounded-sm checked:bg-blue-600 checked:border-blue-600 transition-all cursor-pointer"
                                             />
                                             <svg className="absolute w-4 h-4 text-white pointer-events-none hidden peer-checked:block left-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                         </div>
@@ -273,7 +273,7 @@ export default function BooksPage() {
                                                 type="checkbox"
                                                 checked={selectedAges.includes(opt.value)}
                                                 onChange={() => toggleFilter(selectedAges, setSelectedAges, opt.value)}
-                                                className="peer appearance-none w-6 h-6 border-2 border-gray-200 rounded-sm checked:bg-indigo-600 checked:border-indigo-600 transition-all cursor-pointer"
+                                                className="peer appearance-none w-6 h-6 border-2 border-gray-200 rounded-sm checked:bg-blue-600 checked:border-blue-600 transition-all cursor-pointer"
                                             />
                                             <svg className="absolute w-4 h-4 text-white pointer-events-none hidden peer-checked:block left-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                         </div>

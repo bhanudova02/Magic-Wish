@@ -5,7 +5,7 @@ export default function PrivacyPage() {
     return (
         <div className="min-h-screen bg-gray-50/50">
             {/* Very subtle background pattern */}
-            <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#4338ca 1.5px, transparent 1.5px)', backgroundSize: '30px 30px' }}></div>
+            <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#2563EB 1.5px, transparent 1.5px)', backgroundSize: '30px 30px' }}></div>
             
             <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-16 md:py-24">
                 <div className="bg-white p-8 md:p-12 lg:p-16 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">

@@ -16,7 +16,7 @@ export default function Hero() {
             {/* Right Area (Ultra-Modern Slant Split with Border Highlight) */}
             <div className="flex flex-col w-full lg:flex-1 relative z-10 lg:-ml-[80px]">
                 {/* Bottom Layer: Dynamic Gradient Highlight Border */}
-                <div className="absolute inset-0 w-full h-[calc(100%+60px)] -mt-[52px] lg:h-full lg:mt-0 left-0 lg:-left-[12px] z-0 [clip-path:polygon(0_40px,100%_0,100%_100%,0_100%)] lg:[clip-path:polygon(80px_0,100%_0,100%_100%,0_100%)] bg-gradient-to-b from-pink-400 via-purple-500 to-[#661399] shadow-2xl"></div>
+                <div className="absolute inset-0 w-full h-[calc(100%+60px)] -mt-[52px] lg:h-full lg:mt-0 left-0 lg:-left-[12px] z-0 [clip-path:polygon(0_40px,100%_0,100%_100%,0_100%)] lg:[clip-path:polygon(80px_0,100%_0,100%_100%,0_100%)] bg-gradient-to-b from-purple-500 via-purple-500 to-[#661399] shadow-2xl"></div>
 
                 {/* Middle Layer: Crisp White Border */}
                 <div className="absolute inset-0 w-full h-[calc(100%+60px)] -mt-[46px] lg:h-full lg:mt-0 left-0 lg:-left-[6px] z-10 [clip-path:polygon(0_40px,100%_0,100%_100%,0_100%)] lg:[clip-path:polygon(80px_0,100%_0,100%_100%,0_100%)] bg-white opacity-80 backdrop-blur-sm"></div>

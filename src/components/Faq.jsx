@@ -9,14 +9,14 @@ const FaqItem = ({ question, answer, isOpen, onToggle }) => {
                 className="w-full flex justify-between items-center py-5 md:py-6 text-left focus:outline-none group"
             >
                 <span className={`text-lg md:text-xl font-bold transition-colors ${
-                    isOpen ? 'text-pink-600' : 'text-gray-900 hover:text-pink-600'
+                    isOpen ? 'text-purple-700' : 'text-gray-900 hover:text-purple-700'
                 }`}>
                     {question}
                 </span>
                 {isOpen ? (
-                    <ChevronUp className="w-5 h-5 text-pink-600" />
+                    <ChevronUp className="w-5 h-5 text-purple-700" />
                 ) : (
-                    <ChevronDown className="w-5 h-5 text-gray-400 group-hover:text-pink-600" />
+                    <ChevronDown className="w-5 h-5 text-gray-400 group-hover:text-purple-700" />
                 )}
             </button>
             <div
@@ -70,7 +70,7 @@ export default function Faq() {
     ];
 
     return (
-        <section id="faq" className="py-20 md:py-28 bg-indigo-50/40 overflow-hidden border-b-2 border-gray-100">
+        <section id="faq" className="py-20 md:py-28 bg-blue-50/40 overflow-hidden border-b-2 border-gray-100">
             <div className="max-w-4xl mx-auto px-6">
                 <div className="mb-6">
                     <h2 className="font-heading text-3xl md:text-4xl font-bold text-gray-900 mb-1 tracking-tight">

@@ -1,6 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const BookCard = ({ 
+    id,
     image, 
     title, 
     description, 
@@ -17,12 +19,16 @@ const BookCard = ({
                 </div>
             )}
             
-            <div className="aspect-square rounded-none rounded-tr-3xl rounded-br-3xl overflow-hidden mb-6 relative">
+            <Link to={`/book/${id}`} className="aspect-square rounded-none rounded-tr-3xl rounded-br-3xl overflow-hidden mb-6 relative block">
                 <img src={image} alt={title} className="w-full h-full object-cover transform group-hover:scale-110 transition duration-700 ease-in-out" />
-            </div>
+            </Link>
 
-            <h3 className="font-heading font-extrabold text-xl text-gray-900 mb-2 leading-tight group-hover:text-purple-600 transition-colors">{title}</h3>
-            <p className="text-gray-500 mb-6 text-sm flex-grow">{description}</p>
+            <Link to={`/book/${id}`}>
+                <h3 className="font-heading font-extrabold text-xl text-gray-900 mb-2 leading-tight group-hover:text-purple-600 transition-colors">{title}</h3>
+            </Link>
+            <Link to={`/book/${id}`}>
+                <p className="text-gray-500 mb-6 text-sm flex-grow">{description}</p>
+            </Link>
             
             <div className="flex items-center justify-between mt-auto pt-2">
                 <div className="flex flex-col">
@@ -31,9 +37,9 @@ const BookCard = ({
                     )}
                     <span className="text-xl font-bold text-gray-900 leading-none">{price}</span>
                 </div>
-                <a href="#" className="py-3 px-10 bg-gray-50 hover:bg-gradient-to-r hover:from-purple-600 hover:to-purple-500 text-gray-900 hover:text-white text-center font-bold rounded-sm transition-all duration-300 border border-purple-100 hover:border-transparent text-lg whitespace-nowrap">
+                <Link to={`/book/${id}`} className="py-3 px-10 bg-gray-50 hover:bg-gradient-to-r hover:from-purple-600 hover:to-purple-500 text-gray-900 hover:text-white text-center font-bold rounded-sm transition-all duration-300 border border-purple-100 hover:border-transparent text-lg whitespace-nowrap">
                     {buttonText}
-                </a>
+                </Link>
             </div>
         </div>
     );

@@ -14,7 +14,7 @@ const BookCard = ({
     return (
         <div className="book-card bg-white rounded-lg p-4 border border-purple-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col h-full relative group">
             {badge && badge.includes('%') && (
-                <div className="absolute top-6 left-6 z-10 bg-[#2e71eb] text-white text-sm font-black px-3 py-1.5 rounded-md shadow-[0_5px_15px_rgba(46,113,235,0.4)] transform -rotate-3 overflow-hidden">
+                <div className="absolute top-6 left-6 z-10 bg-[#5e2ca0] text-white text-sm font-black px-3 py-1.5 rounded-md shadow-[0_5px_15px_rgba(46,113,235,0.4)] transform -rotate-3 overflow-hidden">
                     {badge}
                 </div>
             )}

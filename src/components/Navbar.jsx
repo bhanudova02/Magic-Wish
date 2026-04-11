@@ -84,14 +84,14 @@ export default function Navbar() {
                         <div className="flex items-center space-x-5 border-l border-gray-200 pl-6 ml-4">
                             <button 
                                 onClick={() => setIsSearchOpen(true)}
-                                className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none"
+                                className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer"
                             >
                                 <Search className="w-6 h-6" />
                             </button>
-                            <button className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none">
+                            <button className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer">
                                 <ShoppingBag className="w-6 h-6" />
                             </button>
-                            <button className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none">
+                            <button className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer">
                                 <User className="w-6 h-6" />
                             </button>
                             <div className="md:hidden flex items-center ml-2 border-l border-gray-200 pl-4">

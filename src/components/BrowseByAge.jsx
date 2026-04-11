@@ -1,33 +1,44 @@
-import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import age2to4 from '../assets/images/age_2_4_toddler.jpg';
 import age4to6 from '../assets/images/age_4_6_explorer.png';
 import age6to8 from '../assets/images/age_6_8_adventure.jpg';
 
-const AgeCard = ({ age, img }) => (
-    <div className="relative rounded-2xl overflow-hidden shadow-xl group hover:shadow-2xl transition-all duration-300 w-full aspect-[3/4.5]">
-        <img
-            src={img}
-            alt={`Age ${age}`}
-            className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700"
-        />
+const AgeCard = ({ age, img }) => {
+    const navigate = useNavigate();
 
-        {/* Dark Opacity Layer for better contrast */}
-        <div className="absolute inset-0 bg-black/25 group-hover:bg-black/15 transition-colors duration-500"></div>
+    const handleClick = () => {
+        navigate('/books', { state: { selectedAge: age } });
+    };
 
-        {/* Top Age Text overlay */}
-        <div className="absolute top-12 left-0 w-full text-center text-white drop-shadow-lg">
-            <p className="text-lg md:text-xl font-medium tracking-tight opacity-90">Age</p>
-            <p className="text-4xl md:text-5xl lg:text-6xl font-black">{age}</p>
+    return (
+        <div 
+            onClick={handleClick}
+            className="relative rounded-2xl overflow-hidden shadow-xl group hover:shadow-2xl transition-all duration-300 w-full aspect-[3/4.5] cursor-pointer"
+        >
+            <img
+                src={img}
+                alt={`Age ${age}`}
+                className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700"
+            />
+
+            {/* Dark Opacity Layer for better contrast */}
+            <div className="absolute inset-0 bg-black/25 group-hover:bg-black/15 transition-colors duration-500"></div>
+
+            {/* Top Age Text overlay */}
+            <div className="absolute top-12 left-0 w-full text-center text-white drop-shadow-lg">
+                <p className="text-lg md:text-xl font-medium tracking-tight opacity-90">Age</p>
+                <p className="text-4xl md:text-5xl lg:text-6xl font-black">{age}</p>
+            </div>
+
+            {/* Bottom Discover Button - New Vibrant Style */}
+            <div className="absolute bottom-12 left-0 w-full flex justify-center">
+                <button className="bg-white hover:bg-white/90 text-gray-900 px-10 py-3.5 rounded-full text-[13px] font-black uppercase tracking-[0.2em] transition-all shadow-2xl active:scale-95 cursor-pointer">
+                    Discover
+                </button>
+            </div>
         </div>
-
-        {/* Bottom Discover Button - New Vibrant Style */}
-        <div className="absolute bottom-12 left-0 w-full flex justify-center">
-            <button className="bg-white hover:bg-white/90 text-gray-900 px-10 py-3.5 rounded-full text-[13px] font-black uppercase tracking-[0.2em] transition-all shadow-2xl active:scale-95">
-                Discover
-            </button>
-        </div>
-    </div>
-);
+    );
+};
 
 export default function BrowseByAge() {
     return (

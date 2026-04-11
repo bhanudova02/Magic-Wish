@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Search, SlidersHorizontal, ArrowUpDown, ChevronDown } from 'lucide-react';
 import BookCard from '../components/BookCard';
 import { books } from '../data/books';
@@ -12,7 +13,7 @@ const FilterDropdown = ({ label, options, selected, onSelect, icon: Icon, isMult
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-                className="flex items-center justify-between min-w-[140px] px-5 py-2.5 bg-white border border-gray-200 rounded-lg hover:border-blue-400 transition-all text-sm font-bold text-gray-700 shadow-sm"
+                className="flex items-center justify-between min-w-[140px] px-5 py-2.5 bg-white border border-gray-200 rounded-sm hover:border-blue-400 transition-all text-sm font-bold text-gray-700 shadow-sm"
             >
                 <div className="flex items-center gap-2">
                     {Icon && <Icon className="w-3.5 h-3.5 text-gray-400" />}
@@ -83,6 +84,7 @@ const FilterSection = ({ title, options, selectedList, setList }) => (
 );
 
 export default function BooksPage() {
+    const location = useLocation();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedGenders, setSelectedGenders] = useState([]);
     const [selectedAges, setSelectedAges] = useState([]);
@@ -90,6 +92,12 @@ export default function BooksPage() {
     const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
     const [isSortDrawerOpen, setIsSortDrawerOpen] = useState(false);
     const [activeMobileTab, setActiveMobileTab] = useState('gender');
+
+    useEffect(() => {
+        if (location.state?.selectedAge) {
+            setSelectedAges([location.state.selectedAge]);
+        }
+    }, [location.state]);
 
     useEffect(() => {
         if (isFilterDrawerOpen || isSortDrawerOpen) {

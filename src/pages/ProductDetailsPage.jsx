@@ -8,12 +8,33 @@ export default function ProductDetailsPage() {
     const [book, setBook] = useState(null);
     const [activeTab, setActiveTab] = useState('how-it-works');
     const [openAccordion, setOpenAccordion] = useState('personalization');
+    const [showSticky, setShowSticky] = useState(false);
+    const ctaRef = React.useRef(null);
 
     useEffect(() => {
         const foundBook = books.find(b => b.id === parseInt(id));
         setBook(foundBook);
         window.scrollTo(0, 0);
     }, [id]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setShowSticky(!entry.isIntersecting);
+            },
+            { threshold: 0 }
+        );
+
+        if (ctaRef.current) {
+            observer.observe(ctaRef.current);
+        }
+
+        return () => {
+            if (ctaRef.current) {
+                observer.unobserve(ctaRef.current);
+            }
+        };
+    }, [book]);
 
     if (!book) {
         return (
@@ -107,7 +128,7 @@ export default function ProductDetailsPage() {
                         </div>
 
                         {/* CTA Section */}
-                        <div className="space-y-6">
+                        <div className="space-y-6" ref={ctaRef}>
                             <button className="w-full bg-[#2e71eb] hover:bg-[#2563eb] text-white py-5 px-8 rounded-sm font-black text-xl transition-all transform hover:scale-[1.02] shadow-xl shadow-blue-500/20 active:scale-95">
                                 Personalise my book
                             </button>
@@ -146,6 +167,13 @@ export default function ProductDetailsPage() {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Mobile/Tablet Sticky CTA */}
+            <div className={`fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-lg border-t border-gray-100 z-[100] lg:hidden transition-all duration-300 transform ${showSticky ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}`}>
+                <button className="w-full bg-[#2e71eb] text-white py-4 rounded-sm font-black text-lg shadow-lg active:scale-95 transition-transform">
+                    Personalise my book
+                </button>
             </div>
         </div>
     );

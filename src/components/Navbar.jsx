@@ -39,7 +39,7 @@ export default function Navbar() {
         <>
             <nav 
                 id="navbar" 
-                className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'shadow-sm bg-white/95' : 'bg-white/85'}`}
+                className={`fixed w-full z-50 bg-white border-b border-gray-100 transition-all duration-300 ${scrolled ? 'shadow-sm' : ''}`}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">

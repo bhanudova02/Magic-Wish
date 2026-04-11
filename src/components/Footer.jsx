@@ -43,7 +43,7 @@ export default function Footer() {
                         <h3 className="text-white font-bold text-lg mb-6 tracking-wide">About MagicWish</h3>
                         <ul className="space-y-4">
                             <li><Link to="/contact" className="text-gray-400 hover:text-white hover:underline transition">Contact us</Link></li>
-                            <li><a href="#" className="text-gray-400 hover:text-white hover:underline transition">FAQs</a></li>
+                            <li><Link to="/#faq" className="text-gray-400 hover:text-white hover:underline transition">FAQs</Link></li>
                             <li><Link to="/support" className="text-gray-400 hover:text-white hover:underline transition">Support</Link></li>
                         </ul>
                     </div>
@@ -63,9 +63,9 @@ export default function Footer() {
                     <div>
                         <h3 className="text-white font-bold text-lg mb-6 tracking-wide">Subscribe to Our Newsletter</h3>
                         <p className="text-gray-400 text-sm mb-4">Don’t miss out on the newest books and exclusive discounts.</p>
-                        <form className="flex flex-col sm:flex-row gap-2" onSubmit={(e) => e.preventDefault()}>
+                        <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
                             <input type="email" placeholder="Email address" className="bg-gray-800 border-none outline-none focus:ring-2 focus:ring-purple-600 text-white rounded-lg px-4 py-3 w-full" required />
-                            <button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-bold transition">
+                            <button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-bold transition w-full">
                                 Subscribe
                             </button>
                         </form>

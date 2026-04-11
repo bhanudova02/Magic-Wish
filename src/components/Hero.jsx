@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import heroMain from '../assets/images/hero_main.jpg';
 
 export default function Hero() {
@@ -46,9 +47,9 @@ export default function Hero() {
                     </div>
                     
                     <div className="mt-4">
-                        <a href="#books" className="bg-white hover:bg-gray-50 text-[#661399] font-bold py-4 px-10 text-md rounded transition-colors inline-block tracking-wide shadow-sm">
+                        <Link to="/books" className="bg-white hover:bg-gray-50 text-[#661399] font-bold py-4 px-10 text-md rounded transition-colors inline-block tracking-wide shadow-sm">
                             View All Books
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>

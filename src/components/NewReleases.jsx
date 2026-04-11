@@ -13,7 +13,7 @@ const newReleasesData = [
         description: "A daring journey through the Whispering Woods to find the lost star.",
         price: "$14.99",
         originalPrice: "$39.99",
-        badge: "NEW"
+        badge: "-30% OFF"
     },
     {
         id: 2,
@@ -22,7 +22,7 @@ const newReleasesData = [
         description: "Dive deep into the blue and save the coral kingdom with your friends.",
         price: "$14.99",
         originalPrice: "$39.99",
-        badge: "NEW"
+        badge: "-30% OFF"
     },
     {
         id: 3,
@@ -31,7 +31,7 @@ const newReleasesData = [
         description: "Everything you paint comes to life! What will you create today?",
         price: "$14.99",
         originalPrice: "$39.99",
-        badge: "NEW"
+        badge: "-30% OFF"
     }
 ];
 

@@ -118,7 +118,7 @@ export const books = [
         description: "A daring journey through the Whispering Woods to find the lost star.",
         price: "$13.49",
         originalPrice: "$26.99",
-        badge: "NEW",
+        badge: "-30% OFF",
         gender: "unisex",
         age: "2-4"
     },
@@ -129,7 +129,7 @@ export const books = [
         description: "Dive deep into the blue and save the coral kingdom with your friends.",
         price: "$16.99",
         originalPrice: "$33.99",
-        badge: "NEW",
+        badge: "-30% OFF",
         gender: "unisex",
         age: "4-6"
     },
@@ -140,7 +140,7 @@ export const books = [
         description: "Everything you paint comes to life! What will you create today?",
         price: "$22.00",
         originalPrice: "$44.00",
-        badge: "NEW",
+        badge: "-30% OFF",
         gender: "unisex",
         age: "6-8"
     }

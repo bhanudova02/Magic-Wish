@@ -320,7 +320,7 @@ export default function BooksPage() {
                                 {(selectedGenders.length > 0 || selectedAges.length > 0) && (
                                     <button
                                         onClick={() => { setSelectedGenders([]); setSelectedAges([]); }}
-                                        className="text-xs font-black text-orange-600 uppercase tracking-widest hover:underline"
+                                        className="text-sm font-black text-orange-600 uppercase tracking-widest hover:underline"
                                     >
                                         Reset
                                     </button>

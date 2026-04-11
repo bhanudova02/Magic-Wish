@@ -42,7 +42,7 @@ export default function Footer() {
                     <div>
                         <h3 className="text-white font-bold text-lg mb-6 tracking-wide">About MagicWish</h3>
                         <ul className="space-y-4">
-                            <li><Link to="/support" className="text-gray-400 hover:text-white hover:underline transition">Contact us</Link></li>
+                            <li><Link to="/contact" className="text-gray-400 hover:text-white hover:underline transition">Contact us</Link></li>
                             <li><a href="#" className="text-gray-400 hover:text-white hover:underline transition">FAQs</a></li>
                             <li><Link to="/support" className="text-gray-400 hover:text-white hover:underline transition">Support</Link></li>
                         </ul>
@@ -54,8 +54,8 @@ export default function Footer() {
                         <ul className="space-y-4">
                             <li><a href="#" className="text-gray-400 hover:text-white hover:underline transition">My Account</a></li>
                             <li><a href="#" className="text-gray-400 hover:text-white hover:underline transition">Orders</a></li>
-                            <li><a href="#" className="text-gray-400 hover:text-white hover:underline transition">Terms & Conditions</a></li>
-                            <li><a href="#" className="text-gray-400 hover:text-white hover:underline transition">Privacy Policy</a></li>
+                            <li><Link to="/terms" className="text-gray-400 hover:text-white hover:underline transition">Terms & Conditions</Link></li>
+                            <li><Link to="/privacy" className="text-gray-400 hover:text-white hover:underline transition">Privacy Policy</Link></li>
                         </ul>
                     </div>
 

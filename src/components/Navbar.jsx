@@ -17,9 +17,8 @@ export default function Navbar() {
 
     const handleLoginClick = (e) => {
         e.preventDefault();
-        localStorage.setItem('isLoggedIn', 'true');
-        setIsLoggedIn(true);
-        window.location.href = "https://storytimekid.com/account/login?return_to=https://magic-wish.vercel.app";
+        // Return URL with success param to verify they actually completed the Shopify flow
+        window.location.href = "https://storytimekid.com/account/login?return_to=https://magic-wish.vercel.app/?auth=success";
     };
 
     const handleLogoutClick = (e) => {
@@ -28,6 +27,30 @@ export default function Navbar() {
         setIsLoggedIn(false);
         window.location.href = "https://shopify.com/65892843582/account/logout";
     };
+
+    // Listen for auth success from Shopify redirect
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('auth') === 'success') {
+            localStorage.setItem('isLoggedIn', 'true');
+            setIsLoggedIn(true);
+            // Clean up the URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    }, [window.location.search]);
+
+    // Handle browser back button and cross-tab sync 
+    useEffect(() => {
+        const syncAuthState = () => {
+            setIsLoggedIn(localStorage.getItem('isLoggedIn') === 'true');
+        };
+        window.addEventListener('focus', syncAuthState);
+        window.addEventListener('pageshow', syncAuthState);
+        return () => {
+            window.removeEventListener('focus', syncAuthState);
+            window.removeEventListener('pageshow', syncAuthState);
+        };
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => {

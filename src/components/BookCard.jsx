@@ -12,14 +12,14 @@ const BookCard = ({
     buttonText = "Personalise"
 }) => {
     return (
-        <div className="book-card bg-white rounded-lg p-4 border border-purple-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col h-full relative group">
+        <div className="book-card bg-white rounded-sm p-4 border border-purple-100 shadow-sm flex flex-col h-full relative group">
             {badge && badge.includes('%') && (
-                <div className="absolute top-6 left-6 z-10 bg-[#5e2ca0] text-white text-sm font-black px-3 py-1.5 rounded-md shadow-[0_5px_15px_rgba(46,113,235,0.4)] transform -rotate-3 overflow-hidden">
+                <div className="absolute top-6 left-6 z-10 bg-[#5e2ca0] text-white text-sm font-black px-3 py-1.5 rounded-sm shadow-lg transform -rotate-3 overflow-hidden">
                     {badge}
                 </div>
             )}
             
-            <Link to={`/books/${id}`} className="aspect-square rounded-none rounded-tr-3xl rounded-br-3xl overflow-hidden mb-6 relative block">
+            <Link to={`/books/${id}`} className="aspect-square rounded-sm overflow-hidden mb-6 relative block">
                 <img src={image} alt={title} className="w-full h-full object-cover transform group-hover:scale-110 transition duration-700 ease-in-out" />
             </Link>
 

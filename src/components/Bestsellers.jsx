@@ -2,17 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import BookCard from './BookCard';
+import SkeletonCard from './SkeletonCard';
 import { getShopifyBooks } from '../utils/shopify';
 
 
 
 export default function Bestsellers() {
     const [books, setBooks] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        setLoading(true);
         getShopifyBooks().then(allBooks => {
             const bestsellers = allBooks.filter(b => b.tags && b.tags.includes('bestseller')).slice(0, 3);
             setBooks(bestsellers.length > 0 ? bestsellers : allBooks.slice(0, 3)); // Fallback if no tags added yet
+            setLoading(false);
         });
     }, []);
 
@@ -32,9 +36,13 @@ export default function Bestsellers() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {books.map((book) => (
-                        <BookCard key={book.id} {...book} />
-                    ))}
+                    {loading ? (
+                        [1, 2, 3].map(i => <SkeletonCard key={i} />)
+                    ) : (
+                        books.map((book) => (
+                            <BookCard key={book.id} {...book} />
+                        ))
+                    )}
                 </div>
 
                 <div className="mt-8 text-center md:hidden">

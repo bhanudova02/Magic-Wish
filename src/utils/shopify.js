@@ -105,7 +105,6 @@ export const getProductQuery = `
     }
   }
 `;
-
 export const customerCreateMutation = `
   mutation customerCreate($input: CustomerCreateInput!) {
     customerCreate(input: $input) {
@@ -115,6 +114,21 @@ export const customerCreateMutation = `
       }
       customerUserErrors {
         code
+        field
+        message
+      }
+    }
+  }
+`;
+
+export const cartCreateMutation = `
+  mutation cartCreate($input: CartInput!) {
+    cartCreate(input: $input) {
+      cart {
+        id
+        checkoutUrl
+      }
+      userErrors {
         field
         message
       }
@@ -151,6 +165,7 @@ export async function getShopifyBooks() {
                 
                 return {
                     id: node.handle,
+                    variantId: variant?.id,
                     sortId: index + 1,
                     image: node.images.edges[0]?.node?.url || '',
                     title: node.title,

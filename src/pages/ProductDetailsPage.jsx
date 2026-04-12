@@ -46,6 +46,7 @@ export default function ProductDetailsPage() {
                 
                 const formattedBook = {
                     id: node.handle,
+                    variantId: variant?.id,
                     image: node.images.edges[0]?.node?.url || '',
                     images: node.images.edges.map(e => e.node.url),
                     title: node.title,

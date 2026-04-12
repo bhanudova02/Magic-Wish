@@ -1,10 +1,20 @@
 import React, { useEffect } from 'react';
-import { X, Minus, Plus, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
+import { X, Minus, Plus, ShoppingBag, Trash2, ArrowRight, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
 
 export default function CartDrawer() {
-    const { isCartOpen, setIsCartOpen, cartItems, updateQuantity, removeFromCart, getCartTotal, getCartCount } = useCart();
+    const { 
+        isCartOpen, 
+        setIsCartOpen, 
+        cartItems, 
+        updateQuantity, 
+        removeFromCart, 
+        getCartTotal, 
+        getCartCount,
+        checkout,
+        isCheckingOut
+    } = useCart();
 
     useEffect(() => {
         if (isCartOpen) {
@@ -117,8 +127,16 @@ export default function CartDrawer() {
                             <span className="text-2xl font-black text-[#2b124c]">${getCartTotal().toFixed(2)}</span>
                         </div>
                         <div className="space-y-2">
-                            <button className="w-full py-4 flex items-center justify-center gap-2 text-white font-bold bg-green-500 rounded-sm hover:bg-green-600 transition-all uppercase tracking-widest transform hover:-translate-y-1 text-xs cursor-pointer">
-                                Continue to Checkout <ArrowRight className="w-4 h-4" />
+                            <button 
+                                onClick={checkout}
+                                disabled={isCheckingOut}
+                                className="w-full py-4 flex items-center justify-center gap-2 text-white font-bold bg-green-500 rounded-sm hover:bg-green-600 transition-all uppercase tracking-widest transform hover:-translate-y-1 text-xs cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+                            >
+                                {isCheckingOut ? (
+                                    <>Processing... <Loader2 className="w-4 h-4 animate-spin" /></>
+                                ) : (
+                                    <>Continue to Checkout <ArrowRight className="w-4 h-4" /></>
+                                )}
                             </button>
                             <Link 
                                 to="/cart" 

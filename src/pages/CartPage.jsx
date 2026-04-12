@@ -1,10 +1,19 @@
 import React, { useEffect } from 'react';
-import { ShoppingBag, ArrowRight, Trash2, Minus, Plus } from 'lucide-react';
+import { ShoppingBag, ArrowRight, Trash2, Minus, Plus, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
 
 export default function CartPage() {
-    const { cartItems, updateQuantity, removeFromCart, getCartTotal, getCartCount, setIsCartOpen } = useCart();
+    const { 
+        cartItems, 
+        updateQuantity, 
+        removeFromCart, 
+        getCartTotal, 
+        getCartCount, 
+        setIsCartOpen,
+        checkout,
+        isCheckingOut
+    } = useCart();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -119,8 +128,16 @@ export default function CartPage() {
                                 <span className="text-4xl font-black text-[#2b124c]">${getCartTotal().toFixed(2)}</span>
                             </div>
 
-                            <button className="w-full py-4 flex items-center justify-center gap-2 text-white font-bold bg-green-500 rounded-sm hover:bg-green-600 transition-all uppercase tracking-widest transform hover:-translate-y-1 text-xs cursor-pointer">
-                                Continue to Checkout <ArrowRight className="w-4 h-4" />
+                            <button 
+                                onClick={checkout}
+                                disabled={isCheckingOut}
+                                className="w-full py-4 flex items-center justify-center gap-2 text-white font-bold bg-green-500 rounded-sm hover:bg-green-600 transition-all uppercase tracking-widest transform hover:-translate-y-1 text-xs cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+                            >
+                                {isCheckingOut ? (
+                                    <>Processing... <Loader2 className="w-4 h-4 animate-spin" /></>
+                                ) : (
+                                    <>Continue to Checkout <ArrowRight className="w-4 h-4" /></>
+                                )}
                             </button>
                             
                             <Link to="/books" className="block text-center mt-6 text-sm font-bold text-gray-400 hover:text-blue-600 transition uppercase tracking-widest cursor-pointer">

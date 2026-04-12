@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Search, SlidersHorizontal, ArrowUpDown, ChevronDown } from 'lucide-react';
 import BookCard from '../components/BookCard';
-import { books } from '../data/books';
+import { shopifyFetch, getProductsQuery } from '../utils/shopify';
 
 const FilterDropdown = ({ label, options, selected, onSelect, icon: Icon, isMulti = false }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -84,6 +84,7 @@ const FilterSection = ({ title, options, selectedList, setList }) => (
 
 export default function BooksPage() {
     const location = useLocation();
+    const [books, setBooks] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedGenders, setSelectedGenders] = useState([]);
     const [selectedAges, setSelectedAges] = useState([]);
@@ -91,6 +92,50 @@ export default function BooksPage() {
     const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
     const [isSortDrawerOpen, setIsSortDrawerOpen] = useState(false);
     const [activeMobileTab, setActiveMobileTab] = useState('gender');
+
+    useEffect(() => {
+        async function fetchProducts() {
+            try {
+                const data = await shopifyFetch({
+                    query: getProductsQuery,
+                    variables: { first: 50 }
+                });
+                
+                const formattedBooks = data.products.edges.map(({ node }, index) => {
+                    const variant = node.variants.edges[0]?.node;
+                    const priceMatch = variant?.price?.amount || 0;
+                    const compareAtMatch = variant?.compareAtPrice?.amount || priceMatch;
+
+                    let badge = "";
+                    if (parseFloat(compareAtMatch) > parseFloat(priceMatch)) {
+                        const discount = Math.round(((parseFloat(compareAtMatch) - parseFloat(priceMatch)) / parseFloat(compareAtMatch)) * 100);
+                        badge = `-${discount}% OFF`;
+                    }
+
+                    const tags = node.tags || [];
+                    const gender = tags.find(tag => ['boy', 'girl'].includes(tag.toLowerCase()))?.toLowerCase() || 'unisex';
+                    const age = tags.find(tag => tag.includes('-')) || '2-4';
+                    
+                    return {
+                        id: node.handle,
+                        sortId: index + 1,
+                        image: node.images.edges[0]?.node?.url || '',
+                        title: node.title,
+                        description: node.description,
+                        price: `$${priceMatch}`,
+                        originalPrice: parseFloat(compareAtMatch) > parseFloat(priceMatch) ? `$${compareAtMatch}` : null,
+                        badge,
+                        gender,
+                        age
+                    };
+                });
+                setBooks(formattedBooks);
+            } catch (error) {
+                console.error("Error fetching books:", error);
+            }
+        }
+        fetchProducts();
+    }, []);
 
     useEffect(() => {
         if (location.state?.selectedAge) {
@@ -160,11 +205,11 @@ export default function BooksPage() {
                 return parseFloat(b.price.replace('$', '')) - parseFloat(a.price.replace('$', ''));
             }
             if (sortBy === 'newest') {
-                return b.id - a.id; // Assuming higher ID is newer
+                return b.sortId - a.sortId; // Assuming higher ID is newer
             }
             return 0;
         });
-    }, [searchQuery, selectedGenders, selectedAges, sortBy]);
+    }, [books, searchQuery, selectedGenders, selectedAges, sortBy]);
 
     return (
         <div className="min-h-screen bg-white pt-[64px] pb-0">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Star, ChevronRight, ChevronDown, ChevronUp, CheckCircle2, Book, GraduationCap, Eye } from 'lucide-react';
-import { books } from '../data/books';
+import { shopifyFetch, getProductQuery } from '../utils/shopify';
 
 export default function ProductDetailsPage() {
     const { id } = useParams();
@@ -12,8 +12,51 @@ export default function ProductDetailsPage() {
     const ctaRef = React.useRef(null);
 
     useEffect(() => {
-        const foundBook = books.find(b => b.id === parseInt(id));
-        setBook(foundBook);
+        async function fetchBook() {
+            try {
+                const data = await shopifyFetch({
+                    query: getProductQuery,
+                    variables: { handle: id }
+                });
+                
+                const node = data.product;
+                if (!node) {
+                    setBook(null);
+                    return;
+                }
+
+                const variant = node.variants.edges[0]?.node;
+                const priceMatch = variant?.price?.amount || 0;
+                const compareAtMatch = variant?.compareAtPrice?.amount || priceMatch;
+
+                let badge = "";
+                if (parseFloat(compareAtMatch) > parseFloat(priceMatch)) {
+                    const discount = Math.round(((parseFloat(compareAtMatch) - parseFloat(priceMatch)) / parseFloat(compareAtMatch)) * 100);
+                    badge = `-${discount}% OFF`;
+                }
+
+                const tags = node.tags || [];
+                const age = tags.find(tag => tag.includes('-')) || '2-4';
+                
+                const formattedBook = {
+                    id: node.handle,
+                    image: node.images.edges[0]?.node?.url || '',
+                    images: node.images.edges.map(e => e.node.url),
+                    title: node.title,
+                    description: node.description,
+                    price: `$${priceMatch}`,
+                    originalPrice: parseFloat(compareAtMatch) > parseFloat(priceMatch) ? `$${compareAtMatch}` : null,
+                    badge,
+                    age
+                };
+                
+                setBook(formattedBook);
+            } catch (error) {
+                console.error("Error fetching book:", error);
+            }
+        }
+
+        fetchBook();
         window.scrollTo(0, 0);
     }, [id]);
 
@@ -56,9 +99,9 @@ export default function ProductDetailsPage() {
                     <div className="flex flex-col md:flex-row gap-4">
                         {/* Thumbnails */}
                         <div className="flex flex-row md:flex-col gap-2 order-2 md:order-1 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
-                            {[1, 2, 3, 4, 5].map((i) => (
-                                <div key={i} className={`w-16 h-16 md:w-20 md:h-20 flex-shrink-0 rounded-sm border-2 cursor-pointer overflow-hidden transition ${i === 1 ? 'border-blue-600' : 'border-gray-100 hover:border-blue-300'}`}>
-                                    <img src={book.image} alt={`Thumb ${i}`} className="w-full h-full object-cover" />
+                            {(book.images && book.images.length > 0 ? book.images : [book.image]).map((imgStr, i) => (
+                                <div key={i} className={`w-16 h-16 md:w-20 md:h-20 flex-shrink-0 rounded-sm border-2 cursor-pointer overflow-hidden transition ${i === 0 ? 'border-blue-600' : 'border-gray-100 hover:border-blue-300'}`}>
+                                    <img src={imgStr} alt={`Thumb ${i}`} className="w-full h-full object-cover" />
                                 </div>
                             ))}
                         </div>

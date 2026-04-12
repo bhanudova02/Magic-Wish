@@ -1,41 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import BookCard from './BookCard';
-import bookFairy from '../assets/images/book_fairy.webp';
-import bookUnicorn from '../assets/images/book_unicorn.webp';
-import bookAlchemist from '../assets/images/book_alchemist.webp';
+import { getShopifyBooks } from '../utils/shopify';
 
-const girlsBooksData = [
-    {
-        id: 1,
-        image: bookFairy,
-        title: "The Fairy Princess of Moonlit Woods",
-        description: "A whimsical journey where your little girl discovers her own magical wings.",
-        price: "$14.99",
-        originalPrice: "$39.99",
-        badge: "-50% OFF"
-    },
-    {
-        id: 2,
-        image: bookUnicorn,
-        title: "Maya and the Rainbow Unicorn",
-        description: "Join forces with a majestic unicorn to bring color back to the kingdom.",
-        price: "$14.99",
-        originalPrice: "$39.99",
-        badge: "-50% OFF"
-    },
-    {
-        id: 3,
-        image: bookAlchemist,
-        title: "The Curious Little Alchemist",
-        description: "Spark a love for science and magic in this bubbly laboratory adventure.",
-        price: "$14.99",
-        originalPrice: "$39.99",
-        badge: "-50% OFF"
-    }
-];
+
 
 export default function GirlsBooks() {
+    const [books, setBooks] = useState([]);
+
+    useEffect(() => {
+        getShopifyBooks().then(allBooks => {
+            const girlsBooks = allBooks.filter(b => b.gender === 'girl' || b.gender === 'unisex').slice(0, 3);
+            setBooks(girlsBooks.length > 0 ? girlsBooks : allBooks.slice(0, 3));
+        });
+    }, []);
+
     return (
         <section id="girls-books" className="pt-14 pb-10 md:pt-20 md:pb-12 bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -52,7 +31,7 @@ export default function GirlsBooks() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {girlsBooksData.map((book) => (
+                    {books.map((book) => (
                         <BookCard key={book.id} {...book} />
                     ))}
                 </div>

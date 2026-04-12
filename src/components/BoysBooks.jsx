@@ -1,41 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import BookCard from './BookCard';
-import adventuresSpace from '../assets/images/adventures_space.webp';
-import adventuresDino from '../assets/images/adventures_dino.webp';
-import adventuresRace from '../assets/images/adventures_race.webp';
+import { getShopifyBooks } from '../utils/shopify';
 
-const boysBooksData = [
-    {
-        id: 1,
-        image: adventuresSpace,
-        title: "The Galactic Commander",
-        description: "Zoom past planets and stars in a high-tech rocket ship built just for you.",
-        price: "$14.99",
-        originalPrice: "$39.99",
-        badge: "-50% OFF"
-    },
-    {
-        id: 2,
-        image: adventuresDino,
-        title: "Dino-Land Expedition",
-        description: "Become a brave explorer and discover hidden fossils in a prehistoric world.",
-        price: "$14.99",
-        originalPrice: "$39.99",
-        badge: "-50% OFF"
-    },
-    {
-        id: 3,
-        image: adventuresRace,
-        title: "The Speedster of Neon City",
-        description: "Race against the clock in the world's fastest car to win the Grand Prix.",
-        price: "$14.99",
-        originalPrice: "$39.99",
-        badge: "-50% OFF"
-    }
-];
+
 
 export default function BoysBooks() {
+    const [books, setBooks] = useState([]);
+
+    useEffect(() => {
+        getShopifyBooks().then(allBooks => {
+            const boysBooks = allBooks.filter(b => b.gender === 'boy' || b.gender === 'unisex').slice(0, 3);
+            setBooks(boysBooks.length > 0 ? boysBooks : allBooks.slice(0, 3));
+        });
+    }, []);
+
     return (
         <section id="boys-books" className="pt-14 pb-10 md:py-20 bg-gray-50/50 border-b-2 border-gray-100">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -52,7 +31,7 @@ export default function BoysBooks() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {boysBooksData.map((book) => (
+                    {books.map((book) => (
                         <BookCard key={book.id} {...book} />
                     ))}
                 </div>

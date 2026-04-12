@@ -1,41 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import BookCard from './BookCard';
-import bookExplorer from '../assets/images/book_explorer.webp';
-import bookOcean from '../assets/images/book_ocean.webp';
-import bookPaintbrush from '../assets/images/book_paintbrush.webp';
+import { getShopifyBooks } from '../utils/shopify';
 
-const newReleasesData = [
-    {
-        id: 1,
-        image: bookExplorer,
-        title: "The Brave Little Explorer",
-        description: "A daring journey through the Whispering Woods to find the lost star.",
-        price: "$14.99",
-        originalPrice: "$39.99",
-        badge: "-30% OFF"
-    },
-    {
-        id: 2,
-        image: bookOcean,
-        title: "Guardians of the Ocean",
-        description: "Dive deep into the blue and save the coral kingdom with your friends.",
-        price: "$14.99",
-        originalPrice: "$39.99",
-        badge: "-30% OFF"
-    },
-    {
-        id: 3,
-        image: bookPaintbrush,
-        title: "The Magic Paintbrush",
-        description: "Everything you paint comes to life! What will you create today?",
-        price: "$14.99",
-        originalPrice: "$39.99",
-        badge: "-30% OFF"
-    }
-];
+
 
 export default function NewReleases() {
+    const [books, setBooks] = useState([]);
+
+    useEffect(() => {
+        getShopifyBooks().then(allBooks => {
+            const newBooks = allBooks.filter(b => b.tags && b.tags.includes('new')).slice(0, 3);
+            setBooks(newBooks.length > 0 ? newBooks : allBooks.slice(0, 3));
+        });
+    }, []);
+
     return (
         <section id="new-releases" className="pt-14 pb-10 md:py-20 bg-gray-50/30 border-b-2 border-gray-100">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -52,7 +31,7 @@ export default function NewReleases() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {newReleasesData.map((book) => (
+                    {books.map((book) => (
                         <BookCard key={book.id} {...book} />
                     ))}
                 </div>

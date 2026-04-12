@@ -1,0 +1,41 @@
+MagicWish E-Commerce Platform - Shopify Tags Reference
+======================================================
+This file documents the critical Shopify product tags that control the logic and layout of the React frontend.
+
+1. 'bestseller'
+   - Used in: src/components/Bestsellers.jsx
+   - Purpose: Will display the product in the homepage "Personalise a bestseller" section.
+
+2. 'new'
+   - Used in: src/components/NewReleases.jsx
+   - Purpose: Will display the product in the homepage "Discover What's New" section.
+
+3. 'boy'
+   - Used in: src/components/BoysBooks.jsx & src/pages/BooksPage.jsx
+   - Purpose: Displays the book in the boys' dedicated sections and enables gender filtering.
+
+4. 'girl'
+   - Used in: src/components/GirlsBooks.jsx & src/pages/BooksPage.jsx
+   - Purpose: Displays the book in the girls' dedicated sections and enables gender filtering.
+
+5. 'unisex'
+   - Used in: BoysBooks.jsx & GirlsBooks.jsx
+   - Purpose: A neutral tag that ensures the book appears in both boys' and girls' suggestions.
+
+6. Age Brackets (e.g., '2-4', '4-6', '6-8')
+   - Used in: src/pages/BooksPage.jsx
+   - Purpose: Used dynamically by the storefront filter drawer to narrow down age ranges.
+
+Note: Shopify Admin doesn't restrict case, but the app generally converts these to lowercase internally. It is best practice to keep all tags lowercase when adding them in Shopify Admin.
+
+
+
+
+#E0EBFF, #2563EB
+#FDE2FF,
+#FFE2E2,
+#E2E0FF, 
+
+
+
+

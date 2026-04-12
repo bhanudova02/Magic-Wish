@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { Search, ShoppingBag, User, Menu, X } from 'lucide-react';
-import { books } from '../data/books';
+import { getShopifyBooks } from '../utils/shopify';
 
 export default function Navbar() {
+    const [books, setBooks] = useState([]);
+    useEffect(() => { getShopifyBooks().then(setBooks); }, []);
     const [scrolled, setScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);

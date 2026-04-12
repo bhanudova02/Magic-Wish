@@ -1,41 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import BookCard from './BookCard';
-import bookPrincess from '../assets/images/book_princess.webp';
-import bookDino from '../assets/images/book_dinosaur.webp';
-import bookSpace from '../assets/images/book_space.webp';
+import { getShopifyBooks } from '../utils/shopify';
 
-const bestsellerData = [
-    {
-        id: 1,
-        image: bookPrincess,
-        title: "Princess and the Glowing Flower",
-        description: "A magical journey of kindness and bravery in an enchanted forest.",
-        price: "$14.99",
-        originalPrice: "$39.99",
-        badge: "-50% OFF"
-    },
-    {
-        id: 2,
-        image: bookDino,
-        title: "Boy The Dinos Need You",
-        description: "Bravery and friendship roar in this thrilling prehistoric adventure!",
-        price: "$14.99",
-        originalPrice: "$39.99",
-        badge: "-50% OFF"
-    },
-    {
-        id: 3,
-        image: bookSpace,
-        title: "The Boy and the Cosmic Journey",
-        description: "Explore stars and planets with a friendly glowing space dragon.",
-        price: "$14.99",
-        originalPrice: "$39.99",
-        badge: "-50% OFF"
-    },
-];
+
 
 export default function Bestsellers() {
+    const [books, setBooks] = useState([]);
+
+    useEffect(() => {
+        getShopifyBooks().then(allBooks => {
+            const bestsellers = allBooks.filter(b => b.tags && b.tags.includes('bestseller')).slice(0, 3);
+            setBooks(bestsellers.length > 0 ? bestsellers : allBooks.slice(0, 3)); // Fallback if no tags added yet
+        });
+    }, []);
+
     return (
         <section id="books" className="pt-14 pb-10 md:py-20 bg-white border-b-2 border-gray-100">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -52,7 +31,7 @@ export default function Bestsellers() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {bestsellerData.map((book) => (
+                    {books.map((book) => (
                         <BookCard key={book.id} {...book} />
                     ))}
                 </div>

@@ -17,7 +17,19 @@ const AuthCallback = () => {
 
             // Verify state to prevent CSRF
             const storedState = localStorage.getItem('shopify_auth_state');
+            
+            // If there's no stored state but we've already cleaned up (like on page refresh)
+            if (!storedState && !state) {
+                 navigate('/');
+                 return;
+            }
+
             if (state !== storedState) {
+                // If it mismatches but we have already logged in, safely redirect back
+                if (!storedState) {
+                     navigate('/');
+                     return;
+                }
                 setError('Security state mismatch. Please try logging in again.');
                 return;
             }

@@ -39,13 +39,21 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logoutUser = () => {
+        const idToken = localStorage.getItem('shopify_id_token');
         setUser(null);
         setAccessToken(null);
         localStorage.removeItem('shopify_access_token');
         localStorage.removeItem('shopify_id_token');
         localStorage.removeItem('shopify_user');
         localStorage.removeItem('magicwish_cart'); // Clear cart data
-        window.location.href = '/'; // Hard reload to clear React memory
+        
+        if (idToken) {
+            // Redirect to Shopify logout endpoint so it clears the server session
+            const shopId = import.meta.env.VITE_SHOPIFY_SHOP_ID;
+            window.location.href = `https://shopify.com/authentication/${shopId}/logout?id_token_hint=${idToken}`;
+        } else {
+            window.location.href = '/'; // Hard reload if no tokens found
+        }
     };
 
     return (

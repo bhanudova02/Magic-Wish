@@ -234,7 +234,7 @@ export default function BooksPage() {
                     <h2 className="text-xl font-black text-[#2b124c]">Filters</h2>
                     <button
                         onClick={() => { setSelectedGenders([]); setSelectedAges([]); setSelectedCategories([]); setSearchQuery(''); }}
-                        className="text-sm font-black text-orange-600 uppercase tracking-widest"
+                        className="text-sm font-black text-orange-600 uppercase tracking-widest cursor-pointer"
                     >
                         Clear All
                     </button>
@@ -362,7 +362,7 @@ export default function BooksPage() {
                                 {(selectedGenders.length > 0 || selectedAges.length > 0 || selectedCategories.length > 0) && (
                                     <button
                                         onClick={() => { setSelectedGenders([]); setSelectedAges([]); setSelectedCategories([]); }}
-                                        className="text-sm font-black text-orange-600 uppercase tracking-widest hover:underline"
+                                        className="text-sm font-black text-orange-600 uppercase tracking-widest hover:underline cursor-pointer"
                                     >
                                         Reset
                                     </button>

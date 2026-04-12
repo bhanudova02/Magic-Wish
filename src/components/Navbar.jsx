@@ -110,13 +110,15 @@ export default function Navbar() {
                                     </span>
                                 )}
                             </button>
-                            <a 
-                                href="https://storytimekid.com/account/login?return_to=https://magic-wish.vercel.app"
-                                className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer"
-                                aria-label="Login to account"
-                            >
-                                <User className="w-6 h-6" />
-                            </a>
+                            <div className="relative group">
+                                <button className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer flex items-center">
+                                    <User className="w-6 h-6" />
+                                </button>
+                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl py-2 border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                    <a href="https://shopify.com/65892843582/account/orders?locale=en&region_country=IN" className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#5e2ca0] font-bold">Orders</a>
+                                    <a href="https://shopify.com/65892843582/account/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#5e2ca0] font-bold">My Profile</a>
+                                </div>
+                            </div>
                             <div className="md:hidden flex items-center ml-2 border-l border-gray-200 pl-4">
                                 <button 
                                     onClick={() => setIsMenuOpen(true)}
@@ -243,12 +245,21 @@ export default function Navbar() {
                                 <NavLink to="/" className={mobileLinkClass}>Home</NavLink>
                                 <NavLink to="/books" className={mobileLinkClass}>Books</NavLink>
                                 <NavLink to="/support" className={mobileLinkClass}>Support</NavLink>
-                                <a 
-                                    href="https://storytimekid.com/account/login?return_to=https://magic-wish.vercel.app" 
-                                    className="block py-4 text-xl font-bold border-b border-gray-100 text-gray-800 hover:text-purple-600 mt-2"
-                                >
-                                    Login / Sign Up
-                                </a>
+                                <div className="border-t border-gray-100 mt-4 pt-4">
+                                    <span className="block text-sm font-black text-gray-400 uppercase tracking-widest mb-2">My Account</span>
+                                    <a 
+                                        href="https://shopify.com/65892843582/account/orders?locale=en&region_country=IN" 
+                                        className="block py-3 text-lg font-bold text-gray-800 hover:text-[#5e2ca0] transition-colors"
+                                    >
+                                        Orders
+                                    </a>
+                                    <a 
+                                        href="https://shopify.com/65892843582/account/profile" 
+                                        className="block py-3 text-lg font-bold text-gray-800 hover:text-[#5e2ca0] transition-colors mb-4"
+                                    >
+                                        My Profile
+                                    </a>
+                                </div>
                             </nav>
                         </div>
                     </div>

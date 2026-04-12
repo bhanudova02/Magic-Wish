@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate, Link, useSearchParams } from 'react-router-dom';
 import { customerAccountFetch, getCustomerProfileQuery, getCustomerOrdersQuery } from '../utils/shopify';
 import { Package, MapPin, User as UserIcon, LogOut, ChevronRight, ShoppingBag, Clock, ExternalLink } from 'lucide-react';
 
 const ProfilePage = () => {
     const { user, isAuthenticated, isLoading: authLoading, logoutUser } = useAuth();
-    const [activeTab, setActiveTab] = useState('profile');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'profile');
     const [customerData, setCustomerData] = useState(null);
     const [orders, setOrders] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const tab = searchParams.get('tab');
+        if (tab && ['profile', 'orders', 'addresses'].includes(tab)) {
+            setActiveTab(tab);
+        }
+    }, [searchParams]);
 
     useEffect(() => {
         if (isAuthenticated) {

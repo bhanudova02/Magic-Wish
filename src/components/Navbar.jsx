@@ -11,10 +11,22 @@ export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const { setIsCartOpen, getCartCount } = useCart();
-    const { user, isAuthenticated } = useAuth();
+    const { user, isAuthenticated, logoutUser } = useAuth();
     const location = useLocation();
+
+    // Close dropdowns when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (isProfileOpen && !e.target.closest('#profile-dropdown-container')) {
+                setIsProfileOpen(false);
+            }
+        };
+        window.addEventListener('click', handleClickOutside);
+        return () => window.removeEventListener('click', handleClickOutside);
+    }, [isProfileOpen]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -112,30 +124,72 @@ export default function Navbar() {
                                     </span>
                                 )}
                             </button>
-                            {isAuthenticated ? (
-                                <Link 
-                                    to="/profile"
-                                    className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer flex items-center justify-center p-1"
-                                >
-                                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-[11px] font-extrabold text-[#2b124c] border border-blue-200 shadow-sm overflow-hidden">
-                                        {user.name?.[0]?.toUpperCase()}
-                                    </div>
-                                </Link>
-                            ) : (
-                                <button
-                                    onClick={async () => {
-                                        try {
-                                            const url = await getAuthorizeUrl();
-                                            window.location.href = url;
-                                        } catch (error) {
-                                            console.error('Login error:', error);
-                                        }
-                                    }}
-                                    className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer flex items-center justify-center p-1"
-                                >
-                                    <User className="w-6 h-6" />
-                                </button>
-                            )}
+                            <div id="profile-dropdown-container" className="relative">
+                                {isAuthenticated ? (
+                                    <>
+                                        <button 
+                                            onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                            className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer flex items-center justify-center p-1"
+                                        >
+                                            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-[11px] font-extrabold text-[#2b124c] border border-blue-200 shadow-sm overflow-hidden pointer-events-none">
+                                                {user.name?.[0]?.toUpperCase()}
+                                            </div>
+                                        </button>
+                                        
+                                        {/* Profile Dropdown Menu */}
+                                        {isProfileOpen && (
+                                            <div className="absolute right-0 mt-3 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 animate-in fade-in zoom-in duration-200 z-[60]">
+                                                <div className="px-4 py-3 border-b border-gray-50 mb-2">
+                                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">Signed in as</p>
+                                                    <p className="text-sm font-bold text-[#2b124c] truncate">{user.name}</p>
+                                                </div>
+                                                
+                                                <Link 
+                                                    to="/profile?tab=profile" 
+                                                    onClick={() => setIsProfileOpen(false)}
+                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                                                >
+                                                    <User className="w-4 h-4 text-gray-400" />
+                                                    My Profile
+                                                </Link>
+                                                <Link 
+                                                    to="/profile?tab=orders" 
+                                                    onClick={() => setIsProfileOpen(false)}
+                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                                                >
+                                                    <ShoppingBag className="w-4 h-4 text-gray-400" />
+                                                    My Orders
+                                                </Link>
+                                                <div className="h-px bg-gray-50 my-2"></div>
+                                                <button 
+                                                    onClick={() => {
+                                                        setIsProfileOpen(false);
+                                                        logoutUser();
+                                                    }}
+                                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-red-500 hover:bg-red-50 transition-colors"
+                                                >
+                                                    <LogOut className="w-4 h-4" />
+                                                    Sign Out
+                                                </button>
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <button
+                                        onClick={async () => {
+                                            try {
+                                                const url = await getAuthorizeUrl();
+                                                window.location.href = url;
+                                            } catch (error) {
+                                                console.error('Login error:', error);
+                                            }
+                                        }}
+                                        className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer flex items-center justify-center p-1"
+                                    >
+                                        <User className="w-6 h-6" />
+                                    </button>
+                                )}
+                            </div>
 
                             <div className="md:hidden flex items-center ml-2 border-l border-gray-200 pl-4">
                                 <button 
@@ -263,6 +317,36 @@ export default function Navbar() {
                                 <NavLink to="/" className={mobileLinkClass}>Home</NavLink>
                                 <NavLink to="/books" className={mobileLinkClass}>Books</NavLink>
                                 <NavLink to="/support" className={mobileLinkClass}>Support</NavLink>
+                                
+                                <div className="mt-8 pt-8 border-t border-gray-100 italic text-sm text-gray-400 uppercase tracking-widest px-1">
+                                    Account
+                                </div>
+                                
+                                {isAuthenticated ? (
+                                    <>
+                                        <NavLink to="/profile?tab=profile" className={mobileLinkClass}>My Profile</NavLink>
+                                        <NavLink to="/profile?tab=orders" className={mobileLinkClass}>My Orders</NavLink>
+                                        <button 
+                                            onClick={() => {
+                                                setIsMenuOpen(false);
+                                                logoutUser();
+                                            }}
+                                            className="block py-4 text-xl font-bold text-red-500 text-left border-b border-gray-100"
+                                        >
+                                            Sign Out
+                                        </button>
+                                    </>
+                                ) : (
+                                    <button 
+                                        onClick={async () => {
+                                            const url = await getAuthorizeUrl();
+                                            window.location.href = url;
+                                        }}
+                                        className="block py-4 text-xl font-bold text-blue-600 text-left border-b border-gray-100"
+                                    >
+                                        Sign In / Register
+                                    </button>
+                                )}
                             </nav>
                         </div>
                     </div>

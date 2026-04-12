@@ -128,7 +128,7 @@ export default function BooksPage() {
         setIsFiltering(true);
         const timer = setTimeout(() => {
             setIsFiltering(false);
-        }, 1000); // 1-second delay
+        }, 2000); // 2-second delay
         
         return () => clearTimeout(timer);
     }, [searchQuery, selectedGenders, selectedAges, selectedCategories, sortBy, books]);

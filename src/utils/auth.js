@@ -95,5 +95,6 @@ export const logout = () => {
     localStorage.removeItem('shopify_access_token');
     localStorage.removeItem('shopify_id_token');
     localStorage.removeItem('shopify_user');
+    localStorage.removeItem('magicwish_cart'); // Clear cart on logout
     window.location.href = '/';
 };

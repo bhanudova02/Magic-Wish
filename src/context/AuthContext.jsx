@@ -44,6 +44,8 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('shopify_access_token');
         localStorage.removeItem('shopify_id_token');
         localStorage.removeItem('shopify_user');
+        localStorage.removeItem('magicwish_cart'); // Clear cart data
+        window.location.href = '/'; // Hard reload to clear React memory
     };
 
     return (

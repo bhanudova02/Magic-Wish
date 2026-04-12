@@ -11,33 +11,42 @@ import ProductDetailsPage from './pages/ProductDetailsPage';
 import ScrollToTop from './components/ScrollToTop';
 
 import { CartProvider } from './context/CartContext';
+import { AuthProvider } from './context/AuthContext';
 import CartDrawer from './components/CartDrawer';
 import CartPage from './pages/CartPage';
+import LoginPage from './pages/LoginPage';
+import AuthCallback from './pages/AuthCallback';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
     return (
-        <CartProvider>
-            <Router>
-                <ScrollToTop />
-                <div className="text-gray-800 antialiased min-h-screen flex flex-col">
-                    <Navbar />
-                    <CartDrawer />
-                    <main className="flex-grow">
-                        <Routes>
-                            <Route path="/" element={<HomePage />} />
-                            <Route path="/books" element={<BooksPage />} />
-                            <Route path="/support" element={<SupportPage />} />
-                            <Route path="/terms" element={<TermsPage />} />
-                            <Route path="/privacy" element={<PrivacyPage />} />
-                            <Route path="/contact" element={<ContactPage />} />
-                            <Route path="/books/:id" element={<ProductDetailsPage />} />
-                            <Route path="/cart" element={<CartPage />} />
-                        </Routes>
-                    </main>
-                    <Footer />
-                </div>
-            </Router>
-        </CartProvider>
+        <AuthProvider>
+            <CartProvider>
+                <Router>
+                    <ScrollToTop />
+                    <div className="text-gray-800 antialiased min-h-screen flex flex-col">
+                        <Navbar />
+                        <CartDrawer />
+                        <main className="flex-grow">
+                            <Routes>
+                                <Route path="/" element={<HomePage />} />
+                                <Route path="/books" element={<BooksPage />} />
+                                <Route path="/support" element={<SupportPage />} />
+                                <Route path="/terms" element={<TermsPage />} />
+                                <Route path="/privacy" element={<PrivacyPage />} />
+                                <Route path="/contact" element={<ContactPage />} />
+                                <Route path="/books/:id" element={<ProductDetailsPage />} />
+                                <Route path="/cart" element={<CartPage />} />
+                                <Route path="/login" element={<LoginPage />} />
+                                <Route path="/callback" element={<AuthCallback />} />
+                                <Route path="/profile" element={<ProfilePage />} />
+                            </Routes>
+                        </main>
+                        <Footer />
+                    </div>
+                </Router>
+            </CartProvider>
+        </AuthProvider>
     );
 }
 

@@ -3,6 +3,7 @@ import { NavLink, Link, useLocation } from 'react-router-dom';
 import { Search, ShoppingBag, User, Menu, X } from 'lucide-react';
 import { getShopifyBooks } from '../utils/shopify';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
     const [books, setBooks] = useState([]);
@@ -12,6 +13,7 @@ export default function Navbar() {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const { setIsCartOpen, getCartCount } = useCart();
+    const { user, isAuthenticated } = useAuth();
     const location = useLocation();
 
     useEffect(() => {
@@ -110,9 +112,18 @@ export default function Navbar() {
                                     </span>
                                 )}
                             </button>
-                            <button className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer">
-                                <User className="w-6 h-6" />
-                            </button>
+                            <Link 
+                                to={isAuthenticated ? "/profile" : "/login"}
+                                className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer flex items-center justify-center p-1"
+                            >
+                                {isAuthenticated ? (
+                                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-[11px] font-extrabold text-[#2b124c] border border-blue-200 shadow-sm overflow-hidden">
+                                        {user.name?.[0]?.toUpperCase()}
+                                    </div>
+                                ) : (
+                                    <User className="w-6 h-6" />
+                                )}
+                            </Link>
 
                             <div className="md:hidden flex items-center ml-2 border-l border-gray-200 pl-4">
                                 <button 

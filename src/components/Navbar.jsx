@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { Search, ShoppingBag, User, Menu, X } from 'lucide-react';
 import { getShopifyBooks } from '../utils/shopify';
+import { useCart } from '../context/CartContext';
 
 export default function Navbar() {
     const [books, setBooks] = useState([]);
@@ -10,6 +11,7 @@ export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const { setIsCartOpen, getCartCount } = useCart();
     const location = useLocation();
 
     useEffect(() => {
@@ -97,8 +99,16 @@ export default function Navbar() {
                             >
                                 <Search className="w-6 h-6" />
                             </button>
-                            <button className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer">
+                            <button 
+                                onClick={() => setIsCartOpen(true)}
+                                className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer relative"
+                            >
                                 <ShoppingBag className="w-6 h-6" />
+                                {getCartCount() > 0 && (
+                                    <span className="absolute -top-1 -right-1 bg-purple-600 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full animate-in zoom-in duration-300">
+                                        {getCartCount()}
+                                    </span>
+                                )}
                             </button>
                             <button className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer">
                                 <User className="w-6 h-6" />

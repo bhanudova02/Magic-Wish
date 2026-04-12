@@ -17,13 +17,12 @@
 - **Cart Privacy**: Automated cart clearing on logout by removing `magicwish_cart` from localStorage.
 - **State Reset**: Added a hard redirect on logout to ensure all React context states are completely reset.
 
-### 4. Advanced Profile & Orders Integration
-- **Direct API Link**: Created `customerAccountFetch` to interact with Shopify's New Customer Account GraphQL API.
-- **Extended Scopes**: Added `customer-account-api:full` to OAuth scopes for secure access to personal data and order history.
-- **Premium UI**: Redesigned `ProfilePage.jsx` with a modern sidebar and tabs for Account, Orders, and Addresses.
-- **Real-Time Data**: Implemented live fetching of Order History and Shipping Addresses directly from Shopify's servers.
+### 5. Bug Fixes & API Stability
+- **Icon Import Fix**: Resolved a `ReferenceError` by properly importing the `LogOut` icon in `Navbar.jsx`, fixing the blank page issue.
+- **API Endpoint Correction**: Updated the Customer Account API GraphQL URL to the official versioned path, resolving connection timeout errors.
+- **Address Management**: Implemented a fully functional "Add New Address" form with live Shopify database synchronization.
 
-### 5. Code Cleanup
+### 6. Code Cleanup
 - Deleted `src/pages/LoginPage.jsx`.
 - Updated `App.jsx` to remove unused routes.
 - Updated `ProfilePage.jsx` and `AuthCallback.jsx` to redirect to home (`/`) instead of the deleted login page.

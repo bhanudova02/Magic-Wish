@@ -208,6 +208,21 @@ export const getCustomerOrdersQuery = `
     }
   }
 `;
+
+export const customerAddressCreateMutation = `
+  mutation customerAddressCreate($address: CustomerAddressInput!) {
+    customerAddressCreate(address: $address) {
+      customerAddress {
+        id
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
+
 export const customerCreateMutation = `
   mutation customerCreate($input: CustomerCreateInput!) {
     customerCreate(input: $input) {

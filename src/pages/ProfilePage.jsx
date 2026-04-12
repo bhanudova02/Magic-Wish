@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate, Link, useSearchParams } from 'react-router-dom';
-import { customerAccountFetch, getCustomerProfileQuery, getCustomerOrdersQuery } from '../utils/shopify';
-import { Package, MapPin, User as UserIcon, LogOut, ChevronRight, ShoppingBag, Clock, ExternalLink } from 'lucide-react';
+import { customerAccountFetch, getCustomerProfileQuery, getCustomerOrdersQuery, customerAddressCreateMutation } from '../utils/shopify';
+import { Package, MapPin, User as UserIcon, LogOut, ChevronRight, ShoppingBag, Clock, ExternalLink, Plus, X as CloseIcon } from 'lucide-react';
 
 const ProfilePage = () => {
     const { user, isAuthenticated, isLoading: authLoading, logoutUser } = useAuth();
@@ -11,6 +11,20 @@ const ProfilePage = () => {
     const [customerData, setCustomerData] = useState(null);
     const [orders, setOrders] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    
+    // Address Form State
+    const [showAddressForm, setShowAddressForm] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [newAddress, setNewAddress] = useState({
+        address1: '',
+        address2: '',
+        city: '',
+        province: '',
+        zip: '',
+        country: 'United States',
+        firstName: '',
+        lastName: ''
+    });
 
     useEffect(() => {
         const tab = searchParams.get('tab');
@@ -39,6 +53,32 @@ const ProfilePage = () => {
             console.error('Error fetching profile data:', error);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleSaveAddress = async (e) => {
+        e.preventDefault();
+        try {
+            setIsSaving(true);
+            const data = await customerAccountFetch({
+                query: customerAddressCreateMutation,
+                variables: { address: newAddress }
+            });
+
+            if (data.customerAddressCreate.userErrors.length > 0) {
+                alert(data.customerAddressCreate.userErrors[0].message);
+            } else {
+                setShowAddressForm(false);
+                fetchProfileData(); // Refresh list
+                setNewAddress({
+                    address1: '', address2: '', city: '', province: '', zip: '', country: 'United States', firstName: '', lastName: ''
+                });
+            }
+        } catch (error) {
+            console.error('Error saving address:', error);
+            alert('Failed to save address. Please check your permissions.');
+        } finally {
+            setIsSaving(false);
         }
     };
 

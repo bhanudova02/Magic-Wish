@@ -179,7 +179,7 @@ export default function BooksPage() {
             }
             return 0;
         });
-    }, [books, searchQuery, selectedGenders, selectedAges, sortBy]);
+    }, [books, searchQuery, selectedGenders, selectedAges, selectedCategories, sortBy]);
 
     return (
         <div className="min-h-screen bg-white pt-[64px] pb-0">

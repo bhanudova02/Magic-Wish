@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Star, ChevronRight, ChevronDown, ChevronUp, CheckCircle2, Book, GraduationCap, Eye } from 'lucide-react';
 import { shopifyFetch, getProductQuery } from '../utils/shopify';
+import { useCart } from '../context/CartContext';
 
 export default function ProductDetailsPage() {
     const { id } = useParams();
@@ -10,6 +11,7 @@ export default function ProductDetailsPage() {
     const [openAccordion, setOpenAccordion] = useState('personalization');
     const [showSticky, setShowSticky] = useState(false);
     const ctaRef = React.useRef(null);
+    const { addToCart } = useCart();
 
     useEffect(() => {
         async function fetchBook() {
@@ -172,8 +174,11 @@ export default function ProductDetailsPage() {
 
                         {/* CTA Section */}
                         <div className="space-y-6" ref={ctaRef}>
-                            <button className="w-full bg-[#5e2ca0] hover:bg-[#5e2ca0] text-white py-5 px-8 rounded-sm font-black text-xl transition-all transform hover:scale-[1.02] shadow-xl shadow-blue-500/20 active:scale-95">
-                                Personalise my book
+                            <button 
+                                onClick={() => addToCart(book)}
+                                className="w-full bg-[#5e2ca0] hover:bg-[#5e2ca0] text-white py-5 px-8 rounded-sm font-black text-xl transition-all transform hover:scale-[1.02] shadow-xl shadow-blue-500/20 active:scale-95"
+                            >
+                                Add to Cart
                             </button>
                             
                             {/* Payment Icons */}
@@ -214,8 +219,11 @@ export default function ProductDetailsPage() {
 
             {/* Mobile/Tablet Sticky CTA */}
             <div className={`fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-lg border-t border-gray-100 z-[100] lg:hidden transition-all duration-300 transform ${showSticky ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}`}>
-                <button className="w-full bg-[#5e2ca0] text-white py-4 rounded-sm font-black text-lg shadow-lg active:scale-95 transition-transform">
-                    Personalise my book
+                <button 
+                    onClick={() => addToCart(book)}
+                    className="w-full bg-[#5e2ca0] text-white py-4 rounded-sm font-black text-lg shadow-lg active:scale-95 transition-transform"
+                >
+                    Add to Cart
                 </button>
             </div>
         </div>

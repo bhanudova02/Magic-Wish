@@ -82,6 +82,18 @@ const FilterSection = ({ title, options, selectedList, setList }) => (
     </div>
 );
 
+const SkeletonCard = () => (
+    <div className="bg-white rounded-3xl p-4 md:p-6 flex flex-col h-full animate-pulse border border-gray-100 shadow-sm">
+        <div className="w-full aspect-[4/5] bg-gray-200 rounded-2xl mb-6"></div>
+        <div className="h-6 bg-gray-200 rounded-full w-3/4 mb-3"></div>
+        <div className="h-4 bg-gray-200 rounded-full w-1/2 mb-6"></div>
+        <div className="flex justify-between items-center mt-auto pt-4 border-t border-gray-100">
+            <div className="h-6 bg-gray-200 rounded-full w-1/4"></div>
+            <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+        </div>
+    </div>
+);
+
 export default function BooksPage() {
     const location = useLocation();
     const [books, setBooks] = useState([]);
@@ -93,6 +105,7 @@ export default function BooksPage() {
     const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
     const [isSortDrawerOpen, setIsSortDrawerOpen] = useState(false);
     const [activeMobileTab, setActiveMobileTab] = useState('gender');
+    const [isFiltering, setIsFiltering] = useState(true);
 
     useEffect(() => {
         getShopifyBooks().then(setBooks);
@@ -109,6 +122,16 @@ export default function BooksPage() {
             setSelectedCategories([location.state.selectedCategory]);
         }
     }, [location.state]);
+
+    // Artificial Loading Simulator for better UX
+    useEffect(() => {
+        setIsFiltering(true);
+        const timer = setTimeout(() => {
+            setIsFiltering(false);
+        }, 1000); // 1-second delay
+        
+        return () => clearTimeout(timer);
+    }, [searchQuery, selectedGenders, selectedAges, selectedCategories, sortBy, books]);
 
     useEffect(() => {
         if (isFilterDrawerOpen || isSortDrawerOpen) {
@@ -437,14 +460,18 @@ export default function BooksPage() {
 
                         {/* Content area */}
                         <div className="px-6 pb-10 md:px-10 md:pb-12 min-h-[calc(100vh-180px)]">
-                            {filteredBooks.length > 0 ? (
+                            {isFiltering ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+                                    {[1, 2, 3, 4, 5, 6].map(i => <SkeletonCard key={i} />)}
+                                </div>
+                            ) : filteredBooks.length > 0 ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8 animate-in fade-in duration-500">
                                     {filteredBooks.map((book) => (
                                         <BookCard key={book.id} {...book} />
                                     ))}
                                 </div>
                             ) : (
-                                <div className="text-center py-32 bg-white border border-dashed border-gray-200 rounded-3xl">
+                                <div className="text-center py-32 bg-white border border-dashed border-gray-200 rounded-3xl animate-in fade-in duration-500">
                                     <Search className="w-12 h-12 text-gray-200 mx-auto mb-4" />
                                     <h3 className="text-lg font-bold text-gray-900 mb-1">No stories match</h3>
                                     <p className="text-gray-400 text-sm">Update your search or filters.</p>

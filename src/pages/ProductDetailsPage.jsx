@@ -11,6 +11,7 @@ export default function ProductDetailsPage() {
     const [activeTab, setActiveTab] = useState('how-it-works');
     const [openAccordion, setOpenAccordion] = useState('personalization');
     const [showSticky, setShowSticky] = useState(false);
+    const [activeImage, setActiveImage] = useState(null);
     const ctaRef = React.useRef(null);
     const { addToCart } = useCart();
 
@@ -58,6 +59,7 @@ export default function ProductDetailsPage() {
                 };
                 
                 setBook(formattedBook);
+                setActiveImage(formattedBook.image);
             } catch (error) {
                 console.error("Error fetching book:", error);
             } finally {
@@ -138,14 +140,18 @@ export default function ProductDetailsPage() {
                         {/* Thumbnails */}
                         <div className="flex flex-row md:flex-col gap-2 order-2 md:order-1 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
                             {(book.images && book.images.length > 0 ? book.images : [book.image]).map((imgStr, i) => (
-                                <div key={i} className={`w-16 h-16 md:w-20 md:h-20 flex-shrink-0 rounded-sm border-2 cursor-pointer overflow-hidden transition ${i === 0 ? 'border-blue-600' : 'border-gray-100 hover:border-blue-300'}`}>
+                                <div 
+                                    key={i} 
+                                    onClick={() => setActiveImage(imgStr)}
+                                    className={`w-16 h-16 md:w-20 md:h-20 flex-shrink-0 rounded-sm border-2 cursor-pointer overflow-hidden transition ${activeImage === imgStr ? 'border-blue-600' : 'border-gray-100 hover:border-blue-300'}`}
+                                >
                                     <img src={imgStr} alt={`Thumb ${i}`} className="w-full h-full object-cover" />
                                 </div>
                             ))}
                         </div>
                         {/* Main Image */}
                         <div className="flex-1 order-1 md:order-2 bg-gray-50 rounded-sm overflow-hidden aspect-square border border-gray-100 shadow-sm relative group">
-                             <img src={book.image} alt={book.title} className="w-full h-full object-cover transform transition duration-700 group-hover:scale-105" />
+                             <img src={activeImage} alt={book.title} className="w-full h-full object-cover transform transition duration-700 group-hover:scale-105" />
                              {book.badge && (
                                 <div className="absolute top-6 left-6 z-10 bg-[#5e2ca0] text-white text-sm font-black px-4 py-2 rounded-sm shadow-lg transform -rotate-3 uppercase tracking-wider">
                                     {book.badge}

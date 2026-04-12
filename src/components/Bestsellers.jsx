@@ -21,7 +21,7 @@ export default function Bestsellers() {
     }, []);
 
     return (
-        <section id="books" className="pt-14 pb-10 md:py-20 bg-white border-b-2 border-gray-100">
+        <section id="books" className="pt-14 pb-10 md:pb-20 md:pt-14 bg-white border-b-2 border-gray-100">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-end mb-4 border-b border-gray-100 pb-3 px-1">
                     <div>

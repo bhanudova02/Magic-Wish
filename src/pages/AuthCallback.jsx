@@ -65,10 +65,10 @@ const AuthCallback = () => {
                 <h1 className="text-2xl font-bold text-gray-800">Authentication Error</h1>
                 <p className="text-gray-600 max-w-sm">{error}</p>
                 <button 
-                    onClick={() => navigate('/login')}
+                    onClick={() => navigate('/')}
                     className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                    Back to Login
+                    Back to Home
                 </button>
             </div>
         );

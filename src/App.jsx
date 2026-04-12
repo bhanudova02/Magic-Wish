@@ -14,7 +14,6 @@ import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 import CartDrawer from './components/CartDrawer';
 import CartPage from './pages/CartPage';
-import LoginPage from './pages/LoginPage';
 import AuthCallback from './pages/AuthCallback';
 import ProfilePage from './pages/ProfilePage';
 
@@ -37,7 +36,6 @@ function App() {
                                 <Route path="/contact" element={<ContactPage />} />
                                 <Route path="/books/:id" element={<ProductDetailsPage />} />
                                 <Route path="/cart" element={<CartPage />} />
-                                <Route path="/login" element={<LoginPage />} />
                                 <Route path="/callback" element={<AuthCallback />} />
                                 <Route path="/profile" element={<ProfilePage />} />
                             </Routes>

@@ -4,7 +4,7 @@ import { Search, ShoppingBag, User, Menu, X } from 'lucide-react';
 import { getShopifyBooks } from '../utils/shopify';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-
+import { getAuthorizeUrl } from '../utils/auth';
 export default function Navbar() {
     const [books, setBooks] = useState([]);
     useEffect(() => { getShopifyBooks().then(setBooks); }, []);
@@ -112,18 +112,30 @@ export default function Navbar() {
                                     </span>
                                 )}
                             </button>
-                            <Link 
-                                to={isAuthenticated ? "/profile" : "/login"}
-                                className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer flex items-center justify-center p-1"
-                            >
-                                {isAuthenticated ? (
+                            {isAuthenticated ? (
+                                <Link 
+                                    to="/profile"
+                                    className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer flex items-center justify-center p-1"
+                                >
                                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-[11px] font-extrabold text-[#2b124c] border border-blue-200 shadow-sm overflow-hidden">
                                         {user.name?.[0]?.toUpperCase()}
                                     </div>
-                                ) : (
+                                </Link>
+                            ) : (
+                                <button
+                                    onClick={async () => {
+                                        try {
+                                            const url = await getAuthorizeUrl();
+                                            window.location.href = url;
+                                        } catch (error) {
+                                            console.error('Login error:', error);
+                                        }
+                                    }}
+                                    className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer flex items-center justify-center p-1"
+                                >
                                     <User className="w-6 h-6" />
-                                )}
-                            </Link>
+                                </button>
+                            )}
 
                             <div className="md:hidden flex items-center ml-2 border-l border-gray-200 pl-4">
                                 <button 

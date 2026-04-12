@@ -48,7 +48,7 @@ export const getAuthorizeUrl = async () => {
     // Use the current origin for the redirect URI
     const redirectUri = `${window.location.origin}/callback`;
     
-    const scope = 'openid email';
+    const scope = 'openid email customer-account-api:full';
     
     const url = new URL(`https://shopify.com/authentication/${SHOP_ID}/oauth/authorize`);
     url.searchParams.set('client_id', CLIENT_ID);

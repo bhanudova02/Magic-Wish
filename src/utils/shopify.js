@@ -1,5 +1,37 @@
 export const domain = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN;
 export const storefrontToken = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN;
+export const shopId = import.meta.env.VITE_SHOPIFY_SHOP_ID;
+
+export async function customerAccountFetch({ query, variables = {} }) {
+  const endpoint = `https://shopify.com/authentication/${shopId}/api/2024-01/graphql.json`;
+  const token = localStorage.getItem('shopify_access_token');
+
+  try {
+    const result = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": token,
+      },
+      body: JSON.stringify({
+        query,
+        variables,
+      }),
+    });
+
+    const body = await result.json();
+
+    if (body.errors) {
+      console.error("Shopify Customer Account API Errors:", body.errors);
+      throw new Error(body.errors[0].message);
+    }
+
+    return body.data;
+  } catch (error) {
+    console.error("Error fetching from Customer Account API:", error);
+    throw error;
+  }
+}
 
 export async function shopifyFetch({ query, variables = {} }) {
   const endpoint = `https://${domain}/api/2024-01/graphql.json`;
@@ -99,6 +131,77 @@ export const getProductQuery = `
           node {
             url
             altText
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const getCustomerProfileQuery = `
+  query getCustomerProfile {
+    customer {
+      id
+      firstName
+      lastName
+      emailAddress {
+        emailAddress
+      }
+      phoneNumber {
+        phoneNumber
+      }
+      defaultAddress {
+        id
+        address1
+        address2
+        city
+        province
+        zip
+        country
+      }
+      addresses(first: 10) {
+        edges {
+          node {
+            id
+            address1
+            address2
+            city
+            province
+            zip
+            country
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const getCustomerOrdersQuery = `
+  query getCustomerOrders($first: Int!) {
+    customer {
+      orders(first: $first) {
+        edges {
+          node {
+            id
+            name
+            processedAt
+            totalPrice {
+              amount
+              currencyCode
+            }
+            financialStatus
+            fulfillmentStatus
+            lineItems(first: 5) {
+              edges {
+                node {
+                  title
+                  quantity
+                  image {
+                    url
+                  }
+                }
+              }
+            }
           }
         }
       }

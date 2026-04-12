@@ -114,9 +114,11 @@ export default function Navbar() {
                                 <button className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer flex items-center">
                                     <User className="w-6 h-6" />
                                 </button>
-                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl py-2 border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-sm shadow-xl py-2 border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                                     <a href="https://shopify.com/65892843582/account/orders?locale=en&region_country=IN" className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#5e2ca0] font-bold">Orders</a>
                                     <a href="https://shopify.com/65892843582/account/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#5e2ca0] font-bold">My Profile</a>
+                                    <div className="border-t border-gray-100 my-1"></div>
+                                    <a href="https://shopify.com/65892843582/account/logout" className="block px-4 py-2 text-sm text-red-500 hover:bg-red-50 font-bold">Logout</a>
                                 </div>
                             </div>
                             <div className="md:hidden flex items-center ml-2 border-l border-gray-200 pl-4">
@@ -255,9 +257,15 @@ export default function Navbar() {
                                     </a>
                                     <a 
                                         href="https://shopify.com/65892843582/account/profile" 
-                                        className="block py-3 text-lg font-bold text-gray-800 hover:text-[#5e2ca0] transition-colors mb-4"
+                                        className="block py-3 text-lg font-bold text-gray-800 hover:text-[#5e2ca0] transition-colors"
                                     >
                                         My Profile
+                                    </a>
+                                    <a 
+                                        href="https://shopify.com/65892843582/account/logout" 
+                                        className="block py-3 text-lg font-bold text-red-500 hover:text-red-700 transition-colors mb-4"
+                                    >
+                                        Logout
                                     </a>
                                 </div>
                             </nav>

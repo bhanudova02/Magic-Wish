@@ -1,0 +1,51 @@
+# MagicWish Project Documentation
+
+## 1. Project Overview
+MagicWish is a Headless E-commerce platform built with React, Vite, and Tailwind CSS. The backend and product management are handled entirely by Shopify via the Storefront API (GraphQL).
+
+## 2. Tech Stack
+- **Frontend**: React.js (Vite)
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide-React
+- **State Management**: React Context API (CartContext)
+- **Backend/API**: Shopify Storefront API (GraphQL)
+
+## 3. Data Flow (Product Fetching)
+All data fetching logic is located in `src/utils/shopify.js`.
+
+- **API Endpoint**: `https://${domain}/api/2024-01/graphql.json`
+- **Authentication**: Uses `VITE_SHOPIFY_STORE_DOMAIN` and `VITE_SHOPIFY_STOREFRONT_TOKEN` from environment variables.
+- **Main Function**: `getShopifyBooks()`
+  - Fetches product data using a GraphQL query.
+  - Formats raw Shopify nodes into a clean JSON object for the UI.
+  - Calculates discounts (percentage OFF) and maps tags like age, gender, and bestsellers.
+
+## 4. Key Components & Pages
+- **HomePage**: Uses `Bestsellers.jsx` to show top products.
+- **BooksPage**: Displays all products with filtering (gender, age, category) and sorting (Price, Newest) logic.
+- **ProductDetailsPage**: Shows detailed info and an interactive image gallery.
+- **Skeleton Loading**: `SkeletonCard.jsx` is used across the site to provide a smooth loading experience while data is being fetched.
+
+## 5. Cart & Checkout System
+Managed in `src/context/CartContext.jsx`.
+
+- **State Persistence**: Cart items are saved to `localStorage` ('magicwish_cart').
+- **Add to Cart**: Adds items to the global state and opens the `CartDrawer`.
+- **Checkout Process**:
+  1. User clicks "Checkout".
+  2. The app prepares `lines` (merchandiseId and quantity).
+  3. A `cartCreate` mutation is sent to Shopify.
+  4. Shopify returns a secure `checkoutUrl`.
+  5. The app redirects the user to that URL to complete the payment.
+
+## 6. Environment Variables
+To run the project, the following keys are required in `.env`:
+- `VITE_SHOPIFY_STORE_DOMAIN`
+- `VITE_SHOPIFY_STOREFRONT_TOKEN`
+
+## 7. Folder Structure
+- `/src/components`: Reusable UI elements (Navbar, Footer, Cards).
+- `/src/context`: Global state (CartContext).
+- `/src/pages`: Main view templates.
+- `/src/utils`: API helper functions (shopify.js).
+- `/src/assets`: Images and styling resources.

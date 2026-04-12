@@ -50,7 +50,8 @@ export const getAuthorizeUrl = async () => {
     
     const scope = 'openid email customer_read_customers customer_write_customers customer_read_orders';
     
-    const url = new URL(`https://shopify.com/authentication/${SHOP_ID}/oauth/authorize`);
+    // Use the shop domain instead of generic shopify.com
+    const url = new URL(`https://${import.meta.env.VITE_SHOPIFY_STORE_DOMAIN}/authentication/${SHOP_ID}/oauth/authorize`);
     url.searchParams.set('client_id', CLIENT_ID);
     url.searchParams.set('scope', scope);
     url.searchParams.set('redirect_uri', redirectUri);
@@ -74,7 +75,7 @@ export const exchangeCodeForToken = async (code) => {
     body.append('code', code);
     body.append('code_verifier', codeVerifier);
 
-    const response = await fetch(`https://shopify.com/authentication/${SHOP_ID}/oauth/token`, {
+    const response = await fetch(`https://${import.meta.env.VITE_SHOPIFY_STORE_DOMAIN}/authentication/${SHOP_ID}/oauth/token`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

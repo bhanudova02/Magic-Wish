@@ -281,45 +281,169 @@ const ProfilePage = () => {
                                                 <h3 className="text-xl font-bold text-gray-900 mb-1">Saved Addresses</h3>
                                                 <p className="text-gray-500 text-sm">Add or edit your shipping and billing addresses.</p>
                                             </div>
-                                            <button className="bg-blue-600 text-white px-5 py-2 rounded-xl text-xs font-bold hover:bg-blue-700 transition">
-                                                Add New Address
-                                            </button>
+                                            {!showAddressForm && (
+                                                <button 
+                                                    onClick={() => setShowAddressForm(true)}
+                                                    className="bg-blue-600 text-white px-5 py-2 rounded-xl text-xs font-bold hover:bg-blue-700 transition flex items-center gap-2"
+                                                >
+                                                    <Plus className="w-4 h-4" /> Add New Address
+                                                </button>
+                                            )}
                                         </div>
                                         
                                         <div className="p-8">
-                                            {!customerData?.addresses?.edges?.length ? (
-                                                <div className="text-center py-12">
-                                                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                                                        <MapPin className="w-8 h-8 text-gray-300" />
+                                            {showAddressForm ? (
+                                                <form onSubmit={handleSaveAddress} className="space-y-6 max-w-2xl animate-in fade-in duration-300">
+                                                    <div className="flex items-center justify-between mb-4">
+                                                        <h4 className="font-bold text-gray-900">New Address Details</h4>
+                                                        <button 
+                                                            type="button"
+                                                            onClick={() => setShowAddressForm(false)}
+                                                            className="text-gray-400 hover:text-gray-600 p-2"
+                                                        >
+                                                            <CloseIcon className="w-5 h-5" />
+                                                        </button>
                                                     </div>
-                                                    <p className="text-gray-500 font-medium">You don't have any saved addresses.</p>
-                                                </div>
-                                            ) : (
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                    {customerData.addresses.edges.map(({ node: addr }) => (
-                                                        <div key={addr.id} className="relative group border border-gray-100 rounded-2xl p-6 hover:border-blue-200 transition-all">
-                                                            {customerData.defaultAddress?.id === addr.id && (
-                                                                <div className="absolute top-4 right-4 bg-blue-50 text-blue-600 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider">
-                                                                    Default
-                                                                </div>
-                                                            )}
-                                                            <div className="flex items-center gap-3 mb-4">
-                                                                <MapPin className="w-5 h-5 text-gray-400" />
-                                                                <span className="font-bold text-gray-900">Shipping Address</span>
-                                                            </div>
-                                                            <p className="text-gray-600 text-sm leading-relaxed">
-                                                                {addr.address1}<br />
-                                                                {addr.address2 && <>{addr.address2}<br /></>}
-                                                                {addr.city}, {addr.province} {addr.zip}<br />
-                                                                {addr.country}
-                                                            </p>
-                                                            <div className="mt-6 pt-4 border-t border-gray-50 flex gap-4">
-                                                                <button className="text-xs font-bold text-blue-600 hover:underline">Edit</button>
-                                                                <button className="text-xs font-bold text-red-500 hover:underline">Delete</button>
-                                                            </div>
+
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <div>
+                                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">First Name</label>
+                                                            <input 
+                                                                required
+                                                                type="text" 
+                                                                className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                                                                value={newAddress.firstName}
+                                                                onChange={(e) => setNewAddress({...newAddress, firstName: e.target.value})}
+                                                            />
                                                         </div>
-                                                    ))}
-                                                </div>
+                                                        <div>
+                                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Last Name</label>
+                                                            <input 
+                                                                required
+                                                                type="text" 
+                                                                className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                                                                value={newAddress.lastName}
+                                                                onChange={(e) => setNewAddress({...newAddress, lastName: e.target.value})}
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Address Line 1</label>
+                                                        <input 
+                                                            required
+                                                            type="text" 
+                                                            placeholder="Street address, P.O. box, company name, c/o"
+                                                            className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                                                            value={newAddress.address1}
+                                                            onChange={(e) => setNewAddress({...newAddress, address1: e.target.value})}
+                                                        />
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Address Line 2 (Optional)</label>
+                                                        <input 
+                                                            type="text" 
+                                                            placeholder="Apartment, suite, unit, building, floor, etc."
+                                                            className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                                                            value={newAddress.address2}
+                                                            onChange={(e) => setNewAddress({...newAddress, address2: e.target.value})}
+                                                        />
+                                                    </div>
+
+                                                    <div className="grid grid-cols-3 gap-4">
+                                                        <div>
+                                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">City</label>
+                                                            <input 
+                                                                required
+                                                                type="text" 
+                                                                className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                                                                value={newAddress.city}
+                                                                onChange={(e) => setNewAddress({...newAddress, city: e.target.value})}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Province / State</label>
+                                                            <input 
+                                                                required
+                                                                type="text" 
+                                                                className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                                                                value={newAddress.province}
+                                                                onChange={(e) => setNewAddress({...newAddress, province: e.target.value})}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Zip Code</label>
+                                                            <input 
+                                                                required
+                                                                type="text" 
+                                                                className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                                                                value={newAddress.zip}
+                                                                onChange={(e) => setNewAddress({...newAddress, zip: e.target.value})}
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="pt-6 border-t border-gray-100 flex gap-4">
+                                                        <button 
+                                                            type="submit"
+                                                            disabled={isSaving}
+                                                            className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        >
+                                                            {isSaving ? 'Saving...' : 'Save Address'}
+                                                        </button>
+                                                        <button 
+                                                            type="button"
+                                                            onClick={() => setShowAddressForm(false)}
+                                                            className="bg-gray-100 text-gray-600 px-8 py-3 rounded-xl font-bold hover:bg-gray-200 transition"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            ) : (
+                                                <>
+                                                    {!customerData?.addresses?.edges?.length ? (
+                                                        <div className="text-center py-12">
+                                                            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                                <MapPin className="w-8 h-8 text-gray-300" />
+                                                            </div>
+                                                            <p className="text-gray-500 font-medium mb-6">You don't have any saved addresses.</p>
+                                                            <button 
+                                                                onClick={() => setShowAddressForm(true)}
+                                                                className="inline-flex bg-blue-50 text-blue-600 px-6 py-2.5 rounded-xl font-bold hover:bg-blue-100 transition"
+                                                            >
+                                                                Add your first address
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                            {customerData.addresses.edges.map(({ node: addr }) => (
+                                                                <div key={addr.id} className="relative group border border-gray-100 rounded-2xl p-6 hover:border-blue-200 transition-all">
+                                                                    {customerData.defaultAddress?.id === addr.id && (
+                                                                        <div className="absolute top-4 right-4 bg-blue-50 text-blue-600 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider">
+                                                                            Default
+                                                                        </div>
+                                                                    )}
+                                                                    <div className="flex items-center gap-3 mb-4">
+                                                                        <MapPin className="w-5 h-5 text-gray-400" />
+                                                                        <span className="font-bold text-gray-900">Shipping Address</span>
+                                                                    </div>
+                                                                    <p className="text-gray-600 text-sm leading-relaxed">
+                                                                        {addr.address1}<br />
+                                                                        {addr.address2 && <>{addr.address2}<br /></>}
+                                                                        {addr.city}, {addr.province} {addr.zip}<br />
+                                                                        {addr.country}
+                                                                    </p>
+                                                                    <div className="mt-6 pt-4 border-t border-gray-50 flex gap-4">
+                                                                        <button className="text-xs font-bold text-blue-600 hover:underline">Edit</button>
+                                                                        <button className="text-xs font-bold text-red-500 hover:underline">Delete</button>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </>
                                             )}
                                         </div>
                                     </div>

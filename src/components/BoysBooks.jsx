@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import BookCard from './BookCard';
 import { getShopifyBooks } from '../utils/shopify';
 
@@ -25,9 +26,9 @@ export default function BoysBooks() {
                         </h2>
                         <p className="text-gray-500 text-lg">Every boy is the hero of his own epic adventure.</p>
                     </div>
-                    <a href="#" className="hidden md:flex text-blue-500 font-bold hover:text-blue-600 transition items-center gap-1 group">
+                    <Link to="/books" state={{ selectedGender: 'boy' }} className="hidden md:flex text-blue-500 font-bold hover:text-blue-600 transition items-center gap-1 group">
                         View All <ArrowRight className="w-5 h-5 transform group-hover:translate-x-1 transition" />
-                    </a>
+                    </Link>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -37,9 +38,9 @@ export default function BoysBooks() {
                 </div>
 
                 <div className="mt-8 text-center md:hidden">
-                    <a href="#" className="inline-flex text-blue-500 font-bold hover:text-blue-600 transition items-center gap-1 bg-blue-50 px-6 py-3 rounded-full">
+                    <Link to="/books" state={{ selectedGender: 'boy' }} className="inline-flex text-blue-500 font-bold hover:text-blue-600 transition items-center gap-1 bg-blue-50 px-6 py-3 rounded-full">
                         View All Boys' Books <ArrowRight className="w-5 h-5" />
-                    </a>
+                    </Link>
                 </div>
             </div>
         </section>

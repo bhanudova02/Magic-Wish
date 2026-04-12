@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Search, SlidersHorizontal, ArrowUpDown, ChevronDown } from 'lucide-react';
 import BookCard from '../components/BookCard';
-import { shopifyFetch, getProductsQuery } from '../utils/shopify';
+import { getShopifyBooks } from '../utils/shopify';
 
 const FilterDropdown = ({ label, options, selected, onSelect, icon: Icon, isMulti = false }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -88,58 +88,25 @@ export default function BooksPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedGenders, setSelectedGenders] = useState([]);
     const [selectedAges, setSelectedAges] = useState([]);
+    const [selectedCategories, setSelectedCategories] = useState([]);
     const [sortBy, setSortBy] = useState('newest');
     const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
     const [isSortDrawerOpen, setIsSortDrawerOpen] = useState(false);
     const [activeMobileTab, setActiveMobileTab] = useState('gender');
 
     useEffect(() => {
-        async function fetchProducts() {
-            try {
-                const data = await shopifyFetch({
-                    query: getProductsQuery,
-                    variables: { first: 50 }
-                });
-                
-                const formattedBooks = data.products.edges.map(({ node }, index) => {
-                    const variant = node.variants.edges[0]?.node;
-                    const priceMatch = variant?.price?.amount || 0;
-                    const compareAtMatch = variant?.compareAtPrice?.amount || priceMatch;
-
-                    let badge = "";
-                    if (parseFloat(compareAtMatch) > parseFloat(priceMatch)) {
-                        const discount = Math.round(((parseFloat(compareAtMatch) - parseFloat(priceMatch)) / parseFloat(compareAtMatch)) * 100);
-                        badge = `-${discount}% OFF`;
-                    }
-
-                    const tags = node.tags || [];
-                    const gender = tags.find(tag => ['boy', 'girl'].includes(tag.toLowerCase()))?.toLowerCase() || 'unisex';
-                    const age = tags.find(tag => tag.includes('-')) || '2-4';
-                    
-                    return {
-                        id: node.handle,
-                        sortId: index + 1,
-                        image: node.images.edges[0]?.node?.url || '',
-                        title: node.title,
-                        description: node.description,
-                        price: `$${priceMatch}`,
-                        originalPrice: parseFloat(compareAtMatch) > parseFloat(priceMatch) ? `$${compareAtMatch}` : null,
-                        badge,
-                        gender,
-                        age
-                    };
-                });
-                setBooks(formattedBooks);
-            } catch (error) {
-                console.error("Error fetching books:", error);
-            }
-        }
-        fetchProducts();
+        getShopifyBooks().then(setBooks);
     }, []);
 
     useEffect(() => {
         if (location.state?.selectedAge) {
             setSelectedAges([location.state.selectedAge]);
+        }
+        if (location.state?.selectedGender) {
+            setSelectedGenders([location.state.selectedGender]);
+        }
+        if (location.state?.selectedCategory) {
+            setSelectedCategories([location.state.selectedCategory]);
         }
     }, [location.state]);
 
@@ -163,7 +130,7 @@ export default function BooksPage() {
         if (!isFilterDrawerOpen && !isSortDrawerOpen) {
             window.scrollTo(0, 0);
         }
-    }, [searchQuery, selectedGenders, selectedAges, sortBy, isFilterDrawerOpen, isSortDrawerOpen]);
+    }, [searchQuery, selectedGenders, selectedAges, selectedCategories, sortBy, isFilterDrawerOpen, isSortDrawerOpen]);
 
     const closeAllDrawers = () => {
         setIsFilterDrawerOpen(false);
@@ -193,7 +160,10 @@ export default function BooksPage() {
             const matchesAge = selectedAges.length === 0 ||
                 selectedAges.includes(book.age);
 
-            return matchesSearch && matchesGender && matchesAge;
+            const matchesCategory = selectedCategories.length === 0 ||
+                selectedCategories.some(cat => book.tags?.includes(cat));
+
+            return matchesSearch && matchesGender && matchesAge && matchesCategory;
         });
 
         // Apply Sorting
@@ -263,7 +233,7 @@ export default function BooksPage() {
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white">
                     <h2 className="text-xl font-black text-[#2b124c]">Filters</h2>
                     <button
-                        onClick={() => { setSelectedGenders([]); setSelectedAges([]); setSearchQuery(''); }}
+                        onClick={() => { setSelectedGenders([]); setSelectedAges([]); setSelectedCategories([]); setSearchQuery(''); }}
                         className="text-sm font-black text-orange-600 uppercase tracking-widest"
                     >
                         Clear All
@@ -286,11 +256,38 @@ export default function BooksPage() {
                         >
                             Age Group
                         </button>
+                        <button
+                            onClick={() => setActiveMobileTab('collections')}
+                            className={`px-4 py-6 text-left text-sm font-bold transition-all ${activeMobileTab === 'collections' ? 'bg-white text-blue-600 border-l-4 border-blue-600' : 'text-gray-500'}`}
+                        >
+                            Collections
+                        </button>
                     </div>
 
                     {/* Right Options */}
                     <div className="flex-grow bg-white overflow-y-auto p-8">
-                        {activeMobileTab === 'gender' ? (
+                        {activeMobileTab === 'collections' ? (
+                            <div className="space-y-6">
+                                <h4 className="text-lg font-bold text-gray-400 mb-6">Choose Collection</h4>
+                                {[
+                                    { label: 'Bestseller', value: 'bestseller' },
+                                    { label: 'New Arrivals', value: 'new' }
+                                ].map((opt) => (
+                                    <label key={opt.value} className="flex items-center group cursor-pointer">
+                                        <div className="relative flex items-center">
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedCategories.includes(opt.value)}
+                                                onChange={() => toggleFilter(selectedCategories, setSelectedCategories, opt.value)}
+                                                className="peer appearance-none w-6 h-6 border-2 border-gray-200 rounded-sm checked:bg-blue-600 checked:border-blue-600 transition-all cursor-pointer"
+                                            />
+                                            <svg className="absolute w-4 h-4 text-white pointer-events-none hidden peer-checked:block left-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        </div>
+                                        <span className="ml-4 text-base font-bold text-gray-700 uppercase tracking-tight">{opt.label}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        ) : activeMobileTab === 'gender' ? (
                             <div className="space-y-6">
                                 <h4 className="text-lg font-bold text-gray-400 mb-6">Choose Gender</h4>
                                 {[
@@ -362,9 +359,9 @@ export default function BooksPage() {
                         <div className="lg:sticky lg:top-[64px] lg:h-[calc(100vh-64px)] overflow-y-auto px-8 py-10">
                             <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-200">
                                 <h2 className="text-xl font-black text-[#2b124c] tracking-tight">Filters</h2>
-                                {(selectedGenders.length > 0 || selectedAges.length > 0) && (
+                                {(selectedGenders.length > 0 || selectedAges.length > 0 || selectedCategories.length > 0) && (
                                     <button
-                                        onClick={() => { setSelectedGenders([]); setSelectedAges([]); }}
+                                        onClick={() => { setSelectedGenders([]); setSelectedAges([]); setSelectedCategories([]); }}
                                         className="text-sm font-black text-orange-600 uppercase tracking-widest hover:underline"
                                     >
                                         Reset
@@ -391,6 +388,16 @@ export default function BooksPage() {
                                     ]}
                                     selectedList={selectedAges}
                                     setList={setSelectedAges}
+                                />
+
+                                <FilterSection
+                                    title="Collections"
+                                    options={[
+                                        { label: 'Bestseller', value: 'bestseller' },
+                                        { label: 'New Arrivals', value: 'new' }
+                                    ]}
+                                    selectedList={selectedCategories}
+                                    setList={setSelectedCategories}
                                 />
                             </div>
                         </div>

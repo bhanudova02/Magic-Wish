@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import BookCard from './BookCard';
 import { getShopifyBooks } from '../utils/shopify';
 
@@ -25,9 +26,9 @@ export default function NewReleases() {
                         </h2>
                         <p className="text-gray-500 text-lg">Fresh stories waiting for your magical touch.</p>
                     </div>
-                    <a href="#" className="hidden md:flex text-purple-600 font-bold hover:text-purple-700 transition items-center gap-1 group">
+                    <Link to="/books" state={{ selectedCategory: 'new' }} className="hidden md:flex text-purple-600 font-bold hover:text-purple-700 transition items-center gap-1 group">
                         View All <ArrowRight className="w-5 h-5 transform group-hover:translate-x-1 transition" />
-                    </a>
+                    </Link>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -37,9 +38,9 @@ export default function NewReleases() {
                 </div>
 
                 <div className="mt-8 text-center md:hidden">
-                    <a href="#" className="inline-flex text-purple-600 font-bold hover:text-purple-700 transition items-center gap-1 bg-purple-50 px-6 py-3 rounded-full">
+                    <Link to="/books" state={{ selectedCategory: 'new' }} className="inline-flex text-purple-600 font-bold hover:text-purple-700 transition items-center gap-1 bg-purple-50 px-6 py-3 rounded-full">
                         View All Books <ArrowRight className="w-5 h-5" />
-                    </a>
+                    </Link>
                 </div>
             </div>
         </section>

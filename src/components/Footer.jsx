@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { shopifyFetch, customerCreateMutation } from '../utils/shopify';
 
 const Instagram = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" /></svg>
@@ -13,6 +14,44 @@ const Twitter = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" /></svg>
 );
 export default function Footer() {
+    const [email, setEmail] = useState('');
+    const [status, setStatus] = useState('idle'); // idle, loading, success, error
+    const [errorMsg, setErrorMsg] = useState('');
+
+    const handleSubscribe = async (e) => {
+        e.preventDefault();
+        setStatus('loading');
+        
+        try {
+            const data = await shopifyFetch({
+                query: customerCreateMutation,
+                variables: {
+                    input: {
+                        email: email,
+                        password: `News-${Math.random().toString(36).slice(-8)}!`,
+                        acceptsMarketing: true
+                    }
+                }
+            });
+
+            if (data.customerCreate.customerUserErrors.length > 0) {
+                const error = data.customerCreate.customerUserErrors[0];
+                if (error.code === 'TAKEN') {
+                    setStatus('success'); // Already exists, so we call it a win
+                } else {
+                    setErrorMsg(error.message);
+                    setStatus('error');
+                }
+            } else {
+                setStatus('success');
+                setEmail('');
+            }
+        } catch (error) {
+            console.error("Newsletter error:", error);
+            setStatus('error');
+            setErrorMsg("Something went wrong. Please try again.");
+        }
+    };
     return (
         <footer className="bg-[#1a0b2e] border-t border-purple-900/30 text-gray-300 pt-16 pb-10">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -63,11 +102,25 @@ export default function Footer() {
                     <div>
                         <h3 className="text-white font-bold text-lg mb-6 tracking-wide">Subscribe to Our Newsletter</h3>
                         <p className="text-gray-400 text-sm mb-4">Don’t miss out on the newest books and exclusive discounts.</p>
-                        <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
-                            <input type="email" placeholder="Email address" className="bg-white/10 border border-white/10 outline-none focus:ring-2 focus:ring-[#5e2ca0] text-white rounded-lg px-4 py-3 w-full placeholder-white/40" required />
-                            <button type="submit" className="bg-[#5e2ca0] hover:bg-[#5e2ca0] text-white px-6 py-3 rounded-lg font-bold transition w-full">
-                                Subscribe
+                        <form className="flex flex-col gap-3" onSubmit={handleSubscribe}>
+                            <input 
+                                type="email" 
+                                placeholder="Email address" 
+                                className="bg-white/10 border border-white/10 outline-none focus:ring-2 focus:ring-[#5e2ca0] text-white rounded-sm px-4 py-3 w-full placeholder-white/40 cursor-text" 
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                disabled={status === 'loading' || status === 'success'}
+                                required 
+                            />
+                            <button 
+                                type="submit" 
+                                className={`bg-[#5e2ca0] hover:bg-[#5e2ca0] text-white px-6 py-3 rounded-sm font-bold transition w-full cursor-pointer flex items-center justify-center gap-2 ${status === 'loading' ? 'opacity-70 cursor-wait' : ''}`}
+                                disabled={status === 'loading' || status === 'success'}
+                            >
+                                {status === 'loading' ? 'Subscribing...' : status === 'success' ? 'Thank you!' : 'Subscribe'}
                             </button>
+                            {status === 'error' && <p className="text-red-400 text-xs mt-1">{errorMsg}</p>}
+                            {status === 'success' && <p className="text-green-400 text-xs mt-1">Hooray! Expect some magic in your inbox.</p>}
                         </form>
                     </div>
                 </div>

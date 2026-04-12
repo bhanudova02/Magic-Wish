@@ -106,6 +106,22 @@ export const getProductQuery = `
   }
 `;
 
+export const customerCreateMutation = `
+  mutation customerCreate($input: CustomerCreateInput!) {
+    customerCreate(input: $input) {
+      customer {
+        id
+        email
+      }
+      customerUserErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`;
+
 let cachedBooksPromise = null;
 
 export async function getShopifyBooks() {

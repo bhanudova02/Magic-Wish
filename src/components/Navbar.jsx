@@ -110,9 +110,13 @@ export default function Navbar() {
                                     </span>
                                 )}
                             </button>
-                            <button className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer">
+                            <a 
+                                href="https://storytimekid.com/account/login?return_to=https://magic-wish.vercel.app"
+                                className="text-gray-800 hover:text-purple-600 transition-colors focus:outline-none cursor-pointer"
+                                aria-label="Login to account"
+                            >
                                 <User className="w-6 h-6" />
-                            </button>
+                            </a>
                             <div className="md:hidden flex items-center ml-2 border-l border-gray-200 pl-4">
                                 <button 
                                     onClick={() => setIsMenuOpen(true)}
@@ -239,6 +243,12 @@ export default function Navbar() {
                                 <NavLink to="/" className={mobileLinkClass}>Home</NavLink>
                                 <NavLink to="/books" className={mobileLinkClass}>Books</NavLink>
                                 <NavLink to="/support" className={mobileLinkClass}>Support</NavLink>
+                                <a 
+                                    href="https://storytimekid.com/account/login?return_to=https://magic-wish.vercel.app" 
+                                    className="block py-4 text-xl font-bold border-b border-gray-100 text-gray-800 hover:text-purple-600 mt-2"
+                                >
+                                    Login / Sign Up
+                                </a>
                             </nav>
                         </div>
                     </div>

@@ -7,6 +7,7 @@ import { useCart } from '../context/CartContext';
 export default function ProductDetailsPage() {
     const { id } = useParams();
     const [book, setBook] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('how-it-works');
     const [openAccordion, setOpenAccordion] = useState('personalization');
     const [showSticky, setShowSticky] = useState(false);
@@ -15,6 +16,7 @@ export default function ProductDetailsPage() {
 
     useEffect(() => {
         async function fetchBook() {
+            setLoading(true);
             try {
                 const data = await shopifyFetch({
                     query: getProductQuery,
@@ -24,9 +26,11 @@ export default function ProductDetailsPage() {
                 const node = data.product;
                 if (!node) {
                     setBook(null);
+                    setLoading(false);
                     return;
                 }
-
+                
+                // ... (rest of formatting logic)
                 const variant = node.variants.edges[0]?.node;
                 const priceMatch = variant?.price?.amount || 0;
                 const compareAtMatch = variant?.compareAtPrice?.amount || priceMatch;
@@ -55,6 +59,8 @@ export default function ProductDetailsPage() {
                 setBook(formattedBook);
             } catch (error) {
                 console.error("Error fetching book:", error);
+            } finally {
+                setLoading(false);
             }
         }
 
@@ -81,17 +87,46 @@ export default function ProductDetailsPage() {
         };
     }, [book]);
 
-    if (!book) {
+    const toggleAccordion = (id) => {
+        setOpenAccordion(openAccordion === id ? null : id);
+    };
+
+    if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <p className="text-xl text-gray-500">Book not found...</p>
+            <div className="bg-white min-h-screen pt-24 pb-20 animate-pulse">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <div className="bg-gray-100 rounded-sm aspect-square w-full"></div>
+                        <div className="space-y-6">
+                            <div className="h-10 bg-gray-100 rounded-full w-3/4"></div>
+                            <div className="h-4 bg-gray-100 rounded-full w-1/4"></div>
+                            <div className="space-y-3 mt-10">
+                                <div className="h-4 bg-gray-100 rounded-full w-full"></div>
+                                <div className="h-4 bg-gray-100 rounded-full w-full"></div>
+                                <div className="h-4 bg-gray-100 rounded-full w-2/3"></div>
+                            </div>
+                            <div className="h-20 bg-gray-50 rounded-sm w-full mt-10"></div>
+                            <div className="h-16 bg-gray-100 rounded-sm w-full mt-10"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
 
-    const toggleAccordion = (id) => {
-        setOpenAccordion(openAccordion === id ? null : id);
-    };
+    if (!book) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <h2 className="text-2xl font-black text-[#2b124c] mb-2">Adventure Not Found</h2>
+                    <p className="text-gray-500 mb-6">We couldn't find the magical story you're looking for.</p>
+                    <Link to="/books" className="text-blue-600 font-bold hover:underline">Back to Books</Link>
+                </div>
+            </div>
+        );
+    }
+
+
 
     return (
         <div className="bg-white min-h-screen pt-24 pb-20">
@@ -176,7 +211,7 @@ export default function ProductDetailsPage() {
                         <div className="space-y-6" ref={ctaRef}>
                             <button 
                                 onClick={() => addToCart(book)}
-                                className="w-full bg-[#5e2ca0] hover:bg-[#5e2ca0] text-white py-5 px-8 rounded-sm font-black text-xl transition-all transform hover:scale-[1.02] shadow-xl shadow-blue-500/20 active:scale-95"
+                                className="w-full bg-[#5e2ca0] hover:bg-[#5e2ca0] text-white py-5 px-8 rounded-sm font-black text-xl transition-all transform hover:scale-[1.02] active:scale-95"
                             >
                                 Add to Cart
                             </button>
@@ -221,7 +256,7 @@ export default function ProductDetailsPage() {
             <div className={`fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-lg border-t border-gray-100 z-[100] lg:hidden transition-all duration-300 transform ${showSticky ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}`}>
                 <button 
                     onClick={() => addToCart(book)}
-                    className="w-full bg-[#5e2ca0] text-white py-4 rounded-sm font-black text-lg shadow-lg active:scale-95 transition-transform"
+                    className="w-full bg-[#5e2ca0] text-white py-4 rounded-sm font-black text-lg active:scale-95 transition-transform"
                 >
                     Add to Cart
                 </button>

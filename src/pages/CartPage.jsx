@@ -23,7 +23,7 @@ export default function CartPage() {
                 </p>
                 <Link 
                     to="/books" 
-                    className="flex text-lg items-center gap-3 px-10 py-5 bg-purple-600 text-white rounded-full font-bold shadow-xl shadow-purple-600/30 hover:bg-purple-700 transition transform hover:-translate-y-1"
+                    className="flex text-lg items-center gap-3 px-10 py-5 bg-purple-600 text-white rounded-sm font-bold hover:bg-purple-700 transition transform hover:-translate-y-1 cursor-pointer"
                 >
                     Start Browsing <ArrowRight className="w-5 h-5" />
                 </Link>
@@ -71,14 +71,14 @@ export default function CartPage() {
                                         <div className="flex items-center gap-4 bg-gray-50 rounded-full px-2 py-1.5 border border-gray-200">
                                             <button 
                                                 onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                                className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm hover:text-[#2b124c] transition"
+                                                className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm hover:text-[#2b124c] transition cursor-pointer"
                                             >
                                                 <Minus className="w-4 h-4" />
                                             </button>
                                             <span className="text-base font-black text-gray-800 w-8 text-center">{item.quantity}</span>
                                             <button 
                                                 onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                                className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm hover:text-[#2b124c] transition"
+                                                className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm hover:text-[#2b124c] transition cursor-pointer"
                                             >
                                                 <Plus className="w-4 h-4" />
                                             </button>
@@ -86,7 +86,7 @@ export default function CartPage() {
 
                                         <button 
                                             onClick={() => removeFromCart(item.id)}
-                                            className="flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-red-500 transition-colors uppercase tracking-widest"
+                                            className="flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-red-500 transition-colors uppercase tracking-widest cursor-pointer"
                                         >
                                             <Trash2 className="w-4 h-4" />
                                             Remove
@@ -119,11 +119,11 @@ export default function CartPage() {
                                 <span className="text-4xl font-black text-[#2b124c]">${getCartTotal().toFixed(2)}</span>
                             </div>
 
-                            <button className="w-full py-5 flex items-center justify-center gap-2 text-white font-bold bg-green-500 rounded-2xl shadow-xl shadow-green-500/20 hover:bg-green-600 transition-all uppercase tracking-widest transform hover:-translate-y-1">
-                                Continue to Checkout <ArrowRight className="w-5 h-5" />
+                            <button className="w-full py-4 flex items-center justify-center gap-2 text-white font-bold bg-green-500 rounded-sm hover:bg-green-600 transition-all uppercase tracking-widest transform hover:-translate-y-1 text-xs cursor-pointer">
+                                Continue to Checkout <ArrowRight className="w-4 h-4" />
                             </button>
                             
-                            <Link to="/books" className="block text-center mt-6 text-sm font-bold text-gray-400 hover:text-blue-600 transition uppercase tracking-widest">
+                            <Link to="/books" className="block text-center mt-6 text-sm font-bold text-gray-400 hover:text-blue-600 transition uppercase tracking-widest cursor-pointer">
                                 Continue Shopping
                             </Link>
 

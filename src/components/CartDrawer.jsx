@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
+import { X, Minus, Plus, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
 
@@ -24,7 +24,7 @@ export default function CartDrawer() {
                     </div>
                     <button 
                         onClick={() => setIsCartOpen(false)}
-                        className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                        className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
                     >
                         <X className="w-5 h-5 text-gray-500" />
                     </button>
@@ -39,7 +39,7 @@ export default function CartDrawer() {
                             <p className="text-gray-500 mb-8">Ready to add your first story?</p>
                             <button 
                                 onClick={() => setIsCartOpen(false)}
-                                className="px-8 py-3 bg-purple-600 text-white rounded-full font-bold shadow-lg shadow-purple-600/30 hover:bg-purple-700 transition-colors"
+                                className="px-8 py-3 bg-purple-600 text-white rounded-sm font-bold hover:bg-purple-700 transition-colors cursor-pointer"
                             >
                                 Start Browsing
                             </button>
@@ -62,7 +62,7 @@ export default function CartDrawer() {
                                             <h4 className="font-bold text-[#2b124c] text-sm leading-tight pr-4">{item.title}</h4>
                                             <button 
                                                 onClick={() => removeFromCart(item.id)}
-                                                className="text-gray-400 hover:text-red-500 transition-colors"
+                                                className="text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
@@ -74,14 +74,14 @@ export default function CartDrawer() {
                                             <div className="flex items-center gap-3 bg-gray-100 rounded-full px-2 py-1 border border-gray-200">
                                                 <button 
                                                     onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                                    className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm hover:text-[#2b124c]"
+                                                    className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm hover:text-[#2b124c] cursor-pointer"
                                                 >
                                                     <Minus className="w-3 h-3" />
                                                 </button>
                                                 <span className="text-sm font-bold text-gray-800 w-4 text-center">{item.quantity}</span>
                                                 <button 
                                                     onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                                    className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm hover:text-[#2b124c]"
+                                                    className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm hover:text-[#2b124c] cursor-pointer"
                                                 >
                                                     <Plus className="w-3 h-3" />
                                                 </button>
@@ -105,14 +105,14 @@ export default function CartDrawer() {
                             <span className="text-gray-500 font-bold uppercase tracking-widest text-sm">Subtotal</span>
                             <span className="text-2xl font-black text-[#2b124c]">${getCartTotal().toFixed(2)}</span>
                         </div>
-                        <div className="space-y-3">
-                            <button className="w-full py-4 text-white font-bold bg-green-500 rounded-2xl shadow-lg shadow-green-500/30 hover:bg-green-600 transition-colors uppercase tracking-widest">
-                                Checkout Now
+                        <div className="space-y-2">
+                            <button className="w-full py-4 flex items-center justify-center gap-2 text-white font-bold bg-green-500 rounded-sm hover:bg-green-600 transition-all uppercase tracking-widest transform hover:-translate-y-1 text-xs cursor-pointer">
+                                Continue to Checkout <ArrowRight className="w-4 h-4" />
                             </button>
                             <Link 
                                 to="/cart" 
                                 onClick={() => setIsCartOpen(false)}
-                                className="w-full py-4 text-[#2b124c] font-bold bg-white border-2 border-gray-200 rounded-2xl hover:border-[#2b124c] transition-colors uppercase tracking-widest flex items-center justify-center"
+                                className="w-full py-3 text-[#2b124c] font-bold bg-white border border-gray-200 rounded-sm hover:border-[#2b124c] transition-colors uppercase tracking-widest flex items-center justify-center text-[11px] cursor-pointer"
                             >
                                 View Cart Page
                             </Link>

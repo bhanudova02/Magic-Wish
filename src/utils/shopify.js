@@ -11,7 +11,7 @@ export async function customerAccountFetch({ query, variables = {} }) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token, // Token contains the full Authorization header value from AuthContext
+        "Authorization": token.startsWith('Bearer ') ? token : `Bearer ${token}`,
       },
       body: JSON.stringify({
         query,

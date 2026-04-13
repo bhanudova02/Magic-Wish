@@ -7,12 +7,12 @@ export default function BookPreviewPage() {
     const navigate = useNavigate();
     const { addToCart } = useCart();
     const [personalization, setPersonalization] = useState(null);
-    const [isGenerating, setIsGenerating] = useState(true);
+    const [isGenerating, setIsGenerating] = useState(false);
     const [generatedImage, setGeneratedImage] = useState(null);
     const [progress, setProgress] = useState(0);
     const [error, setError] = useState(null);
 
-    // Prompt generator helper
+    // Helper for prompt
     const getFinalAIInstruction = (data) => {
         if (!data) return "";
         return `Professional storybook cover titled "${data.title}". ${data.description}. The hero is a ${data.age} year old child named ${data.name}. Scene: ${data.coverpagePrompt}. Maintain a magical fantasy and vibrant 8k style.`;
@@ -52,52 +52,68 @@ export default function BookPreviewPage() {
             const parsedData = JSON.parse(stored);
             setPersonalization(parsedData);
             
-            const generateImage = async () => {
-                setIsGenerating(true);
-                setError(null);
-                
-                const title = parsedData.title || "Magic Story";
-                const desc = (parsedData.description || "").substring(0, 150);
-                const activePrompt = `Professional storybook cover titled "${title}". ${desc}. The hero is a ${parsedData.age} year old child named ${parsedData.name}. Scene: ${parsedData.coverpagePrompt}. Magical fantasy, vibrant 8k`;
-                
-                const seed = Math.floor(Math.random() * 999999);
-                const pollUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(activePrompt)}?width=1024&height=1024&seed=${seed}&nologo=true`;
-                
-                setGeneratedImage(pollUrl);
-
-                try {
-                    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-                    const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-                    
-                    if (cloudName && preset) {
-                        const response = await fetch(pollUrl);
-                        const blob = await response.blob();
-                        const uploadData = new FormData();
-                        uploadData.append('file', blob);
-                        uploadData.append('upload_preset', preset);
-                        
-                        const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-                            method: 'POST',
-                            body: uploadData
-                        });
-                        
-                        const cloudResult = await cloudRes.json();
-                        if (cloudResult.secure_url) {
-                            setGeneratedImage(cloudResult.secure_url);
-                        }
-                    }
-                } catch (err) {
-                    console.warn("Cloudinary background upload failed:", err);
-                }
-            };
-
-            generateImage();
+            // Check if we already have a generated image from a previous load
+            if (parsedData.generatedImage) {
+                setGeneratedImage(parsedData.generatedImage);
+                setIsGenerating(false);
+                setProgress(100);
+            } else {
+                startGeneration(parsedData);
+            }
         } catch (e) {
             console.error("Failed to parse personalization data:", e);
             navigate('/books');
         }
         window.scrollTo(0, 0);
     }, [navigate]);
+
+    const startGeneration = async (parsedData) => {
+        setIsGenerating(true);
+        setError(null);
+        
+        const title = parsedData.title || "Magic Story";
+        const desc = (parsedData.description || "").substring(0, 150);
+        const activePrompt = `Professional storybook cover titled "${title}". ${desc}. The hero is a ${parsedData.age} year old child named ${parsedData.name}. Scene: ${parsedData.coverpagePrompt}. Magical fantasy, vibrant 8k`;
+        
+        const seed = Math.floor(Math.random() * 999999);
+        const pollUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(activePrompt)}?width=1024&height=1024&seed=${seed}&nologo=true`;
+        
+        // Initial fast show
+        setGeneratedImage(pollUrl);
+
+        try {
+            const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+            const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+            
+            if (cloudName && preset) {
+                const response = await fetch(pollUrl);
+                const blob = await response.blob();
+                const uploadData = new FormData();
+                uploadData.append('file', blob);
+                uploadData.append('upload_preset', preset);
+                
+                const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                    method: 'POST',
+                    body: uploadData
+                });
+                
+                const cloudResult = await cloudRes.json();
+                if (cloudResult.secure_url) {
+                    const finalUrl = cloudResult.secure_url;
+                    setGeneratedImage(finalUrl);
+                    
+                    // SAVE TO LOCAL STORAGE to prevent re-generation on refresh
+                    const currentData = JSON.parse(localStorage.getItem('last_personalization'));
+                    localStorage.setItem('last_personalization', JSON.stringify({
+                        ...currentData,
+                        generatedImage: finalUrl
+                    }));
+                }
+            }
+        } catch (err) {
+            console.warn("Background persistence failed:", err);
+        }
+    };
 
     const handleImageLoad = () => {
         setProgress(100);
@@ -110,7 +126,7 @@ export default function BookPreviewPage() {
             setGeneratedImage(personalization.photo);
             setError("AI preview is taking longer. Using your photo!");
         } else {
-            setError("Unable to generate preview. Please try again.");
+            setError("Unable to generate preview.");
         }
     };
 
@@ -134,121 +150,104 @@ export default function BookPreviewPage() {
     };
 
     useEffect(() => {
-        if (personalization && !isGenerating) {
+        if (personalization && !isGenerating && generatedImage) {
             console.log("%cFinal AI Manufacturing Instruction:", "color: #a21caf; font-weight: bold; font-size: 14px;");
             console.log(finalAIInstruction);
         }
-    }, [isGenerating, finalAIInstruction, personalization]);
+    }, [isGenerating, finalAIInstruction, personalization, generatedImage]);
 
-    if (!personalization && isGenerating) {
-        return (
-            <div className="min-h-screen bg-white flex items-center justify-center">
-                <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
-            </div>
-        );
-    }
+    if (!personalization) return null;
 
     return (
-        <div className="bg-white min-h-screen flex flex-col relative overflow-hidden">
-            {/* Background Blur Effect */}
-            <div className="fixed inset-0 z-0 pointer-events-none">
-                <div 
-                    className="absolute inset-0 bg-cover bg-center scale-110 blur-[120px] opacity-10 transition-all duration-1000"
-                    style={{ backgroundImage: `url(${generatedImage || (personalization ? personalization.photo : '')})` }}
-                ></div>
-                <div className="absolute inset-0 bg-white/60"></div>
+        <div className="bg-white min-h-screen flex flex-col font-sans">
+            {/* Minimal Header (No nav links to keep it focused) */}
+            <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-purple-600" />
+                    <span className="font-black text-xl tracking-tighter text-gray-900">Magic<span className="text-purple-600">Wish</span></span>
+                </div>
+                <div className="text-xs font-black text-gray-400 uppercase tracking-widest hidden sm:block">
+                    Preview Mode
+                </div>
             </div>
 
-            {/* Main Content Area */}
-            <div className="flex-1 flex items-center justify-center p-6 md:p-12 relative z-10 pt-20 pb-36">
-                <div className="relative w-full max-w-[480px]">
-                    {/* Shadow Decor */}
-                    <div className="absolute -inset-10 bg-purple-500/5 blur-3xl rounded-full -z-10"></div>
+            {/* Content Area */}
+            <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12 pt-28 pb-32">
+                <div className="w-full max-w-[420px] mx-auto space-y-8">
                     
-                    {/* Book Frame Container */}
-                    <div className="relative aspect-[4/5] bg-white rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.1)] border-x-[12px] border-white overflow-hidden flex flex-col items-center justify-center">
+                    {/* Centered Large Book Preview */}
+                    <div className="relative group">
+                        {/* Shadow Decor */}
+                        <div className="absolute -inset-10 bg-purple-500/5 blur-[100px] rounded-full -z-10"></div>
                         
-                        {/* Generation Overlay */}
-                        {isGenerating && (
-                            <div className="absolute inset-0 z-20 bg-white flex flex-col items-center justify-center text-center p-10">
-                                <h2 className="text-2xl font-black text-gray-900 mb-12 tracking-tight">Your story is coming together...</h2>
-                                
-                                <div className="relative mb-12">
-                                    <div className="w-32 h-32 rounded-3xl bg-gray-50 overflow-hidden relative border-4 border-white shadow-xl">
-                                        {personalization?.photo ? (
-                                            <img src={personalization.photo} className="w-full h-full object-cover" alt="Hero" />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center bg-purple-50">
-                                                <User className="w-12 h-12 text-purple-200" />
-                                            </div>
-                                        )}
-                                        <div className="absolute inset-0 flex items-center justify-center bg-white/10 backdrop-blur-[1px]">
-                                            <Sparkles className="w-16 h-16 text-white opacity-60 animate-pulse" />
+                        <div className="relative aspect-[4/5] bg-white rounded-[1.5rem] shadow-2xl border-x-[8px] border-white overflow-hidden ring-1 ring-black/5 flex items-center justify-center">
+                            {isGenerating && (
+                                <div className="absolute inset-0 z-20 bg-white flex flex-col items-center justify-center text-center p-8 space-y-10">
+                                    <h2 className="text-xl font-black text-gray-900">Crafting your story...</h2>
+                                    <div className="relative">
+                                        <div className="w-24 h-24 rounded-2xl bg-gray-50 overflow-hidden relative border-2 border-white shadow-lg">
+                                            {personalization?.photo ? (
+                                                <img src={personalization.photo} className="w-full h-full object-cover" alt="Hero" />
+                                            ) : (
+                                                <User className="w-8 h-8 text-purple-200" />
+                                            )}
                                         </div>
+                                        <div className="absolute -inset-3 border-[3px] border-purple-50 border-t-purple-600 rounded-full animate-spin"></div>
                                     </div>
-                                    <div className="absolute -inset-4 border-2 border-purple-100 border-t-purple-600 rounded-full animate-spin"></div>
-                                </div>
-
-                                <div className="flex items-center gap-3 bg-gray-900 text-white px-5 py-2.5 rounded-full text-xs font-black tracking-widest uppercase">
-                                    <span>Please wait.</span>
-                                    <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center text-[10px]">
-                                        {Math.max(0, 30 - Math.floor((progress / 100) * 30))}
+                                    <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest text-gray-500">
+                                        Wait {Math.max(0, 30 - Math.floor((progress / 100) * 30))}s
                                     </div>
                                 </div>
-                            </div>
-                        )}
-
-                        {/* Image Layer */}
-                        <div className="w-full h-full bg-gray-50">
-                            {generatedImage && (
-                                <img 
-                                    src={generatedImage} 
-                                    alt="Personalized Book Cover" 
-                                    onLoad={handleImageLoad}
-                                    onError={handleImageError}
-                                    className={`w-full h-full object-cover transition-all duration-1000 ${isGenerating ? 'scale-110 blur-2xl' : 'scale-100 blur-0'}`}
-                                />
                             )}
+                            
+                            <img 
+                                src={generatedImage} 
+                                alt="Book Cover" 
+                                onLoad={handleImageLoad}
+                                onError={handleImageError}
+                                className={`w-full h-full object-cover transition-all duration-1000 ${isGenerating ? 'blur-2xl opacity-0' : 'blur-0 opacity-100'}`}
+                            />
                         </div>
                     </div>
-                    {error && !isGenerating && (
-                        <div className="mt-4 text-center">
-                            <p className="inline-block bg-yellow-50 text-yellow-700 px-4 py-2 rounded-lg text-xs font-bold border border-yellow-100">{error}</p>
-                        </div>
+
+                    {!isGenerating && !error && (
+                         <div className="text-center space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-700">
+                            <h3 className="text-lg font-black text-gray-900">{personalization.name}'s Adventure</h3>
+                            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Final cover design ready</p>
+                         </div>
                     )}
                 </div>
             </div>
 
-            {/* Sticky Bottom Bar */}
-            <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-gray-100 py-6 px-6 md:px-16 flex items-center justify-between">
-                {/* Desktop Step Indicator */}
-                <div className="hidden md:flex items-center gap-12 flex-1">
-                    <div className="flex items-center gap-3">
-                        <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-white">
-                            <Check className="w-3.5 h-3.5" />
+            {/* Fixed Bottom Bar - User Friendly */}
+            <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-gray-100 p-6 md:px-12 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)]">
+                
+                {/* Step Indicator */}
+                <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                            <Check className="w-3 h-3" />
                         </div>
-                        <span className="text-xs font-black text-purple-600 uppercase tracking-widest border-b-2 border-purple-600 pb-1">Book</span>
+                        <span className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Personalize</span>
                     </div>
-                    <div className="w-16 h-px bg-gray-100"></div>
-                    <div className="flex items-center gap-3">
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white ${isGenerating ? 'bg-gray-200' : 'bg-purple-600'}`}>
-                            {isGenerating ? <span className="text-[10px] font-black">2</span> : <Check className="w-3.5 h-3.5" />}
+                    <div className="w-8 h-px bg-gray-100"></div>
+                    <div className="flex items-center gap-2">
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center text-white ${isGenerating ? 'bg-gray-200' : 'bg-purple-600'}`}>
+                            {isGenerating ? <span className="text-[9px] font-black">2</span> : <Check className="w-3 h-3" />}
                         </div>
-                        <span className={`text-xs font-black uppercase tracking-widest border-b-2 pb-1 ${isGenerating ? 'text-gray-400 border-transparent' : 'text-purple-600 border-purple-600'}`}>Preview</span>
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${isGenerating ? 'text-gray-400' : 'text-gray-900'}`}>Preview</span>
                     </div>
                 </div>
 
-                {/* Main Action Call */}
-                <div className="flex-1 md:flex-none">
-                    <button 
-                        onClick={handleAddToCart}
-                        disabled={isGenerating}
-                        className={`w-full md:min-w-[220px] py-4 px-10 rounded-xl font-black text-sm uppercase tracking-widest transition-all flex items-center justify-center gap-3 ${isGenerating ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-[#6366f1] hover:bg-[#4f46e5] text-white shadow-xl shadow-indigo-100 hover:-translate-y-1'}`}
-                    >
-                        {isGenerating ? 'Processing...' : 'Continue'}
-                        <ArrowRight className="w-4 h-4" />
-                    </button>
-                </div>
+                {/* Primary Action */}
+                <button 
+                    onClick={handleAddToCart}
+                    disabled={isGenerating}
+                    className={`w-full sm:w-auto min-w-[240px] py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all flex items-center justify-center gap-3 ${isGenerating ? 'bg-gray-100 text-gray-400 opacity-50' : 'bg-[#6366f1] hover:bg-[#4f46e5] text-white shadow-xl shadow-indigo-100'}`}
+                >
+                    {isGenerating ? 'Wait for Preview...' : 'Continue to Checkout'}
+                    <ArrowRight className="w-4 h-4" />
+                </button>
             </div>
         </div>
     );

@@ -18,6 +18,16 @@ export const CartProvider = ({ children }) => {
     const [isCheckingOut, setIsCheckingOut] = useState(false);
 
     useEffect(() => {
+        // Check if we just came back from a checkout attempt
+        const pendingCheckout = localStorage.getItem('magicwish_pending_checkout');
+        if (pendingCheckout === 'true') {
+            setCartItems([]);
+            localStorage.removeItem('magicwish_pending_checkout');
+            localStorage.removeItem('magicwish_cart');
+        }
+    }, []);
+
+    useEffect(() => {
         localStorage.setItem('magicwish_cart', JSON.stringify(cartItems));
     }, [cartItems]);
 
@@ -109,9 +119,9 @@ export const CartProvider = ({ children }) => {
 
             const checkoutUrl = data.cartCreate.cart.checkoutUrl;
             
-            // Clear cart before redirecting
-            clearCart();
-            localStorage.removeItem('magicwish_cart');
+            // Set flag to clear cart on next load (so it's empty if they come back)
+            // but keep it for now so there's no UI flash before redirect
+            localStorage.setItem('magicwish_pending_checkout', 'true');
 
             window.location.href = checkoutUrl;
         } catch (error) {

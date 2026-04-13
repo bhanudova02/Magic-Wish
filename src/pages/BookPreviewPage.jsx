@@ -213,21 +213,21 @@ export default function BookPreviewPage() {
                         {/* Order Summary Card */}
                         <div className="bg-white rounded-sm p-6 shadow-xl shadow-blue-100/50 border border-blue-50 space-y-4">
                             <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-3">Personalization Details</h3>
-                            <div className="grid grid-cols-2 lg:grid-cols-1 gap-6">
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-black text-[#624da0]/60 uppercase tracking-widest">Child's Name</p>
-                                    <p className="text-lg font-black text-gray-900">{personalization?.name}</p>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between gap-4 border-b border-gray-50 pb-2">
+                                    <p className="text-[10px] font-black text-[#624da0]/60 uppercase tracking-widest whitespace-nowrap">Child's Name</p>
+                                    <p className="text-sm font-black text-gray-900 truncate">{personalization?.name}</p>
                                 </div>
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-black text-[#624da0]/60 uppercase tracking-widest">Language</p>
-                                    <p className="text-lg font-black text-gray-900">{personalization?.language}</p>
+                                <div className="flex items-center justify-between gap-4 border-b border-gray-50 pb-2">
+                                    <p className="text-[10px] font-black text-[#624da0]/60 uppercase tracking-widest whitespace-nowrap">Language</p>
+                                    <p className="text-sm font-black text-gray-900">{personalization?.language}</p>
                                 </div>
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-black text-[#624da0]/60 uppercase tracking-widest">Book Title</p>
-                                    <p className="text-sm font-bold text-gray-700">{personalization?.title}</p>
+                                <div className="flex items-center justify-between gap-4 border-b border-gray-50 pb-2">
+                                    <p className="text-[10px] font-black text-[#624da0]/60 uppercase tracking-widest whitespace-nowrap">Book Title</p>
+                                    <p className="text-sm font-bold text-gray-700 truncate">{personalization?.title}</p>
                                 </div>
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-black text-[#624da0]/60 uppercase tracking-widest">Manufacturing</p>
+                                <div className="flex items-center justify-between gap-4">
+                                    <p className="text-[10px] font-black text-[#624da0]/60 uppercase tracking-widest whitespace-nowrap">Manufacturing</p>
                                     <p className="text-sm font-bold text-gray-700 flex items-center gap-1.5">
                                         <Clock className="w-3.5 h-3.5" /> 3-5 Days
                                     </p>

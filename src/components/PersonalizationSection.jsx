@@ -132,14 +132,21 @@ export default function PersonalizationSection({ book }) {
                         </div>
                         <div className="space-y-2">
                             <h3 className="text-2xl font-black text-gray-900 leading-tight">Save Your Magic!</h3>
-                            <p className="text-gray-500 font-medium">Please login or create an account to securely save your child's personalization and see the AI-generated preview.</p>
+                            <p className="text-gray-500 font-medium">Please login to securely save your child's personalization and see the AI-generated preview.</p>
                         </div>
                         <div className="space-y-3">
                             <button 
-                                onClick={() => navigate('/login')}
+                                onClick={async () => {
+                                    try {
+                                        const url = await getAuthorizeUrl();
+                                        window.location.href = url;
+                                    } catch (err) {
+                                        console.error("Login redirect failed:", err);
+                                    }
+                                }}
                                 className="w-full bg-[#a21caf] text-white py-4 rounded-2xl font-bold hover:bg-[#86198f] transition shadow-lg flex items-center justify-center gap-2"
                             >
-                                <Sparkles className="w-5 h-5" /> Login / Register
+                                <Sparkles className="w-5 h-5" /> Sign In
                             </button>
                             <button 
                                 onClick={() => setShowLoginModal(false)}

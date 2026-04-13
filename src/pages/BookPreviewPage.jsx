@@ -8,7 +8,9 @@ export default function BookPreviewPage() {
     const { addToCart } = useCart();
     const [personalization, setPersonalization] = useState(null);
     const [isGenerating, setIsGenerating] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
     const [generatedImage, setGeneratedImage] = useState(null);
+    const [cloudinaryUrl, setCloudinaryUrl] = useState(null);
     const [progress, setProgress] = useState(0);
     const [error, setError] = useState(null);
 
@@ -21,7 +23,7 @@ export default function BookPreviewPage() {
 
     useEffect(() => {
         let interval;
-        if (isGenerating) {
+        if (isGenerating || isUploading) {
             setProgress(0);
             interval = setInterval(() => {
                 setProgress((prev) => {
@@ -38,7 +40,7 @@ export default function BookPreviewPage() {
             clearInterval(interval);
         }
         return () => clearInterval(interval);
-    }, [isGenerating]);
+    }, [isGenerating, isUploading]);
 
     useEffect(() => {
         const stored = localStorage.getItem('last_personalization');
@@ -51,9 +53,12 @@ export default function BookPreviewPage() {
             const parsedData = JSON.parse(stored);
             setPersonalization(parsedData);
             
-            if (parsedData.generatedImage) {
+            // If we already have a Cloudinary URL, use it and don't re-generate
+            if (parsedData.generatedImage && parsedData.generatedImage.includes('cloudinary')) {
                 setGeneratedImage(parsedData.generatedImage);
+                setCloudinaryUrl(parsedData.generatedImage);
                 setIsGenerating(false);
+                setIsUploading(false);
                 setProgress(100);
             } else {
                 startGeneration(parsedData);
@@ -75,13 +80,16 @@ export default function BookPreviewPage() {
         const seed = Math.floor(Math.random() * 999999);
         const pollUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(activePrompt)}?width=1024&height=1024&seed=${seed}&nologo=true`;
         
+        // Show temporary pollinations image to user immediately
         setGeneratedImage(pollUrl);
 
         try {
+            setIsUploading(true);
             const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
             const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
             
             if (cloudName && preset) {
+                // Fetch the image from pollinations and upload to cloudinary
                 const response = await fetch(pollUrl);
                 const blob = await response.blob();
                 const uploadData = new FormData();
@@ -96,8 +104,11 @@ export default function BookPreviewPage() {
                 const cloudResult = await cloudRes.json();
                 if (cloudResult.secure_url) {
                     const finalUrl = cloudResult.secure_url;
-                    setGeneratedImage(finalUrl);
+                    setCloudinaryUrl(finalUrl);
+                    setGeneratedImage(finalUrl); // Switch user view to permanent URL
+                    setIsUploading(false);
                     
+                    // SAVE TO LOCAL STORAGE to prevent re-generation
                     const currentData = JSON.parse(localStorage.getItem('last_personalization'));
                     localStorage.setItem('last_personalization', JSON.stringify({
                         ...currentData,
@@ -106,34 +117,39 @@ export default function BookPreviewPage() {
                 }
             }
         } catch (err) {
-            console.warn("Background upload failed:", err);
+            console.warn("Cloudinary upload failed:", err);
+            setIsUploading(false);
         }
     };
 
     const handleImageLoad = () => {
-        setProgress(100);
-        setTimeout(() => setIsGenerating(false), 800);
+        if (!isUploading) {
+            setProgress(100);
+            setTimeout(() => setIsGenerating(false), 500);
+        }
     };
 
     const handleImageError = () => {
         setIsGenerating(false);
+        setIsUploading(false);
         if (personalization?.photo) {
             setGeneratedImage(personalization.photo);
-            setError("AI is busy. Showing your photo!");
+            setCloudinaryUrl(personalization.photo);
+            setError("AI preview using fallback photo.");
         } else {
             setError("Preview unavailable.");
         }
     };
 
     const handleAddToCart = () => {
-        if (!personalization) return;
+        if (!personalization || !cloudinaryUrl) return; // FORBID adding without cloudinary URL
 
         const attributes = [
             { key: "Child Name", value: personalization.name || "" },
             { key: "Child Age", value: String(personalization.age || "") },
             { key: "Language", value: personalization.language || "English" },
             { key: "Child Photo", value: personalization.photo || "" },
-            { key: "AI Cover URL", value: generatedImage || "" },
+            { key: "AI Cover URL", value: cloudinaryUrl }, // ONLY CLOUDINARY URL GOES TO SHOPIFY
             { key: "Manufacturing Instruction", value: finalAIInstruction }
         ];
 
@@ -145,68 +161,71 @@ export default function BookPreviewPage() {
     };
 
     useEffect(() => {
-        if (personalization && !isGenerating && generatedImage) {
+        if (personalization && !isGenerating && !isUploading && cloudinaryUrl) {
             console.log("%cFinal AI Manufacturing Instruction:", "color: #a21caf; font-weight: bold; font-size: 14px;");
             console.log(finalAIInstruction);
+            console.log("Verified Permanent Cloudinary URL:", cloudinaryUrl);
         }
-    }, [isGenerating, finalAIInstruction, personalization, generatedImage]);
+    }, [isGenerating, isUploading, finalAIInstruction, personalization, cloudinaryUrl]);
 
     if (!personalization) return null;
+
+    const canContinue = !isGenerating && !isUploading && cloudinaryUrl;
 
     return (
         <div className="bg-[#fcfaff] min-h-screen pt-24 pb-20">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 
-                {/* Simplified Content Layout */}
                 <div className="flex flex-col items-center gap-12">
                     
                     <div className="text-center space-y-2">
                         <h1 className="text-3xl font-black text-gray-900 tracking-tight">Preview Your Adventure</h1>
-                        <p className="text-gray-500 font-medium">Your personalized cover is ready to view</p>
+                        <p className="text-gray-500 font-medium">Your storybook is almost ready</p>
                     </div>
 
-                    <div className="relative w-full max-w-[440px]">
-                        {/* 3D Book Shadow Effect */}
+                    <div className="relative w-full max-w-[420px]">
                         <div className="absolute -inset-10 bg-purple-500/5 blur-[80px] rounded-full -z-10"></div>
                         
                         <div className="relative aspect-[4/5] bg-white rounded-3xl shadow-2xl border-x-[10px] border-white overflow-hidden flex items-center justify-center">
-                            {isGenerating && (
+                            {(isGenerating || isUploading) && (
                                 <div className="absolute inset-0 z-20 bg-white flex flex-col items-center justify-center text-center p-8">
                                     <div className="relative mb-8">
-                                        <div className="w-20 h-20 rounded-2xl bg-gray-50 overflow-hidden relative border-2 border-white shadow-md">
+                                        <div className="w-20 h-20 rounded-2xl bg-gray-50 overflow-hidden border-2 border-white shadow-md">
                                             {personalization?.photo && <img src={personalization.photo} className="w-full h-full object-cover opacity-50" />}
                                         </div>
                                         <div className="absolute -inset-4 border-2 border-purple-100 border-t-purple-600 rounded-full animate-spin"></div>
                                     </div>
-                                    <p className="text-sm font-black text-gray-400 uppercase tracking-widest">Generating {Math.round(progress)}%</p>
+                                    <p className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                                        {isUploading ? "Finalizing Security..." : `Painting Cover ${Math.round(progress)}%`}
+                                    </p>
                                 </div>
                             )}
                             
                             <img 
                                 src={generatedImage} 
-                                alt="Book Preview" 
+                                alt="Cover" 
                                 onLoad={handleImageLoad}
                                 onError={handleImageError}
-                                className={`w-full h-full object-cover transition-opacity duration-1000 ${isGenerating ? 'opacity-0' : 'opacity-100'}`}
+                                className={`w-full h-full object-cover transition-opacity duration-1000 ${(isGenerating || isUploading) ? 'opacity-0' : 'opacity-100'}`}
                             />
                         </div>
                     </div>
 
-                    <div className="w-full max-w-[440px] flex flex-col gap-4">
+                    <div className="w-full max-w-[420px] flex flex-col gap-4">
                         <button 
                             onClick={handleAddToCart}
-                            disabled={isGenerating}
-                            className={`w-full py-5 rounded-2xl font-black text-xl uppercase tracking-widest transition-all flex items-center justify-center gap-3 ${isGenerating ? 'bg-gray-100 text-gray-400' : 'bg-[#6366f1] hover:bg-[#4f46e5] text-white shadow-xl shadow-indigo-100 hover:-translate-y-1'}`}
+                            disabled={!canContinue}
+                            className={`w-full py-5 rounded-2xl font-black text-xl uppercase tracking-widest transition-all flex items-center justify-center gap-3 ${!canContinue ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-[#6366f1] hover:bg-[#4f46e5] text-white shadow-xl shadow-indigo-100 hover:-translate-y-1 active:scale-95'}`}
                         >
-                            {isGenerating ? 'Generating...' : 'Continue to Cart'}
-                            <ArrowRight className="w-6 h-6" />
+                            {!canContinue ? (isUploading ? 'Securing Image...' : 'Please Wait...') : 'Continue to Cart'}
+                            {canContinue && <ArrowRight className="w-6 h-6" />}
                         </button>
                         
                         <button 
                             onClick={() => navigate(-1)}
-                            className="w-full py-4 text-gray-400 font-bold text-sm uppercase tracking-widest hover:text-gray-600 transition"
+                            className="w-full py-2 text-gray-400 font-bold text-sm uppercase tracking-widest hover:text-gray-600 transition"
                         >
-                            Back to Customise
+                            Edit Personalization
                         </button>
                     </div>
 

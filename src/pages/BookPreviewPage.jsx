@@ -184,15 +184,10 @@ export default function BookPreviewPage() {
                     {/* Left side: Book Information */}
                     <div className="lg:col-span-5 space-y-10 animate-in slide-in-from-right duration-700 order-2 lg:order-2">
                         <div className="space-y-6">
-                            <button 
-                                onClick={() => navigate(-1)}
-                                className="hidden lg:flex items-center gap-2 text-[#624da0] font-black text-sm uppercase tracking-widest hover:translate-x-[-4px] transition-transform"
-                            >
-                                <ArrowLeft className="w-5 h-5" /> Go Back
-                            </button>
+
                             <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-tight">
                                 Your Magical <br />
-                                <span className="text-[#624da0]">Book Preview</span>
+                                <span className="text-[#624da0]">Book Preview & Add To Cart</span>
                             </h1>
                             <p className="text-gray-600 text-lg leading-relaxed max-w-lg">
                                 We've customized the cover specifically for <span className="text-[#624da0] font-bold">{personalization?.name}</span>. 

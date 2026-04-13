@@ -102,6 +102,40 @@ export default function BooksPage() {
     const [isMoreLoading, setIsMoreLoading] = useState(false);
     const loaderRef = React.useRef(null);
 
+    const filteredBooks = useMemo(() => {
+        let result = books.filter(book => {
+            const matchesSearch = searchQuery === '' ||
+                book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                book.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+            const matchesGender = selectedGenders.length === 0 ||
+                selectedGenders.includes(book.gender) ||
+                book.gender === 'unisex';
+
+            const matchesAge = selectedAges.length === 0 ||
+                selectedAges.includes(book.age);
+
+            const matchesCategory = selectedCategories.length === 0 ||
+                selectedCategories.some(cat => book.tags?.includes(cat));
+
+            return matchesSearch && matchesGender && matchesAge && matchesCategory;
+        });
+
+        // Apply Sorting
+        return [...result].sort((a, b) => {
+            if (sortBy === 'price-low') {
+                return parseFloat(a.price.replace('$', '')) - parseFloat(b.price.replace('$', ''));
+            }
+            if (sortBy === 'price-high') {
+                return parseFloat(b.price.replace('$', '')) - parseFloat(a.price.replace('$', ''));
+            }
+            if (sortBy === 'newest') {
+                return b.sortId - a.sortId; // Assuming higher ID is newer
+            }
+            return 0;
+        });
+    }, [books, searchQuery, selectedGenders, selectedAges, selectedCategories, sortBy]);
+
     useEffect(() => {
         getShopifyBooks().then(data => {
             setBooks(data);
@@ -191,40 +225,6 @@ export default function BooksPage() {
             window.history.back();
         }
     };
-
-    const filteredBooks = useMemo(() => {
-        let result = books.filter(book => {
-            const matchesSearch = searchQuery === '' ||
-                book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                book.description.toLowerCase().includes(searchQuery.toLowerCase());
-
-            const matchesGender = selectedGenders.length === 0 ||
-                selectedGenders.includes(book.gender) ||
-                book.gender === 'unisex';
-
-            const matchesAge = selectedAges.length === 0 ||
-                selectedAges.includes(book.age);
-
-            const matchesCategory = selectedCategories.length === 0 ||
-                selectedCategories.some(cat => book.tags?.includes(cat));
-
-            return matchesSearch && matchesGender && matchesAge && matchesCategory;
-        });
-
-        // Apply Sorting
-        return [...result].sort((a, b) => {
-            if (sortBy === 'price-low') {
-                return parseFloat(a.price.replace('$', '')) - parseFloat(b.price.replace('$', ''));
-            }
-            if (sortBy === 'price-high') {
-                return parseFloat(b.price.replace('$', '')) - parseFloat(a.price.replace('$', ''));
-            }
-            if (sortBy === 'newest') {
-                return b.sortId - a.sortId; // Assuming higher ID is newer
-            }
-            return 0;
-        });
-    }, [books, searchQuery, selectedGenders, selectedAges, selectedCategories, sortBy]);
 
     return (
         <div className="min-h-screen bg-white pt-[64px] pb-0">

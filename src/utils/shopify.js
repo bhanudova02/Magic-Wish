@@ -329,7 +329,7 @@ export const cartCreateMutation = `
 `;
 
 export const cartLinesAddMutation = `
-  mutation cartLinesAdd($cartId: ID!, $lines: [BaseCartLineInput!]!) {
+  mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
     cartLinesAdd(cartId: $cartId, lines: $lines) {
       cart {
         id

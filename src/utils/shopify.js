@@ -5,7 +5,7 @@ export const shopId = import.meta.env.VITE_SHOPIFY_SHOP_ID;
 export async function customerAccountFetch({ query, variables = {} }) {
   const endpoint = `https://shopify.com/65892843582/account/customer/api/2026-04/graphql`;
   const token = localStorage.getItem('shopify_access_token')?.trim();
-  const authHeader = token ? (token.startsWith('Bearer ') ? token : `Bearer ${token}`) : "";
+  const authHeader = token || "";
 
   try {
     const result = await fetch(endpoint, {

@@ -197,11 +197,9 @@ export const getCustomerOrdersQuery = `
                 node {
                   title
                   quantity
-                  variant {
-                    image {
-                      url
-                      altText
-                    }
+                  image {
+                    url
+                    altText
                   }
                 }
               }

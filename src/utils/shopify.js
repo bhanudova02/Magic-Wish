@@ -3,7 +3,7 @@ export const storefrontToken = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN;
 export const shopId = import.meta.env.VITE_SHOPIFY_SHOP_ID;
 
 export async function customerAccountFetch({ query, variables = {} }) {
-  const endpoint = `https://shopify.com/${shopId}/account/api/2024-07/graphql`;
+  const endpoint = `https://shopify.com/${shopId}/account/api/2024-04/graphql`;
   const token = localStorage.getItem('shopify_access_token');
 
   try {
@@ -11,7 +11,7 @@ export async function customerAccountFetch({ query, variables = {} }) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token.startsWith('Bearer ') ? token : `Bearer ${token}`,
+        "Authorization": token ? (token.startsWith('Bearer ') ? token : `Bearer ${token}`) : "",
       },
       body: JSON.stringify({
         query,

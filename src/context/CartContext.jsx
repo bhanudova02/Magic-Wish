@@ -127,7 +127,7 @@ export const CartProvider = ({ children }) => {
 
 
 
-    const addToCart = async (product) => {
+    const addToCart = async (product, attributes = []) => {
         if (!product.variantId) return;
         setIsSynchronizing(true);
         try {
@@ -143,7 +143,11 @@ export const CartProvider = ({ children }) => {
                 query: cartLinesAddMutation, 
                 variables: { 
                     cartId, 
-                    lines: [{ merchandiseId: product.variantId, quantity: 1 }] 
+                    lines: [{ 
+                        merchandiseId: product.variantId, 
+                        quantity: 1,
+                        attributes: attributes // Attach personalization!
+                    }] 
                 } 
             });
             
@@ -155,7 +159,7 @@ export const CartProvider = ({ children }) => {
                 if (error.message.toLowerCase().includes("not found") || error.field?.includes("cartId")) {
                     localStorage.removeItem(getCartIdKey(user));
                     await fetchOrCreateCart();
-                    return addToCart(product); // Recursive retry
+                    return addToCart(product, attributes); // Recursive retry
                 }
                 throw new Error(error.message);
             }

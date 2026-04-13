@@ -99,7 +99,18 @@ export default function CartDrawer() {
                                                 <Trash2 className="w-3.5 h-3.5" />
                                             </button>
                                         </div>
-                                        <div className="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-widest">{item.gender} • {item.age}</div>
+                                        <div className="flex flex-wrap gap-2 mt-1">
+                                            {item.attributes?.map((attr, idx) => {
+                                                if (["Child Name", "Child Age"].includes(attr.key)) {
+                                                    return (
+                                                        <div key={idx} className="bg-purple-50 text-purple-700 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider border border-purple-100/50">
+                                                            {attr.value}
+                                                        </div>
+                                                    );
+                                                }
+                                                return null;
+                                            })}
+                                        </div>
                                         
                                         <div className="mt-auto flex items-center justify-between pt-2">
                                             {/* Quantity Controller */}

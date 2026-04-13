@@ -288,6 +288,10 @@ export const getCartQuery = `
           node {
             id
             quantity
+            attributes {
+              key
+              value
+            }
             merchandise {
               ... on ProductVariant {
                 id

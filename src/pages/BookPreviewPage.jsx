@@ -81,11 +81,19 @@ export default function BookPreviewPage() {
     if (!personalization) return null;
 
     const handleAddToCart = () => {
+        const attributes = [
+            { key: "Child Name", value: personalization?.name || "" },
+            { key: "Child Age", value: String(personalization?.age || "") },
+            { key: "Child Photo", value: personalization?.photo || "" },
+            { key: "AI Cover URL", value: generatedImage || "" },
+            { key: "Manufacturing Prompt", value: `Professional storybook cover titled "${personalization.title}". ${personalization.description}. The hero is a ${personalization.age} year old child named ${personalization.name}. Scene: ${personalization.coverpagePrompt}.` }
+        ];
+
         addToCart({ 
             id: personalization.productId, 
             variantId: personalization.variantId, 
             title: personalization.title
-        });
+        }, attributes);
     };
 
     return (

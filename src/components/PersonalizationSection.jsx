@@ -42,18 +42,41 @@ export default function PersonalizationSection({ book }) {
                 img.src = event.target.result;
                 img.onload = async () => {
                     try {
-                        // Detect faces
+                        // Resizing logic for localStorage safety
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 500;
+                        const MAX_HEIGHT = 500;
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > height) {
+                            if (width > MAX_WIDTH) {
+                                height *= MAX_WIDTH / width;
+                                width = MAX_WIDTH;
+                            }
+                        } else {
+                            if (height > MAX_HEIGHT) {
+                                width *= MAX_HEIGHT / height;
+                                height = MAX_HEIGHT;
+                            }
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+
+                        // Detect faces on the original or compressed image
                         const detections = await faceapi.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions());
                         
                         if (detections.length > 0) {
-                            setUploadedPhoto(event.target.result);
+                            setUploadedPhoto(compressedBase64);
                             setShowWarning(false);
                         } else {
                             setShowWarning(true);
                         }
                     } catch (err) {
                         console.error("Face detection error:", err);
-                        // Fallback: accept if detection fails but log it
                         setUploadedPhoto(event.target.result);
                     } finally {
                         setIsValidating(false);
@@ -333,12 +356,13 @@ export default function PersonalizationSection({ book }) {
 
                                     <div className="space-y-2">
                                         <button 
-                                            onClick={() => {
+                                            disabled={isValidating}
+                                            onClick={async () => {
                                                 const nameRegex = /^[a-zA-Z]/;
                                                 const newErrors = {};
 
                                                 if (!uploadedPhoto) {
-                                                    alert("Please upload a photo first."); // Still alert for photo as it's outside the form card usually
+                                                    alert("Please upload a photo first.");
                                                     return;
                                                 }
                                                 
@@ -357,20 +381,48 @@ export default function PersonalizationSection({ book }) {
                                                     return;
                                                 }
 
-                                                localStorage.setItem('last_personalization', JSON.stringify({
-                                                    ...formData,
-                                                    photo: uploadedPhoto,
-                                                    productId: book.id,
-                                                    variantId: book.variantId,
-                                                    title: book.title,
-                                                    description: book.description,
-                                                    coverpagePrompt: book.coverpagePrompt
-                                                }));
-                                                navigate('/preview');
+                                                try {
+                                                    setIsValidating(true); // Re-use loading state for upload
+                                                    
+                                                    // Prepare Cloudinary Upload
+                                                    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+                                                    const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+                                                    
+                                                    const uploadData = new FormData();
+                                                    uploadData.append('file', uploadedPhoto);
+                                                    uploadData.append('upload_preset', preset);
+                                                    
+                                                    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                                                        method: 'POST',
+                                                        body: uploadData
+                                                    });
+                                                    
+                                                    const result = await response.json();
+                                                    
+                                                    if (!result.secure_url) {
+                                                        throw new Error("Upload failed");
+                                                    }
+
+                                                    localStorage.setItem('last_personalization', JSON.stringify({
+                                                        ...formData,
+                                                        photo: result.secure_url, // Store the Cloudinary URL!
+                                                        productId: book.id,
+                                                        variantId: book.variantId,
+                                                        title: book.title,
+                                                        description: book.description,
+                                                        coverpagePrompt: book.coverpagePrompt
+                                                    }));
+                                                    navigate('/preview');
+                                                } catch (err) {
+                                                    console.error("Cloudinary Error:", err);
+                                                    alert("Failed to upload photo. Please try again.");
+                                                } finally {
+                                                    setIsValidating(false);
+                                                }
                                             }}
-                                            className="w-full bg-[#a21caf] hover:bg-[#86198f] text-white py-5 px-6 rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-purple-200 mt-4"
+                                            className="w-full bg-[#a21caf] hover:bg-[#86198f] text-white py-5 px-6 rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-purple-200 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
-                                            Preview My Book <Sparkles className="w-6 h-6" />
+                                            {isValidating ? 'Finishing Up...' : 'Preview My Book'} <Sparkles className="w-6 h-6" />
                                         </button>
                                         {Object.keys(errors).length > 0 && <p className="text-center text-[10px] text-red-500 font-bold">Please fix the errors above to continue.</p>}
                                     </div>

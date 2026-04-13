@@ -198,10 +198,14 @@ export default function BookPreviewPage() {
                             </div>
                             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-inner">
                                 <p className="text-gray-700 font-bold text-lg leading-relaxed">
-                                    "Generate a premium <span className="text-purple-600">book front cover artwork</span> featuring <span className="text-purple-600 underline">a {personalization?.age || '...'} year old child named {personalization?.name || '...'}</span> in a scene described as: <span className="text-gray-900 italic">{personalization?.coverpagePrompt}</span>. Maintain a magical, cinematic, and vibrant fantasy style."
+                                    "Professional storybook cover titled <span className="text-purple-600">"{personalization?.title}"</span>. 
+                                    <span className="text-gray-500 font-medium"> {(personalization?.description || "").substring(0, 100)}...</span>
+                                    The hero is a <span className="text-purple-600 underline">{personalization?.age || '...'} year old</span> child named <span className="text-purple-600 underline font-black">{personalization?.name || '...'}</span>. 
+                                    Scene: <span className="text-gray-900 italic">"{personalization?.coverpagePrompt}"</span>. 
+                                    Maintain a magical fantasy and vibrant 8k style."
                                 </p>
                             </div>
-                            <p className="text-[10px] text-purple-400 font-medium text-center italic mt-2 italic">* This instruction will be sent to our AI artist to craft your unique book cover.</p>
+                            <p className="text-[10px] text-purple-400 font-medium text-center italic mt-2 italic">* This instruction is sent to our AI production engine to craft your unique book cover.</p>
                         </div>
 
                         {/* Checkout Section */}

@@ -7,10 +7,9 @@ import {
     getCustomerOrdersQuery, 
     customerAddressCreateMutation,
     customerAddressUpdateMutation,
-    customerAddressDeleteMutation,
-    customerUpdateMutation
+    customerAddressDeleteMutation
 } from '../utils/shopify';
-import { Package, User as UserIcon, LogOut, ShoppingBag, Clock, Plus, Pencil, X } from 'lucide-react';
+import { Package, User as UserIcon, LogOut, Pencil, X } from 'lucide-react';
 
 // Reusable Modal Component
 const Modal = ({ isOpen, onClose, title, children }) => {
@@ -62,7 +61,7 @@ const AddressFormFields = ({ address, setAddress, isSaving, onSave, submitLabel 
 );
 
 const ProfilePage = () => {
-    const { user, isAuthenticated, isLoading: authLoading, logoutUser } = useAuth();
+    const { isAuthenticated, isLoading: authLoading, logoutUser } = useAuth();
     const [searchParams, setSearchParams] = useSearchParams();
     const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'orders');
     const [customerData, setCustomerData] = useState(null);
@@ -119,15 +118,27 @@ const ProfilePage = () => {
         e.preventDefault();
         try {
             setIsSaving(true);
-            // Prepare clean data for Shopify
             const { id, ...cleanAddress } = editingAddress;
+            // Remove any extra fields that might cause GraphQL errors
+            const formattedAddress = {
+                address1: cleanAddress.address1,
+                address2: cleanAddress.address2,
+                city: cleanAddress.city,
+                province: cleanAddress.province,
+                zip: cleanAddress.zip,
+                country: cleanAddress.country || 'India',
+                firstName: cleanAddress.firstName,
+                lastName: cleanAddress.lastName
+            };
             const data = await customerAccountFetch({ 
                 query: customerAddressUpdateMutation, 
-                variables: { address: cleanAddress, addressId: id } 
+                variables: { address: formattedAddress, addressId: id } 
             });
             if (!data.customerAddressUpdate.userErrors.length) {
                 setEditingAddress(null);
                 fetchProfileData();
+            } else {
+                alert(data.customerAddressUpdate.userErrors[0].message);
             }
         } catch (error) {
             alert('Error updating address');
@@ -208,7 +219,7 @@ const ProfilePage = () => {
                     </div>
                     <div>
                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Email Address</label>
-                        <p className="text-sm font-bold break-all">{customerData?.emailAddress?.emailAddress}</p>
+                        <p className="text-sm font-bold break-all underline decoration-gray-200 underline-offset-4">{customerData?.emailAddress?.emailAddress}</p>
                     </div>
                 </div>
             </section>
@@ -245,7 +256,6 @@ const ProfilePage = () => {
                 </div>
             </section>
 
-            {/* Modals */}
             <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="Add New Address">
                 <AddressFormFields address={newAddress} setAddress={setNewAddress} isSaving={isSaving} onSave={handleCreateAddress} submitLabel="Save Address" />
             </Modal>
@@ -258,15 +268,17 @@ const ProfilePage = () => {
         </div>
     );
 
+    const tabs = [
+        { id: 'orders', label: 'Orders', icon: Package },
+        { id: 'profile', label: 'Profile', icon: UserIcon }
+    ];
+
     return (
         <div className="min-h-screen pt-24 pb-20 bg-white font-sans text-gray-900">
             <div className="max-w-4xl mx-auto px-6">
                 <div className="flex items-center justify-between mb-12 border-b-2 border-gray-200">
                     <div className="flex gap-8">
-                        {[
-                            { id: 'orders', label: 'Orders', icon: Package },
-                            { id: 'profile', label: 'Profile', icon: UserIcon }
-                        ].map((tab) => (
+                        {tabs.map((tab) => (
                             <button 
                                 key={tab.id} 
                                 onClick={() => { setActiveTab(tab.id); setSearchParams({ tab: tab.id }); }} 

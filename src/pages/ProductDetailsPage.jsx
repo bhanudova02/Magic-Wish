@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Star, ChevronRight, ChevronDown, ChevronUp, CheckCircle2, Book, GraduationCap, Eye } from 'lucide-react';
 import { shopifyFetch, getProductQuery } from '../utils/shopify';
 import { useCart } from '../context/CartContext';
+import PersonalizationSection from '../components/PersonalizationSection';
 
 export default function ProductDetailsPage() {
     const { id } = useParams();
@@ -258,6 +259,11 @@ export default function ProductDetailsPage() {
                             ))}
                         </div>
                     </div>
+                </div>
+
+                {/* New Personalization UI Component */}
+                <div className="mt-20 -mx-4 sm:-mx-6 lg:-mx-8">
+                    <PersonalizationSection />
                 </div>
             </div>
 

@@ -201,7 +201,33 @@ const ProfilePage = () => {
                     </button>
                 </div>
                 {isLoading ? (
-                    <div className="py-24 text-center text-gray-300 font-bold uppercase text-[10px] tracking-[0.2em] italic">Syncing Data...</div>
+                    <div className="space-y-10">
+                        <div className="flex flex-col items-center gap-4 py-12">
+                            <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent animate-spin rounded-full"></div>
+                            <div className="text-blue-600 font-bold uppercase text-[10px] tracking-[0.3em] italic animate-pulse">Syncing Your Data...</div>
+                        </div>
+                        
+                        <div className="animate-pulse space-y-6">
+                            {[1, 2, 3].map((i) => (
+                                <div key={i} className="border-2 border-gray-100 rounded-sm overflow-hidden">
+                                    <div className="p-4 bg-gray-50/50 flex justify-between items-center border-b-2 border-gray-100">
+                                        <div className="flex gap-4">
+                                            <div className="h-2.5 w-20 bg-gray-200 rounded-sm"></div>
+                                            <div className="h-2.5 w-32 bg-gray-200 rounded-sm"></div>
+                                        </div>
+                                        <div className="h-4 w-24 bg-gray-200 rounded-sm"></div>
+                                    </div>
+                                    <div className="p-4 flex gap-5 items-center">
+                                        <div className="w-14 h-20 bg-gray-100 rounded-sm"></div>
+                                        <div className="flex-1 space-y-3">
+                                            <div className="h-4 w-3/4 bg-gray-100 rounded-sm"></div>
+                                            <div className="h-2.5 w-1/4 bg-gray-100 rounded-sm"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 ) : (
                     <div className="animate-in fade-in duration-500">
                         {activeTab === 'orders' ? renderOrdersTab() : renderProfileTab()}

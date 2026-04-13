@@ -186,15 +186,17 @@ const ProfilePage = () => {
         </div>
     );
 
+    const tabs = [
+        { id: 'orders', label: 'Orders', icon: Package },
+        { id: 'profile', label: 'Profile', icon: UserIcon }
+    ];
+
     return (
         <div className="min-h-screen pt-24 pb-20 bg-white font-sans text-gray-900">
             <div className="max-w-4xl mx-auto px-6">
                 <div className="flex items-center justify-between mb-12 border-b-2 border-gray-200">
                     <div className="flex gap-8">
-                        {[
-                            { id: 'orders', label: 'My Orders', icon: Package },
-                            { id: 'profile', label: 'My Profile', icon: UserIcon }
-                        ].map((tab) => (
+                        {tabs.map((tab) => (
                             <button 
                                 key={tab.id} 
                                 onClick={() => { setActiveTab(tab.id); setSearchParams({ tab: tab.id }); }} 
@@ -205,7 +207,8 @@ const ProfilePage = () => {
                             </button>
                         ))}
                     </div>
-                    <button onClick={logoutUser} className="pb-4 text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-black flex items-center gap-2">
+                    {/* Sign Out hidden on mobile, visible on desktop */}
+                    <button onClick={logoutUser} className="hidden lg:flex pb-4 text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-black items-center gap-2">
                         <LogOut className="w-4 h-4" />
                         Sign Out
                     </button>

@@ -4,6 +4,7 @@ import { exchangeCodeForToken } from '../utils/auth';
 import { useAuth } from '../context/AuthContext';
 
 const AuthCallback = () => {
+    const hasExchanged = React.useRef(false);
     const navigate = useNavigate();
     const location = useLocation();
     const { loginUser } = useAuth();
@@ -11,31 +12,27 @@ const AuthCallback = () => {
 
     useEffect(() => {
         const handleCallback = async () => {
+            if (hasExchanged.current) return;
+            
             const params = new URLSearchParams(location.search);
             const code = params.get('code');
             const state = params.get('state');
 
-            // Verify state to prevent CSRF
-            const storedState = localStorage.getItem('shopify_auth_state');
-            
-            // If there's no stored state but we've already cleaned up (like on page refresh)
-            if (!storedState && !state) {
-                 navigate('/');
-                 return;
-            }
-
-            if (state !== storedState) {
-                // If it mismatches but we have already logged in, safely redirect back
-                if (!storedState) {
-                     navigate('/');
-                     return;
-                }
-                setError('Security state mismatch. Please try logging in again.');
-                return;
-            }
-
             if (code) {
+                hasExchanged.current = true;
                 try {
+                    // Verify state to prevent CSRF
+                    const storedState = localStorage.getItem('shopify_auth_state');
+                    
+                    if (state !== storedState) {
+                        if (!storedState) {
+                             navigate('/');
+                             return;
+                        }
+                        setError('Security state mismatch. Please try logging in again.');
+                        return;
+                    }
+
                     const tokens = await exchangeCodeForToken(code);
                     loginUser(tokens);
                     
@@ -50,8 +47,6 @@ const AuthCallback = () => {
                     console.error('Token exchange failed:', err);
                     setError('Failed to complete login. Please try again.');
                 }
-            } else {
-                setError('No authorization code found.');
             }
         };
 

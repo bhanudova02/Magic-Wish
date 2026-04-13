@@ -44,7 +44,10 @@ export default function BookPreviewPage() {
                 setIsGenerating(true);
                 setError(null);
                 
-                const finalPrompt = `Fantasy book cover illustration, child named ${parsedData.name}, ${parsedData.coverpagePrompt}, magical lighting, high detail, digital art style`;
+                const title = parsedData.title || "Magic Story";
+                const desc = (parsedData.description || "").substring(0, 150); // Truncate to keep URL safe
+                const finalPrompt = `Professional storybook cover titled "${title}". ${desc}. The hero is a ${parsedData.age} year old child named ${parsedData.name}. Scene: ${parsedData.coverpagePrompt}. Magical fantasy, vibrant 8k`;
+                
                 const seed = Math.floor(Math.random() * 999999);
                 const apiUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}?width=1024&height=1024&seed=${seed}&nologo=true`;
                 

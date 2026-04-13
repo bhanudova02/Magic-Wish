@@ -268,12 +268,99 @@ export const customerCreateMutation = `
   }
 `;
 
+export const getCartQuery = `
+  query getCart($cartId: ID!) {
+    cart(id: $cartId) {
+      id
+      checkoutUrl
+      totalQuantity
+      cost {
+        subtotalAmount {
+          amount
+          currencyCode
+        }
+      }
+      lines(first: 50) {
+        edges {
+          node {
+            id
+            quantity
+            merchandise {
+              ... on ProductVariant {
+                id
+                title
+                price {
+                  amount
+                  currencyCode
+                }
+                product {
+                  title
+                  handle
+                  images(first: 1) {
+                    edges {
+                      node {
+                        url
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const cartCreateMutation = `
   mutation cartCreate($input: CartInput!) {
     cartCreate(input: $input) {
       cart {
         id
         checkoutUrl
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export const cartLinesAddMutation = `
+  mutation cartLinesAdd($cartId: ID!, $lines: [BaseCartLineInput!]!) {
+    cartLinesAdd(cartId: $cartId, lines: $lines) {
+      cart {
+        id
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export const cartLinesUpdateMutation = `
+  mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+    cartLinesUpdate(cartId: $cartId, lines: $lines) {
+      cart {
+        id
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export const cartLinesRemoveMutation = `
+  mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
+    cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+      cart {
+        id
       }
       userErrors {
         field

@@ -5,7 +5,6 @@ import {
     customerAccountFetch, 
     getCustomerProfileQuery, 
     getCustomerOrdersQuery, 
-    customerAddressCreateMutation,
     customerAddressCreateMutation
 } from '../utils/shopify';
 import { Package, User as UserIcon, LogOut, X } from 'lucide-react';
@@ -204,8 +203,8 @@ const ProfilePage = () => {
     );
 
     const tabs = [
-        { id: 'orders', label: 'Orders', icon: Package },
-        { id: 'profile', label: 'Profile', icon: UserIcon }
+        { id: 'orders', label: 'My Order', icon: Package },
+        { id: 'profile', label: 'My Profile', icon: UserIcon }
     ];
 
     return (

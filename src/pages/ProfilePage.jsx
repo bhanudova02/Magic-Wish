@@ -64,6 +64,30 @@ const ProfilePage = () => {
     const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'orders');
     const [customerData, setCustomerData] = useState(null);
     const [orders, setOrders] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const tab = searchParams.get('tab');
+        if (tab && ['profile', 'orders'].includes(tab)) setActiveTab(tab);
+    }, [searchParams]);
+
+    useEffect(() => {
+        if (isAuthenticated) fetchProfileData();
+    }, [isAuthenticated]);
+
+    const fetchProfileData = async () => {
+        try {
+            setIsLoading(true);
+            const profileRes = await customerAccountFetch({ query: getCustomerProfileQuery });
+            if (profileRes?.customer) setCustomerData(profileRes.customer);
+            const ordersRes = await customerAccountFetch({ query: getCustomerOrdersQuery, variables: { first: 10 } });
+            if (ordersRes?.customer?.orders) setOrders(ordersRes.customer.orders.edges.map(e => e.node) || []);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
     if (authLoading) return <div className="min-h-screen flex items-center justify-center bg-white"><div className="w-8 h-8 border-2 border-black border-t-transparent animate-spin"></div></div>;
     if (!isAuthenticated) return <Navigate to="/" replace />;
 

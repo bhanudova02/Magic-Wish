@@ -1,5 +1,8 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Upload, Check, X, Lock, Sparkles, Image as ImageIcon, Printer } from 'lucide-react';
+import * as faceapi from 'https://esm.sh/@vladmandic/face-api';
 import { useAuth } from '../context/AuthContext';
-// ... (other imports)
 
 export default function PersonalizationSection({ book }) {
     const navigate = useNavigate();
@@ -8,7 +11,12 @@ export default function PersonalizationSection({ book }) {
     const [isValidating, setIsValidating] = React.useState(false);
     const [showWarning, setShowWarning] = React.useState(false);
     const [showLoginModal, setShowLoginModal] = React.useState(false);
-    // ... rest of state
+    const [errors, setErrors] = React.useState({});
+    const [formData, setFormData] = React.useState({
+        language: 'English',
+        name: '',
+        age: ''
+    });
     
     const fileInputRef = React.useRef(null);
 
@@ -115,6 +123,35 @@ export default function PersonalizationSection({ book }) {
 
     return (
         <section className="bg-[#fdf2f8] py-16 md:py-24 overflow-hidden relative">
+            {/* Login Required Modal */}
+            {showLoginModal && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl space-y-6 text-center animate-in zoom-in-95 duration-300">
+                        <div className="w-20 h-20 bg-purple-50 rounded-full flex items-center justify-center mx-auto">
+                            <Lock className="w-10 h-10 text-purple-600" />
+                        </div>
+                        <div className="space-y-2">
+                            <h3 className="text-2xl font-black text-gray-900 leading-tight">Save Your Magic!</h3>
+                            <p className="text-gray-500 font-medium">Please login or create an account to securely save your child's personalization and see the AI-generated preview.</p>
+                        </div>
+                        <div className="space-y-3">
+                            <button 
+                                onClick={() => navigate('/login')}
+                                className="w-full bg-[#a21caf] text-white py-4 rounded-2xl font-bold hover:bg-[#86198f] transition shadow-lg flex items-center justify-center gap-2"
+                            >
+                                <Sparkles className="w-5 h-5" /> Login / Register
+                            </button>
+                            <button 
+                                onClick={() => setShowLoginModal(false)}
+                                className="w-full text-gray-500 py-3 rounded-2xl font-bold hover:bg-gray-50 transition"
+                            >
+                                Maybe Later
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Warning Modal */}
             {showWarning && (
                 <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
@@ -353,6 +390,11 @@ export default function PersonalizationSection({ book }) {
                                         <button 
                                             disabled={isValidating}
                                             onClick={async () => {
+                                                if (!user) {
+                                                    setShowLoginModal(true);
+                                                    return;
+                                                }
+
                                                 const nameRegex = /^[a-zA-Z]/;
                                                 const newErrors = {};
 

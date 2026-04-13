@@ -68,7 +68,7 @@ export default function CartPage() {
                                 <div className="flex-1 flex flex-col min-w-0">
                                     <div className="flex justify-between items-start gap-4">
                                         <h3 className="text-sm font-black text-[#2b124c] tracking-tight uppercase truncate">{item.title}</h3>
-                                        <div className="text-sm font-black text-blue-600">${(parseFloat(item.price.replace('$', '')) * item.quantity).toFixed(2)}</div>
+                                        <div className="text-sm font-black text-blue-600">${((item.priceAmount ?? parseFloat(item.price?.replace('$', '') || '0')) * item.quantity).toFixed(2)}</div>
                                     </div>
                                     
                                     <div className="text-[10px] font-bold text-gray-400 mt-0.5 uppercase tracking-widest italic">{item.gender} • {item.age}</div>

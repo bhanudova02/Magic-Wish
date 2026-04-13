@@ -53,6 +53,8 @@ export default function ProductDetailsPage() {
                     title: node.title,
                     description: node.description,
                     price: `$${priceMatch}`,
+                    priceAmount: parseFloat(priceMatch),
+                    currencyCode: variant?.price?.currencyCode || 'USD',
                     originalPrice: parseFloat(compareAtMatch) > parseFloat(priceMatch) ? `$${compareAtMatch}` : null,
                     badge,
                     age

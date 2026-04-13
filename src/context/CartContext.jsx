@@ -22,6 +22,10 @@ export const CartProvider = ({ children }) => {
     }, [cartItems]);
 
     const addToCart = (product) => {
+        if (!product.variantId) {
+            console.error("Cannot add item to cart: Missing variantId", product);
+            return;
+        }
         setCartItems((prevItems) => {
             const existingItem = prevItems.find((item) => item.id === product.id);
             if (existingItem) {
@@ -56,8 +60,8 @@ export const CartProvider = ({ children }) => {
 
     const getCartTotal = () => {
         return cartItems.reduce((total, item) => {
-            const price = parseFloat(item.price.replace('$', ''));
-            return total + price * item.quantity;
+            const price = item.priceAmount ?? parseFloat(item.price?.replace('$', '') || '0');
+            return isNaN(price) ? total : total + (price * item.quantity);
         }, 0);
     };
 

@@ -157,7 +157,6 @@ export default function CartDrawer() {
                                 Cart Details
                             </Link>
                         </div>
-                        <p className="mt-4 text-[9px] text-gray-300 text-center font-bold tracking-widest uppercase italic">* Shipping calculated at checkout</p>
                     </div>
                 )}
             </div>

@@ -213,7 +213,7 @@ export default function BookPreviewPage() {
                         {/* Order Summary Card */}
                         <div className="bg-white rounded-sm p-6 shadow-xl shadow-blue-100/50 border border-blue-50 space-y-4">
                             <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-3">Personalization Details</h3>
-                            <div className="grid grid-cols-2 gap-6">
+                            <div className="grid grid-cols-2 lg:grid-cols-1 gap-6">
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-black text-[#624da0]/60 uppercase tracking-widest">Child's Name</p>
                                     <p className="text-lg font-black text-gray-900">{personalization?.name}</p>

@@ -48,25 +48,45 @@ export const CartProvider = ({ children }) => {
         setIsSynchronizing(true);
         try {
             let cartId = localStorage.getItem(getCartIdKey(user));
-            let data;
+            let data = null;
 
             if (cartId) {
-                const res = await shopifyFetch({ query: getCartQuery, variables: { cartId } });
-                if (res?.cart) {
-                    data = res.cart;
-                } else {
+                try {
+                    const res = await shopifyFetch({ query: getCartQuery, variables: { cartId } });
+                    if (res?.cart) {
+                        data = res.cart;
+                    } else {
+                        // Cart ID is invalid or expired
+                        cartId = null;
+                        localStorage.removeItem(getCartIdKey(user));
+                    }
+                } catch (e) {
+                    console.warn("Cart fetch failed, will re-create:", e);
                     cartId = null;
+                    localStorage.removeItem(getCartIdKey(user));
                 }
             }
 
             if (!cartId) {
                 const input = {};
+                // Only add buyer identity if we have a valid access token
                 if (accessToken) {
                     input.buyerIdentity = { customerAccessToken: accessToken };
                 }
                 const res = await shopifyFetch({ query: cartCreateMutation, variables: { input } });
-                data = res.cartCreate.cart;
-                localStorage.setItem(getCartIdKey(user), data.id);
+                
+                if (res?.cartCreate?.userErrors?.length > 0) {
+                    console.error("Cart creation errors:", res.cartCreate.userErrors);
+                    // Special case: if buyerIdentity failed (e.g. expired token), try without it
+                    const fallbackRes = await shopifyFetch({ query: cartCreateMutation, variables: { input: {} } });
+                    data = fallbackRes.cartCreate.cart;
+                } else {
+                    data = res?.cartCreate?.cart;
+                }
+
+                if (data?.id) {
+                    localStorage.setItem(getCartIdKey(user), data.id);
+                }
             }
 
             if (data) {
@@ -75,7 +95,7 @@ export const CartProvider = ({ children }) => {
                 setCheckoutUrl(data.checkoutUrl);
             }
         } catch (error) {
-            console.error("Error syncing cart with Shopify:", error);
+            console.error("Critical error syncing cart with Shopify:", error);
         } finally {
             setIsSynchronizing(false);
         }

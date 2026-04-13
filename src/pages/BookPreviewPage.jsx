@@ -187,7 +187,7 @@ export default function BookPreviewPage() {
 
                             <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-tight">
                                 Your Magical <br />
-                                <span className="text-[#624da0]">Book Preview & Add To Cart</span>
+                                <span className="text-[#624da0]">Book Preview Ready</span>
                             </h1>
                             <p className="text-gray-600 text-lg leading-relaxed max-w-lg">
                                 We've customized the cover specifically for <span className="text-[#624da0] font-bold">{personalization?.name}</span>. 

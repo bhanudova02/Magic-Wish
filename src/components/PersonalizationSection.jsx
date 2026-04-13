@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Upload, Check, X, Lock, Sparkles, Image as ImageIcon, Printer } from 'lucide-react';
 import * as faceapi from 'https://esm.sh/@vladmandic/face-api';
 import { useAuth } from '../context/AuthContext';
+import { getAuthorizeUrl } from '../utils/auth';
 
 export default function PersonalizationSection({ book }) {
     const navigate = useNavigate();

@@ -45,7 +45,8 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('shopify_access_token');
         localStorage.removeItem('shopify_id_token');
         localStorage.removeItem('shopify_user');
-        localStorage.removeItem('magicwish_cart'); // Clear cart data
+        // Removed: localStorage.removeItem('magicwish_cart'); 
+        // We now use account-specific keys for persistence.
         
         if (idToken) {
             // Redirect to Shopify logout endpoint so it clears the server session

@@ -10,12 +10,29 @@ export const useCart = () => {
 
 export const CartProvider = ({ children }) => {
     const { user } = useAuth();
-    const [cartItems, setCartItems] = useState(() => {
-        const savedCart = localStorage.getItem('magicwish_cart');
-        return savedCart ? JSON.parse(savedCart) : [];
-    });
+    const [cartItems, setCartItems] = useState([]);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
+    
+    // Store user ID to manage account transitions and avoid data leaks
+    const lastUserIdRef = React.useRef(user?.id);
+    const getCartKey = (u) => u?.id ? `magicwish_cart_${u.id}` : 'magicwish_cart_guest';
+
+    // 1. Initial Load & Account Switching
+    useEffect(() => {
+        const key = getCartKey(user);
+        const savedCart = localStorage.getItem(key);
+        setCartItems(savedCart ? JSON.parse(savedCart) : []);
+        lastUserIdRef.current = user?.id;
+    }, [user?.id]);
+
+    // 2. Persistent Saving (Sync current state to current account key)
+    useEffect(() => {
+        if (lastUserIdRef.current === user?.id) {
+            const key = getCartKey(user);
+            localStorage.setItem(key, JSON.stringify(cartItems));
+        }
+    }, [cartItems, user?.id]);
 
     useEffect(() => {
         const handleCheckPendingCheckout = () => {
@@ -23,7 +40,8 @@ export const CartProvider = ({ children }) => {
             if (pendingCheckout === 'true') {
                 setCartItems([]);
                 localStorage.removeItem('magicwish_pending_checkout');
-                localStorage.removeItem('magicwish_cart');
+                // Clear the specific user's cart after returning from checkout
+                localStorage.removeItem(getCartKey(user));
             }
         };
 
@@ -40,9 +58,7 @@ export const CartProvider = ({ children }) => {
         };
     }, []);
 
-    useEffect(() => {
-        localStorage.setItem('magicwish_cart', JSON.stringify(cartItems));
-    }, [cartItems]);
+
 
     const addToCart = (product) => {
         if (!product.variantId) {

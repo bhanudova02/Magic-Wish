@@ -45,14 +45,41 @@ export default function BookPreviewPage() {
                 setError(null);
                 
                 const title = parsedData.title || "Magic Story";
-                const desc = (parsedData.description || "").substring(0, 150); // Truncate to keep URL safe
+                const desc = (parsedData.description || "").substring(0, 150);
                 const finalPrompt = `Professional storybook cover titled "${title}". ${desc}. The hero is a ${parsedData.age} year old child named ${parsedData.name}. Scene: ${parsedData.coverpagePrompt}. Magical fantasy, vibrant 8k`;
                 
                 const seed = Math.floor(Math.random() * 999999);
-                const apiUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}?width=1024&height=1024&seed=${seed}&nologo=true`;
+                const pollUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}?width=1024&height=1024&seed=${seed}&nologo=true`;
                 
-                console.log("AI Generation URL (Copy this to browser to test):", apiUrl);
-                setGeneratedImage(apiUrl);
+                setGeneratedImage(pollUrl); // Show the initial AI image fast
+
+                // BACKGROUND TASK: Save AI image to Cloudinary for permanence
+                try {
+                    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+                    const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+                    
+                    if (cloudName && preset) {
+                        const response = await fetch(pollUrl);
+                        const blob = await response.blob();
+                        
+                        const uploadData = new FormData();
+                        uploadData.append('file', blob);
+                        uploadData.append('upload_preset', preset);
+                        
+                        const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                            method: 'POST',
+                            body: uploadData
+                        });
+                        
+                        const cloudResult = await cloudRes.json();
+                        if (cloudResult.secure_url) {
+                            console.log("AI Image Permanent URL:", cloudResult.secure_url);
+                            setGeneratedImage(cloudResult.secure_url); // Switch to permanent URL
+                        }
+                    }
+                } catch (err) {
+                    console.warn("Could not save AI image to Cloudinary (Permanence skipped):", err);
+                }
             };
 
             generateImage();
@@ -84,6 +111,7 @@ export default function BookPreviewPage() {
         const attributes = [
             { key: "Child Name", value: personalization?.name || "" },
             { key: "Child Age", value: String(personalization?.age || "") },
+            { key: "Language", value: personalization?.language || "English" },
             { key: "Child Photo", value: personalization?.photo || "" },
             { key: "AI Cover URL", value: generatedImage || "" },
             { key: "Manufacturing Prompt", value: `Professional storybook cover titled "${personalization.title}". ${personalization.description}. The hero is a ${personalization.age} year old child named ${personalization.name}. Scene: ${personalization.coverpagePrompt}.` }

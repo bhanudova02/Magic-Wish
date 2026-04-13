@@ -64,53 +64,6 @@ const ProfilePage = () => {
     const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'orders');
     const [customerData, setCustomerData] = useState(null);
     const [orders, setOrders] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isSaving, setIsSaving] = useState(false);
-
-    // Modal States
-    const [showAddModal, setShowAddModal] = useState(false);
-    const [newAddress, setNewAddress] = useState({ address1: '', address2: '', city: '', province: '', zip: '', country: 'India', firstName: '', lastName: '' });
-
-    useEffect(() => {
-        const tab = searchParams.get('tab');
-        if (tab && ['profile', 'orders'].includes(tab)) setActiveTab(tab);
-    }, [searchParams]);
-
-    useEffect(() => {
-        if (isAuthenticated) fetchProfileData();
-    }, [isAuthenticated]);
-
-    const fetchProfileData = async () => {
-        try {
-            setIsLoading(true);
-            const profileRes = await customerAccountFetch({ query: getCustomerProfileQuery });
-            if (profileRes?.customer) setCustomerData(profileRes.customer);
-            const ordersRes = await customerAccountFetch({ query: getCustomerOrdersQuery, variables: { first: 10 } });
-            if (ordersRes?.customer?.orders) setOrders(ordersRes.customer.orders.edges.map(e => e.node) || []);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleCreateAddress = async (e) => {
-        e.preventDefault();
-        try {
-            setIsSaving(true);
-            const data = await customerAccountFetch({ query: customerAddressCreateMutation, variables: { address: newAddress } });
-            if (!data.customerAddressCreate.userErrors.length) {
-                setShowAddModal(false);
-                fetchProfileData();
-                setNewAddress({ address1: '', address2: '', city: '', province: '', zip: '', country: 'India', firstName: '', lastName: '' });
-            }
-        } catch (error) {
-            alert('Error saving address');
-        } finally {
-            setIsSaving(false);
-        }
-    };
-
     if (authLoading) return <div className="min-h-screen flex items-center justify-center bg-white"><div className="w-8 h-8 border-2 border-black border-t-transparent animate-spin"></div></div>;
     if (!isAuthenticated) return <Navigate to="/" replace />;
 
@@ -175,7 +128,6 @@ const ProfilePage = () => {
             <section className="space-y-8">
                 <div className="flex items-center justify-between">
                     <h3 className="text-xl font-bold uppercase tracking-tighter">Shipping Addresses</h3>
-                    <button onClick={() => setShowAddModal(true)} className="hidden md:block text-[10px] font-bold uppercase tracking-widest border-2 border-black px-4 py-1.5 hover:bg-black hover:text-white transition-all">+ Add New</button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -195,10 +147,6 @@ const ProfilePage = () => {
                     ))}
                 </div>
             </section>
-
-            <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="Add New Address">
-                <AddressFormFields address={newAddress} setAddress={setNewAddress} isSaving={isSaving} onSave={handleCreateAddress} submitLabel="Save Address" />
-            </Modal>
         </div>
     );
 

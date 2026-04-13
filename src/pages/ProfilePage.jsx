@@ -6,10 +6,9 @@ import {
     getCustomerProfileQuery, 
     getCustomerOrdersQuery, 
     customerAddressCreateMutation,
-    customerAddressUpdateMutation,
-    customerAddressDeleteMutation
+    customerAddressCreateMutation
 } from '../utils/shopify';
-import { Package, User as UserIcon, LogOut, Pencil, X } from 'lucide-react';
+import { Package, User as UserIcon, LogOut, X } from 'lucide-react';
 
 // Reusable Modal Component
 const Modal = ({ isOpen, onClose, title, children }) => {
@@ -71,7 +70,6 @@ const ProfilePage = () => {
 
     // Modal States
     const [showAddModal, setShowAddModal] = useState(false);
-    const [editingAddress, setEditingAddress] = useState(null);
     const [newAddress, setNewAddress] = useState({ address1: '', address2: '', city: '', province: '', zip: '', country: 'India', firstName: '', lastName: '' });
 
     useEffect(() => {
@@ -111,55 +109,6 @@ const ProfilePage = () => {
             alert('Error saving address');
         } finally {
             setIsSaving(false);
-        }
-    };
-
-    const handleUpdateAddress = async (e) => {
-        e.preventDefault();
-        try {
-            setIsSaving(true);
-            const { id, ...cleanAddress } = editingAddress;
-            // Remove any extra fields that might cause GraphQL errors
-            const formattedAddress = {
-                address1: cleanAddress.address1,
-                address2: cleanAddress.address2,
-                city: cleanAddress.city,
-                province: cleanAddress.province,
-                zip: cleanAddress.zip,
-                country: cleanAddress.country || 'India',
-                firstName: cleanAddress.firstName,
-                lastName: cleanAddress.lastName
-            };
-            const data = await customerAccountFetch({ 
-                query: customerAddressUpdateMutation, 
-                variables: { address: formattedAddress, addressId: id } 
-            });
-            if (!data.customerAddressUpdate.userErrors.length) {
-                setEditingAddress(null);
-                fetchProfileData();
-            } else {
-                alert(data.customerAddressUpdate.userErrors[0].message);
-            }
-        } catch (error) {
-            alert('Error updating address');
-        } finally {
-            setIsSaving(false);
-        }
-    };
-
-    const handleDeleteAddress = async (addressId) => {
-        if (!window.confirm('Are you sure you want to delete this address?')) return;
-        try {
-            setIsLoading(true);
-            await customerAccountFetch({ 
-                query: customerAddressDeleteMutation, 
-                variables: { addressId } 
-            });
-            fetchProfileData();
-        } catch (error) {
-            alert('Error deleting address');
-        } finally {
-            setIsLoading(false);
         }
     };
 
@@ -243,14 +192,6 @@ const ProfilePage = () => {
                                 <p>{addr.city}, {addr.province} {addr.zip}</p>
                                 <p className="text-black uppercase">{addr.country}</p>
                             </div>
-                            <div className="mt-6 pt-4 border-t-2 border-gray-50 flex gap-6 text-[10px] font-bold uppercase tracking-widest">
-                                <button onClick={() => setEditingAddress(addr)} className="text-black hover:underline underline-offset-4 flex items-center gap-1.5">
-                                    <Pencil className="w-3 h-3" /> Edit
-                                </button>
-                                <button onClick={() => handleDeleteAddress(addr.id)} className="text-red-500 hover:underline underline-offset-4">
-                                    Delete
-                                </button>
-                            </div>
                         </div>
                     ))}
                 </div>
@@ -258,12 +199,6 @@ const ProfilePage = () => {
 
             <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="Add New Address">
                 <AddressFormFields address={newAddress} setAddress={setNewAddress} isSaving={isSaving} onSave={handleCreateAddress} submitLabel="Save Address" />
-            </Modal>
-
-            <Modal isOpen={!!editingAddress} onClose={() => setEditingAddress(null)} title="Edit Address">
-                {editingAddress && (
-                    <AddressFormFields address={editingAddress} setAddress={setEditingAddress} isSaving={isSaving} onSave={handleUpdateAddress} submitLabel="Update Address" />
-                )}
             </Modal>
         </div>
     );

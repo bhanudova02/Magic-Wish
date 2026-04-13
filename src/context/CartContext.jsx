@@ -108,6 +108,11 @@ export const CartProvider = ({ children }) => {
             }
 
             const checkoutUrl = data.cartCreate.cart.checkoutUrl;
+            
+            // Clear cart before redirecting
+            clearCart();
+            localStorage.removeItem('magicwish_cart');
+
             window.location.href = checkoutUrl;
         } catch (error) {
             console.error("Checkout failed:", error);

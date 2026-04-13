@@ -104,7 +104,6 @@ export const CartProvider = ({ children }) => {
             }
 
             const checkoutUrl = data.cartCreate.cart.checkoutUrl;
-            clearCart(); 
             window.location.href = checkoutUrl;
         } catch (error) {
             console.error("Checkout failed:", error);

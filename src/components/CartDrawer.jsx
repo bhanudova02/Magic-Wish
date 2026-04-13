@@ -132,7 +132,7 @@ export default function CartDrawer() {
 
                 {/* Footer */}
                 {cartItems.length > 0 && (
-                    <div className="border-t border-gray-100 bg-white p-6 shadow-[0_-10px_30px_rgba(0,0,0,0.03)] pb-10">
+                    <div className="border-t border-gray-100 bg-white p-6 shadow-[0_-10px_30px_rgba(0,0,0,0.03)] pb-6">
                         <div className="flex justify-between items-baseline mb-6">
                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] italic">Subtotal</span>
                             <span className="text-2xl font-black text-[#2b124c]">${getCartTotal().toFixed(2)}</span>

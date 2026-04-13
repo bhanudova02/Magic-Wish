@@ -242,7 +242,7 @@ export default function BookPreviewPage() {
                     </div>
 
                     {/* Right side: Interactive Book Mockup */}
-                    <div className="lg:col-span-7 relative animate-in zoom-in duration-700 delay-200 max-w-[540px] mx-auto w-full">
+                    <div className="lg:col-span-7 relative animate-in zoom-in duration-700 delay-200 max-w-[480px] mx-auto w-full">
                         <div className="absolute -inset-10 bg-[#624da0]/10 blur-[100px] rounded-sm -z-10"></div>
                         
                         <div className="relative aspect-[4/5] bg-white rounded-sm shadow-[0_30px_60px_-12px_rgba(37,99,235,0.25)] border-l-[12px] border-white overflow-hidden group">

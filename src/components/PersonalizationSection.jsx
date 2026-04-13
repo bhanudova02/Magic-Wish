@@ -203,7 +203,7 @@ export default function PersonalizationSection({ book }) {
                             <div className="flex flex-col items-center text-center space-y-4">
                                 <div className="relative">
                                     <div className={`w-20 h-20 md:w-24 md:h-24 rounded-sm border-2 border-dashed ${uploadedPhoto ? 'border-green-500 bg-green-50' : 'border-[#2563EB]/30 bg-white'} flex items-center justify-center shadow-sm`}>
-                                        {isValidating ? <div className="w-8 h-8 border-4 border-blue-200 border-t-[#2563EB] rounded-sm animate-spin"></div> : (uploadedPhoto ? <Check className="w-8 h-8 text-green-600" /> : <Upload className="w-8 h-8 text-[#2563EB]" />)}
+                                        {isValidating ? <div className="w-8 h-8 border-4 border-blue-200 border-t-[#2563EB] rounded-full animate-spin"></div> : (uploadedPhoto ? <Check className="w-8 h-8 text-green-600" /> : <Upload className="w-8 h-8 text-[#2563EB]" />)}
                                     </div>
                                     <div className="absolute -bottom-2 -left-2 w-8 h-8 bg-[#2563EB] text-white rounded-sm flex items-center justify-center font-bold text-sm border-2 border-[#E0EBFF]">
                                         1
@@ -247,7 +247,7 @@ export default function PersonalizationSection({ book }) {
                             {isValidating ? (
                                 <div className="text-center space-y-6 animate-pulse">
                                     <div className="w-24 h-24 bg-[#E2E0FF] rounded-sm flex items-center justify-center mx-auto border-4 border-dashed border-blue-200">
-                                        <div className="w-10 h-10 border-4 border-blue-100 border-t-[#2563EB] rounded-sm animate-spin"></div>
+                                        <div className="w-10 h-10 border-4 border-blue-100 border-t-[#2563EB] rounded-full animate-spin"></div>
                                     </div>
                                     <div className="space-y-2">
                                         <h3 className="text-xl font-black text-gray-900">Validating Photo...</h3>

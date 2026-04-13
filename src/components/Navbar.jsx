@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
-import { Search, ShoppingBag, User, Menu, X, LogOut } from 'lucide-react';
+import { Search, ShoppingBag, User, Menu, X, LogOut, Home, HelpCircle } from 'lucide-react';
 import { getShopifyBooks } from '../utils/shopify';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -91,11 +91,11 @@ export default function Navbar() {
         >
             {({ isActive }) => (
                 <div className={`
-                    flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-300 group
+                    flex items-center gap-4 px-4 py-4 rounded-sm transition-all duration-300 group
                     ${isActive ? 'bg-purple-50 text-purple-700 shadow-sm shadow-purple-100/50' : 'text-gray-600 hover:bg-gray-50 hover:text-purple-600'}
                 `}>
                     <div className={`
-                        w-10 h-10 rounded-xl flex items-center justify-center transition-colors
+                        w-10 h-10 rounded-sm flex items-center justify-center transition-colors
                         ${isActive ? 'bg-white text-purple-600 shadow-sm' : 'bg-gray-50 text-gray-400 group-hover:bg-white group-hover:text-purple-400 shadow-inner'}
                     `}>
                         <Icon className="w-5 h-5" />
@@ -349,9 +349,9 @@ export default function Navbar() {
                     {/* Navigation Items */}
                     <div className="flex-grow px-4 py-8 overflow-y-auto">
                         <div className="space-y-1">
-                            <MobileNavLink to="/" icon={Search} label="Home" onClick={() => setIsMenuOpen(false)} />
+                            <MobileNavLink to="/" icon={Home} label="Home" onClick={() => setIsMenuOpen(false)} />
                             <MobileNavLink to="/books" icon={ShoppingBag} label="Books" onClick={() => setIsMenuOpen(false)} />
-                            <MobileNavLink to="/support" icon={X} label="Support" onClick={() => setIsMenuOpen(false)} />
+                            <MobileNavLink to="/support" icon={HelpCircle} label="Support" onClick={() => setIsMenuOpen(false)} />
                         </div>
                         
                         <div className="mt-10 mb-4 px-2">
@@ -367,9 +367,9 @@ export default function Navbar() {
                                             setIsMenuOpen(false);
                                             logoutUser();
                                         }}
-                                        className="w-full flex items-center gap-4 px-4 py-4 text-md font-bold text-red-500 hover:bg-red-50 rounded-2xl transition-all group"
+                                        className="w-full flex items-center gap-4 px-4 py-4 text-md font-bold text-red-500 hover:bg-red-50 rounded-sm transition-all group"
                                     >
-                                        <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-400 group-hover:bg-red-100 transition-colors">
+                                        <div className="w-10 h-10 rounded-sm bg-red-50 flex items-center justify-center text-red-400 group-hover:bg-red-100 transition-colors">
                                             <LogOut className="w-5 h-5" />
                                         </div>
                                         <span>Sign Out</span>
@@ -381,9 +381,9 @@ export default function Navbar() {
                                         const url = await getAuthorizeUrl();
                                         window.location.href = url;
                                     }}
-                                    className="w-full flex items-center gap-4 px-4 py-4 text-md font-bold text-blue-600 hover:bg-blue-50 rounded-2xl transition-all group"
+                                    className="w-full flex items-center gap-4 px-4 py-4 text-md font-bold text-blue-600 hover:bg-blue-50 rounded-sm transition-all group"
                                 >
-                                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-400 group-hover:bg-blue-100 transition-colors">
+                                    <div className="w-10 h-10 rounded-sm bg-blue-50 flex items-center justify-center text-blue-400 group-hover:bg-blue-100 transition-colors">
                                         <User className="w-5 h-5" />
                                     </div>
                                     <span>Sign In / Register</span>

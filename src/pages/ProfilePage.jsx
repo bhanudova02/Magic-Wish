@@ -259,21 +259,26 @@ const ProfilePage = () => {
                                                                 </div>
                                                             </div>
                                                             
-                                                            <div className="flex flex-wrap gap-2">
-                                                                {order.lineItems?.nodes?.map((item, idx) => (
-                                                                    <div key={idx} className="w-16 h-20 bg-gray-50 rounded-lg overflow-hidden border border-gray-100 p-1">
-                                                                        {item.image ? (
-                                                                            <img src={item.image.url} alt={item.title} className="w-full h-full object-contain" />
-                                                                        ) : (
-                                                                            <div className="w-full h-full bg-gray-100 flex items-center justify-center text-[8px] text-gray-400 text-center">No Image</div>
-                                                                        )}
+                                                            <div className="space-y-4">
+                                                                {order.lineItems?.edges?.map(({ node: item }, idx) => (
+                                                                    <div key={idx} className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                                                                        <div className="w-16 h-20 flex-shrink-0 bg-white rounded-lg overflow-hidden border border-gray-50 p-1">
+                                                                            {item.variant?.image?.url ? (
+                                                                                <img 
+                                                                                    src={item.variant.image.url} 
+                                                                                    alt={item.variant.image.altText || item.title} 
+                                                                                    className="w-full h-full object-contain" 
+                                                                                />
+                                                                            ) : (
+                                                                                <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-400 text-center uppercase font-bold">No Image</div>
+                                                                            )}
+                                                                        </div>
+                                                                        <div className="flex-1 min-w-0">
+                                                                            <h5 className="font-bold text-gray-900 text-sm truncate">{item.title}</h5>
+                                                                            <p className="text-xs text-gray-500 mt-1">Quantity: {item.quantity}</p>
+                                                                        </div>
                                                                     </div>
                                                                 ))}
-                                                                {order.lineItems?.nodes?.length > 5 && (
-                                                                    <div className="w-16 h-20 bg-gray-50 rounded-lg flex items-center justify-center border border-gray-100 text-xs font-bold text-gray-400">
-                                                                        +{order.lineItems.nodes.length - 5}
-                                                                    </div>
-                                                                )}
                                                             </div>
                                                         </div>
                                                     ))}

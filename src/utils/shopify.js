@@ -192,6 +192,20 @@ export const getCustomerOrdersQuery = `
             }
             financialStatus
             fulfillmentStatus
+            lineItems(first: 10) {
+              edges {
+                node {
+                  title
+                  quantity
+                  variant {
+                    image {
+                      url
+                      altText
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }

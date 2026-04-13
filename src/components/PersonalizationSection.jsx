@@ -8,6 +8,7 @@ export default function PersonalizationSection() {
     const [uploadedPhoto, setUploadedPhoto] = React.useState(null);
     const [isValidating, setIsValidating] = React.useState(false);
     const [showWarning, setShowWarning] = React.useState(false);
+    const [errors, setErrors] = React.useState({});
     const [formData, setFormData] = React.useState({
         language: 'English',
         name: '',
@@ -280,43 +281,73 @@ export default function PersonalizationSection() {
                                                         type="text" 
                                                         maxLength={25}
                                                         placeholder="Name"
-                                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl py-4 px-6 focus:ring-2 focus:ring-purple-200 outline-none font-bold text-gray-700 transition"
+                                                        className={`w-full bg-gray-50 border ${errors.name ? 'border-red-500' : 'border-gray-100'} rounded-2xl py-4 px-6 focus:ring-2 focus:ring-purple-200 outline-none font-bold text-gray-700 transition`}
                                                         value={formData.name}
-                                                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                                        onChange={(e) => {
+                                                            setFormData({...formData, name: e.target.value});
+                                                            if (errors.name) setErrors({...errors, name: null});
+                                                        }}
                                                     />
                                                     <span className="absolute right-4 bottom-2 text-[10px] font-bold text-gray-300">{formData.name.length}/25</span>
                                                 </div>
+                                                {errors.name && <p className="text-[10px] text-red-500 font-bold mt-1 px-2">{errors.name}</p>}
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-black text-gray-800 mb-2 uppercase tracking-wide">Child's Age</label>
                                                 <input 
                                                     type="number" 
                                                     placeholder="Age"
-                                                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl py-4 px-6 focus:ring-2 focus:ring-purple-200 outline-none font-bold text-gray-700 transition"
+                                                    className={`w-full bg-gray-50 border ${errors.age ? 'border-red-500' : 'border-gray-100'} rounded-2xl py-4 px-6 focus:ring-2 focus:ring-purple-200 outline-none font-bold text-gray-700 transition`}
                                                     value={formData.age}
-                                                    onChange={(e) => setFormData({...formData, age: e.target.value})}
+                                                    onChange={(e) => {
+                                                        setFormData({...formData, age: e.target.value});
+                                                        if (errors.age) setErrors({...errors, age: null});
+                                                    }}
                                                 />
+                                                {errors.age && <p className="text-[10px] text-red-500 font-bold mt-1 px-2">{errors.age}</p>}
                                             </div>
                                         </div>
                                     </div>
 
-                                    <button 
-                                        onClick={() => {
-                                            if (!formData.name) {
-                                                alert("Please enter your child's name.");
-                                                return;
-                                            }
-                                            localStorage.setItem('last_personalization', JSON.stringify({
-                                                ...formData,
-                                                photo: uploadedPhoto,
-                                                title: 'The Boy and the Cosmic Journey'
-                                            }));
-                                            navigate('/preview');
-                                        }}
-                                        className="w-full bg-[#a21caf] hover:bg-[#86198f] text-white py-5 px-6 rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-purple-200 mt-4"
-                                    >
-                                        Preview My Book <Sparkles className="w-6 h-6" />
-                                    </button>
+                                    <div className="space-y-2">
+                                        <button 
+                                            onClick={() => {
+                                                const nameRegex = /^[a-zA-Z]/;
+                                                const newErrors = {};
+
+                                                if (!uploadedPhoto) {
+                                                    alert("Please upload a photo first."); // Still alert for photo as it's outside the form card usually
+                                                    return;
+                                                }
+                                                
+                                                if (!formData.name || formData.name.length < 2) {
+                                                    newErrors.name = "Min 2 characters required";
+                                                } else if (!nameRegex.test(formData.name)) {
+                                                    newErrors.name = "Must start with a letter";
+                                                }
+
+                                                if (!formData.age) {
+                                                    newErrors.age = "Required";
+                                                }
+
+                                                if (Object.keys(newErrors).length > 0) {
+                                                    setErrors(newErrors);
+                                                    return;
+                                                }
+
+                                                localStorage.setItem('last_personalization', JSON.stringify({
+                                                    ...formData,
+                                                    photo: uploadedPhoto,
+                                                    title: 'The Boy and the Cosmic Journey'
+                                                }));
+                                                navigate('/preview');
+                                            }}
+                                            className="w-full bg-[#a21caf] hover:bg-[#86198f] text-white py-5 px-6 rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-purple-200 mt-4"
+                                        >
+                                            Preview My Book <Sparkles className="w-6 h-6" />
+                                        </button>
+                                        {Object.keys(errors).length > 0 && <p className="text-center text-[10px] text-red-500 font-bold">Please fix the errors above to continue.</p>}
+                                    </div>
                                 </div>
                             )}
 

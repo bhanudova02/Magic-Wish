@@ -44,10 +44,11 @@ export default function BookPreviewPage() {
                 setIsGenerating(true);
                 setError(null);
                 
-                const finalPrompt = `Generate a premium book front cover artwork featuring a ${parsedData.age} year old child named ${parsedData.name} in a scene described as: ${parsedData.coverpagePrompt}. Maintain a magical, cinematic, and vibrant fantasy style.`;
+                const finalPrompt = `Fantasy book cover illustration, child named ${parsedData.name}, ${parsedData.coverpagePrompt}, magical lighting, high detail, digital art style`;
                 const seed = Math.floor(Math.random() * 999999);
                 const apiUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}?width=1024&height=1024&seed=${seed}&nologo=true`;
                 
+                console.log("AI Generation URL (Copy this to browser to test):", apiUrl);
                 setGeneratedImage(apiUrl);
             };
 
@@ -65,9 +66,13 @@ export default function BookPreviewPage() {
 
     const handleImageError = () => {
         setIsGenerating(false);
-        // Use a high-quality fallback image if AI is busy
-        setGeneratedImage('https://images.unsplash.com/photo-1618519764620-7403abdb0991?q=80&w=1200&h=1200&auto=format&fit=crop');
-        setError("AI artist is busy. Showing sample artwork instead!");
+        // Best fallback: Use the child's own photo if AI fails
+        if (personalization?.photo) {
+            setGeneratedImage(personalization.photo);
+            setError("AI is taking longer than expected. Previewing with your photo!");
+        } else {
+            setError("Unable to load preview. Please check your connection.");
+        }
     };
 
     if (!personalization) return null;
@@ -140,10 +145,10 @@ export default function BookPreviewPage() {
                                 {generatedImage && (
                                     <img 
                                         src={generatedImage} 
-                                        alt="AI Generated Cover" 
+                                        alt="Book Preview" 
                                         onLoad={handleImageLoad}
                                         onError={handleImageError}
-                                        className={`w-full h-full object-cover object-center transition-opacity duration-1000 ${isGenerating ? 'opacity-0' : 'opacity-100'}`}
+                                        className="w-full h-full object-cover object-center"
                                     />
                                 )}
                                 {error && (

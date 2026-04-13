@@ -49,3 +49,7 @@ To run the project, the following keys are required in `.env`:
 - `/src/pages`: Main view templates.
 - `/src/utils`: API helper functions (shopify.js).
 - `/src/assets`: Images and styling resources.
+VITE_SHOPIFY_STORE_DOMAIN="storytimekid.myshopify.com"
+VITE_SHOPIFY_STOREFRONT_TOKEN="e21e445c5b00d8dee0e7bca10b4eeefa"
+VITE_SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID="8fecbaf3-403f-4216-b023-a82802af662e"
+VITE_SHOPIFY_SHOP_ID="65892843582"

@@ -104,8 +104,7 @@ export const CartProvider = ({ children }) => {
             }
 
             const checkoutUrl = data.cartCreate.cart.checkoutUrl;
-            // Optionally clear cart here, but it's safer to let the user return if they cancel
-            // clearCart(); 
+            clearCart(); 
             window.location.href = checkoutUrl;
         } catch (error) {
             console.error("Checkout failed:", error);

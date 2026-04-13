@@ -180,6 +180,7 @@ export const getCustomerOrdersQuery = `
   query getCustomerOrders($first: Int!) {
     customer {
       orders(first: $first) {
+        totalCount
         nodes {
           id
           name
@@ -190,6 +191,15 @@ export const getCustomerOrdersQuery = `
           }
           financialStatus
           fulfillmentStatus
+          lineItems(first: 5) {
+            nodes {
+              title
+              quantity
+              image {
+                url
+              }
+            }
+          }
         }
       }
     }

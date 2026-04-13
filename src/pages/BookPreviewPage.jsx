@@ -173,7 +173,7 @@ export default function BookPreviewPage() {
     const canContinue = !isGenerating && !isUploading && cloudinaryUrl;
 
     return (
-        <div className="bg-[#E0EBFF] min-h-screen pt-24 pb-10 lg:pb-20 overflow-hidden relative">
+        <div className="bg-[#E0EBFF] min-h-screen flex flex-col items-center justify-center p-4 lg:p-8 overflow-hidden relative">
             {/* Background Accents */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-[#FDE2FF] rounded-sm mix-blend-multiply filter blur-3xl opacity-40 -translate-y-1/2 translate-x-1/2"></div>
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#E2E0FF] rounded-sm mix-blend-multiply filter blur-3xl opacity-40 translate-y-1/2 -translate-x-1/2"></div>

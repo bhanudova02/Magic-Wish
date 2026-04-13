@@ -263,10 +263,10 @@ const ProfilePage = () => {
                                                                 {order.lineItems?.edges?.map(({ node: item }, idx) => (
                                                                     <div key={idx} className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl border border-gray-100">
                                                                         <div className="w-16 h-20 flex-shrink-0 bg-white rounded-lg overflow-hidden border border-gray-50 p-1">
-                                                                            {item.variant?.image?.url ? (
+                                                                            {item.image?.url ? (
                                                                                 <img 
-                                                                                    src={item.variant.image.url} 
-                                                                                    alt={item.variant.image.altText || item.title} 
+                                                                                    src={item.image.url} 
+                                                                                    alt={item.image.altText || item.title} 
                                                                                     className="w-full h-full object-contain" 
                                                                                 />
                                                                             ) : (

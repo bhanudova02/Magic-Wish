@@ -42,15 +42,24 @@ const ProfilePage = () => {
     const fetchProfileData = async () => {
         try {
             setIsLoading(true);
-            const [profileRes, ordersRes] = await Promise.all([
-                customerAccountFetch({ query: getCustomerProfileQuery }),
-                customerAccountFetch({ query: getCustomerOrdersQuery, variables: { first: 10 } })
-            ]);
             
-            setCustomerData(profileRes.customer);
-            setOrders(ordersRes.customer.orders.nodes || []);
+            // Try fetching profile first
+            const profileRes = await customerAccountFetch({ query: getCustomerProfileQuery });
+            if (profileRes?.customer) {
+                setCustomerData(profileRes.customer);
+            }
+
+            // Try fetching orders separately
+            const ordersRes = await customerAccountFetch({ query: getCustomerOrdersQuery, variables: { first: 10 } });
+            if (ordersRes?.customer?.orders) {
+                setOrders(ordersRes.customer.orders.nodes || []);
+            } else {
+                console.warn('Orders data format unexpected:', ordersRes);
+            }
+
         } catch (error) {
             console.error('Error fetching profile data:', error);
+            alert('Shopify API Error: ' + error.message);
         } finally {
             setIsLoading(false);
         }

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Star, ChevronRight, ChevronDown, ChevronUp, CheckCircle2, Book, GraduationCap, Eye } from 'lucide-react';
+import { Star, ChevronRight, ChevronDown, ChevronUp, CheckCircle2, Book, GraduationCap, Eye, ArrowRight } from 'lucide-react';
 import { shopifyFetch, getProductQuery } from '../utils/shopify';
 import { useCart } from '../context/CartContext';
 import PersonalizationSection from '../components/PersonalizationSection';
@@ -13,7 +13,8 @@ export default function ProductDetailsPage() {
     const [openAccordion, setOpenAccordion] = useState('personalization');
     const [showSticky, setShowSticky] = useState(false);
     const [activeImage, setActiveImage] = useState(null);
-    const ctaRef = React.useRef(null);
+    const ctaRef = useRef(null);
+    const personalizationRef = useRef(null);
     const { addToCart } = useCart();
 
     useEffect(() => {
@@ -182,7 +183,6 @@ export default function ProductDetailsPage() {
                             {book.description || "When a dragon flies into a peaceful village, everyone is scared and hides. But one brave child notices that something is different. The dragon wasn't weird or dangerous, he was just lonely. By listening, helping, and being kind, fear turns into smiles, games, and a new, precious friendship."}
                         </p>
 
-                        {/* Features List */}
                         <div className="space-y-4 mb-8 bg-blue-50/50 p-6 rounded-sm border border-blue-100">
                             <div className="flex items-center gap-3 text-gray-700">
                                 <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm text-blue-600 border border-blue-100">
@@ -218,16 +218,14 @@ export default function ProductDetailsPage() {
                             )}
                         </div>
 
-                        {/* CTA Section */}
                         <div className="space-y-6" ref={ctaRef}>
                             <button 
-                                onClick={() => addToCart(book)}
-                                className="w-full bg-[#5e2ca0] hover:bg-[#5e2ca0] text-white py-5 px-8 rounded-sm font-black text-xl transition-all transform hover:scale-[1.02] active:scale-95"
+                                onClick={scrollToPersonalization}
+                                className="w-full bg-[#5e2ca0] hover:bg-[#4c2282] text-white py-5 px-8 rounded-sm font-black text-xl transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3"
                             >
-                                Add to Cart
+                                Personalise My Book <ArrowRight className="w-6 h-6" />
                             </button>
                             
-                            {/* Payment Icons */}
                             <div className="flex flex-wrap justify-center items-center gap-4 py-4 border-y border-gray-100">
                                 <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-4 opacity-70 grayscale hover:grayscale-0 transition" />
                                 <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-6 opacity-70 grayscale hover:grayscale-0 transition" />
@@ -236,7 +234,6 @@ export default function ProductDetailsPage() {
                             </div>
                         </div>
 
-                        {/* Accordions */}
                         <div className="mt-10 space-y-3">
                             {[
                                 { id: 'personalization', title: 'How is the book personalized for my child?', content: 'You can choose your child\'s name, gender, skin tone, hairstyle, and even add a special dedication message at the beginning of the book.' },
@@ -262,19 +259,17 @@ export default function ProductDetailsPage() {
                     </div>
                 </div>
 
-                {/* New Personalization UI Component */}
-                <div className="mt-20 -mx-4 sm:-mx-6 lg:-mx-8">
+                <div ref={personalizationRef} className="mt-20 -mx-4 sm:-mx-6 lg:-mx-8 scroll-mt-24">
                     <PersonalizationSection book={book} />
                 </div>
             </div>
 
-            {/* Mobile/Tablet Sticky CTA */}
             <div className={`fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-lg border-t border-gray-100 z-[100] lg:hidden transition-all duration-300 transform ${showSticky ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}`}>
                 <button 
-                    onClick={() => addToCart(book)}
+                    onClick={scrollToPersonalization}
                     className="w-full bg-[#5e2ca0] text-white py-4 rounded-sm font-black text-lg active:scale-95 transition-transform"
                 >
-                    Add to Cart
+                    Personalise My Book
                 </button>
             </div>
         </div>

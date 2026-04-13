@@ -225,6 +225,33 @@ export const customerAddressCreateMutation = `
   }
 `;
 
+export const customerAddressUpdateMutation = `
+  mutation customerAddressUpdate($address: CustomerAddressInput!, $addressId: ID!) {
+    customerAddressUpdate(address: $address, addressId: $addressId) {
+      customerAddress { id }
+      userErrors { field message }
+    }
+  }
+`;
+
+export const customerAddressDeleteMutation = `
+  mutation customerAddressDelete($addressId: ID!) {
+    customerAddressDelete(addressId: $addressId) {
+      deletedAddressId
+      userErrors { field message }
+    }
+  }
+`;
+
+export const customerUpdateMutation = `
+  mutation customerUpdate($customer: CustomerUpdateInput!) {
+    customerUpdate(customer: $customer) {
+      customer { id firstName lastName }
+      userErrors { field message }
+    }
+  }
+`;
+
 export const customerCreateMutation = `
   mutation customerCreate($input: CustomerCreateInput!) {
     customerCreate(input: $input) {

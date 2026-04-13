@@ -4,14 +4,15 @@ export const shopId = import.meta.env.VITE_SHOPIFY_SHOP_ID;
 
 export async function customerAccountFetch({ query, variables = {} }) {
   const endpoint = `https://shopify.com/65892843582/account/api/2024-04/graphql`;
-  const token = localStorage.getItem('shopify_access_token');
+  const token = localStorage.getItem('shopify_access_token')?.trim();
   
   try {
     const result = await fetch(endpoint, {
       method: "POST",
+      mode: "cors",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token,
+        "Authorization": token || "",
       },
       body: JSON.stringify({
         query,

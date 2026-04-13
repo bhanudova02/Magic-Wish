@@ -186,7 +186,7 @@ export default function BookPreviewPage() {
                         <div className="space-y-6">
                             <button 
                                 onClick={() => navigate(-1)}
-                                className="flex items-center gap-2 text-[#624da0] font-black text-sm uppercase tracking-widest hover:translate-x-[-4px] transition-transform"
+                                className="hidden lg:flex items-center gap-2 text-[#624da0] font-black text-sm uppercase tracking-widest hover:translate-x-[-4px] transition-transform"
                             >
                                 <ArrowLeft className="w-5 h-5" /> Go Back
                             </button>
@@ -225,7 +225,7 @@ export default function BookPreviewPage() {
                             </div>
                         </div>
 
-                        <div className="space-y-4">
+                        <div className="hidden lg:block space-y-4">
                             <button 
                                 onClick={handleAddToCart}
                                 disabled={!canContinue}
@@ -242,58 +242,76 @@ export default function BookPreviewPage() {
                     </div>
 
                     {/* Right side: Interactive Book Mockup */}
-                    <div className="lg:col-span-7 relative animate-in zoom-in duration-700 delay-200 max-w-[480px] mx-auto w-full order-1 lg:order-2">
-                        <div className="absolute -inset-10 bg-[#624da0]/10 blur-[100px] rounded-sm -z-10"></div>
-                        
-                        <div className="relative aspect-[4/5] bg-white rounded-sm shadow-[0_30px_60px_-12px_rgba(37,99,235,0.25)] border-l-[12px] border-white overflow-hidden group">
-                            {(isGenerating || isUploading) && (
-                                <div className="absolute inset-0 z-20 bg-white flex flex-col items-center justify-center text-center p-8">
-                                    <div className="relative mb-8">
-                                        <div className="w-24 h-24 rounded-sm bg-[#E0EBFF] overflow-hidden border-4 border-white shadow-lg flex items-center justify-center">
-                                            {personalization?.photo ? (
-                                                <img src={personalization.photo} className="w-full h-full object-cover" alt="Reference" />
-                                            ) : (
-                                                <User className="w-10 h-10 text-[#624da0]/30" />
-                                            )}
+                    <div className="lg:col-span-7 relative animate-in zoom-in duration-700 delay-200 max-w-[480px] mx-auto w-full order-1 lg:order-2 space-y-8">
+                        <div className="relative">
+                            <div className="absolute -inset-10 bg-[#624da0]/10 blur-[100px] rounded-sm -z-10"></div>
+                            
+                            <div className="relative aspect-[4/5] bg-white rounded-sm shadow-[0_30px_60px_-12px_rgba(37,99,235,0.25)] border-l-[12px] border-white overflow-hidden group">
+                                {(isGenerating || isUploading) && (
+                                    <div className="absolute inset-0 z-20 bg-white flex flex-col items-center justify-center text-center p-8">
+                                        <div className="relative mb-8">
+                                            <div className="w-24 h-24 rounded-sm bg-[#E0EBFF] overflow-hidden border-4 border-white shadow-lg flex items-center justify-center">
+                                                {personalization?.photo ? (
+                                                    <img src={personalization.photo} className="w-full h-full object-cover" alt="Reference" />
+                                                ) : (
+                                                    <User className="w-10 h-10 text-[#624da0]/30" />
+                                                )}
+                                            </div>
+                                            <div className="absolute -inset-4 border-2 border-dashed border-[#624da0]/40 rounded-sm animate-spin-slow"></div>
                                         </div>
-                                        <div className="absolute -inset-4 border-2 border-dashed border-[#624da0]/40 rounded-sm animate-spin-slow"></div>
+                                        <div className="space-y-4">
+                                            <div className="flex flex-col items-center gap-1">
+                                                <p className="text-xs font-black text-[#624da0] uppercase tracking-widest">Creating Magic</p>
+                                                <h4 className="text-2xl font-black text-gray-900 leading-none">{Math.round(progress)}%</h4>
+                                            </div>
+                                            {/* Minimal Progress Bar */}
+                                            <div className="w-48 h-1 bg-gray-100 rounded-full overflow-hidden">
+                                                <div 
+                                                    className="h-full bg-[#624da0] transition-all duration-500 ease-out"
+                                                    style={{ width: `${progress}%` }}
+                                                />
+                                            </div>
+                                            <p className="text-[10px] font-bold text-gray-400 max-w-[200px] mx-auto">
+                                                {isUploading ? "Uploading to secure servers..." : "Our AI is illustrating your child into the story..."}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div className="space-y-4">
-                                        <div className="flex flex-col items-center gap-1">
-                                            <p className="text-xs font-black text-[#624da0] uppercase tracking-widest">Creating Magic</p>
-                                            <h4 className="text-2xl font-black text-gray-900 leading-none">{Math.round(progress)}%</h4>
-                                        </div>
-                                        {/* Minimal Progress Bar */}
-                                        <div className="w-48 h-1 bg-gray-100 rounded-full overflow-hidden">
-                                            <div 
-                                                className="h-full bg-[#624da0] transition-all duration-500 ease-out"
-                                                style={{ width: `${progress}%` }}
-                                            />
-                                        </div>
-                                        <p className="text-[10px] font-bold text-gray-400 max-w-[200px] mx-auto">
-                                            {isUploading ? "Uploading to secure servers..." : "Our AI is illustrating your child into the story..."}
-                                        </p>
+                                )}
+                                
+                                <img 
+                                    src={generatedImage} 
+                                    alt="Book Cover Preview" 
+                                    onLoad={handleImageLoad}
+                                    onError={handleImageError}
+                                    className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-105 ${(isGenerating || isUploading) ? 'opacity-0' : 'opacity-100'}`}
+                                />
+                            </div>
+
+                            {/* Floating elements for depth */}
+                            {!isGenerating && !isUploading && generatedImage && (
+                                <div className="hidden lg:block absolute -top-8 -right-8 w-32 h-40 bg-white p-2 rounded-sm shadow-2xl rotate-6 border border-gray-50 animate-in fade-in slide-in-from-top-4 duration-700 delay-500">
+                                    <div className="w-full h-full bg-[#FDE2FF] rounded-sm overflow-hidden shadow-inner">
+                                        <img src={generatedImage} className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity" alt="Mini Preview" />
                                     </div>
                                 </div>
                             )}
-                            
-                            <img 
-                                src={generatedImage} 
-                                alt="Book Cover Preview" 
-                                onLoad={handleImageLoad}
-                                onError={handleImageError}
-                                className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-105 ${(isGenerating || isUploading) ? 'opacity-0' : 'opacity-100'}`}
-                            />
                         </div>
 
-                        {/* Floating elements for depth */}
-                        {!isGenerating && !isUploading && generatedImage && (
-                            <div className="hidden lg:block absolute -top-8 -right-8 w-32 h-40 bg-white p-2 rounded-sm shadow-2xl rotate-6 border border-gray-50 animate-in fade-in slide-in-from-top-4 duration-700 delay-500">
-                                <div className="w-full h-full bg-[#FDE2FF] rounded-sm overflow-hidden shadow-inner">
-                                    <img src={generatedImage} className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity" alt="Mini Preview" />
-                                </div>
-                            </div>
-                        )}
+                        {/* Mobile Add to Cart Button */}
+                        <div className="lg:hidden space-y-4">
+                            <button 
+                                onClick={handleAddToCart}
+                                disabled={!canContinue}
+                                className={`w-full py-5 rounded-sm font-black text-xl uppercase tracking-widest transition-all flex items-center justify-center gap-3 ${!canContinue ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#624da0] hover:bg-[#4d3a82] text-white shadow-xl shadow-purple-200/50 active:scale-95'}`}
+                            >
+                                {!canContinue ? (isUploading ? 'Securing Preview...' : 'Generating...') : 'Add to Cart'}
+                                {canContinue && <ArrowRight className="w-6 h-6" />}
+                                {!canContinue && <Loader2 className="w-6 h-6 animate-spin" />}
+                            </button>
+                            <p className="text-center text-[10px] font-bold text-gray-400 flex items-center justify-center gap-2">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> Premium Hardcover Print Quality Verified
+                            </p>
+                        </div>
                     </div>
                 </div>
 

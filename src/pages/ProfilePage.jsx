@@ -10,7 +10,7 @@ const FormInput = ({ label, value, onChange }) => (
         <input 
             required 
             type="text" 
-            className="w-full p-2.5 border border-gray-100 rounded-sm text-sm focus:outline-none focus:border-black font-medium" 
+            className="w-full p-2.5 border border-gray-200 rounded-sm text-sm focus:outline-none focus:border-black font-medium" 
             value={value || ''} 
             onChange={(e) => onChange(e.target.value)} 
         />
@@ -97,28 +97,28 @@ const ProfilePage = () => {
         <div className="space-y-10">
             <h2 className="text-2xl font-bold uppercase tracking-tight">Purchase History</h2>
             {orders.length === 0 ? (
-                <div className="py-24 text-center border border-gray-100 rounded-sm bg-gray-50/20">
+                <div className="py-24 text-center border border-gray-200 rounded-sm bg-gray-50/20">
                     <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest italic">No orders found</p>
                     <Link to="/books" className="text-black underline underline-offset-4 mt-4 inline-block font-bold">Start Shopping</Link>
                 </div>
             ) : (
                 <div className="space-y-6">
                     {orders.map((order) => (
-                        <div key={order.id} className="border border-gray-100 rounded-sm">
-                            <div className="p-4 bg-gray-50/50 flex justify-between items-center border-b border-gray-100">
+                        <div key={order.id} className="border border-gray-200 rounded-sm">
+                            <div className="p-4 bg-gray-50/50 flex justify-between items-center border-b border-gray-200">
                                 <div className="flex gap-4 text-[10px] font-bold uppercase tracking-widest text-gray-400 italic">
                                     <span>#{order.name}</span>
                                     <span>{new Date(order.processedAt).toLocaleDateString()}</span>
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <span className="font-bold text-sm tracking-tight">{order.totalPrice.amount} {order.totalPrice.currencyCode}</span>
-                                    <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 border ${order.financialStatus === 'PAID' ? 'border-green-100 text-green-600 bg-green-50' : 'border-gray-100 text-gray-400'}`}>{order.financialStatus}</span>
+                                    <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 border ${order.financialStatus === 'PAID' ? 'border-green-100 text-green-600 bg-green-50' : 'border-gray-200 text-gray-400'}`}>{order.financialStatus}</span>
                                 </div>
                             </div>
                             <div className="p-4 space-y-4">
                                 {order.lineItems?.edges?.map(({ node: item }, idx) => (
                                     <div key={idx} className="flex gap-4 items-center">
-                                        <div className="w-12 h-16 bg-white border border-gray-100 rounded-sm flex-shrink-0 p-1">
+                                        <div className="w-12 h-16 bg-white border border-gray-200 rounded-sm flex-shrink-0 p-1">
                                             {item.image ? <img src={item.image.url} alt={item.title} className="w-full h-full object-contain" /> : <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-200 uppercase">img</div>}
                                         </div>
                                         <div>
@@ -139,7 +139,7 @@ const ProfilePage = () => {
         <div className="space-y-16">
             <section>
                 <h2 className="text-2xl font-bold uppercase tracking-tight mb-8">Personal Information</h2>
-                <div className="p-6 border border-gray-100 rounded-sm space-y-6">
+                <div className="p-6 border border-gray-200 rounded-sm space-y-6">
                     <div>
                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Full Name</label>
                         <p className="text-sm font-bold">{customerData?.firstName} {customerData?.lastName}</p>
@@ -157,13 +157,13 @@ const ProfilePage = () => {
                     {!showAddressForm && <button onClick={() => setShowAddressForm(true)} className="text-[10px] font-bold uppercase tracking-widest border border-black px-4 py-1.5 hover:bg-black hover:text-white transition-all">+ Add New</button>}
                 </div>
                 {showAddressForm ? (
-                    <div className="p-8 border border-gray-100 rounded-sm">
+                    <div className="p-8 border border-gray-200 rounded-sm">
                         <AddressForm newAddress={newAddress} setNewAddress={setNewAddress} isSaving={isSaving} onSave={handleSaveAddress} onCancel={() => setShowAddressForm(false)} />
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {(customerData?.addresses?.edges || []).map(({ node: addr }) => (
-                            <div key={addr.id} className="p-6 border border-gray-100 rounded-sm relative group hover:border-black transition-all">
+                            <div key={addr.id} className="p-6 border border-gray-200 rounded-sm relative group hover:border-black transition-all">
                                 <span className="absolute top-4 right-4 text-[9px] font-bold uppercase tracking-widest text-gray-300 group-hover:text-black">
                                     {customerData.defaultAddress?.id === addr.id ? 'Default' : 'Regular'}
                                 </span>
@@ -189,7 +189,7 @@ const ProfilePage = () => {
     return (
         <div className="min-h-screen pt-24 pb-20 bg-white font-sans text-gray-900">
             <div className="max-w-4xl mx-auto px-6">
-                <div className="flex items-center justify-between mb-12 border-b border-gray-100">
+                <div className="flex items-center justify-between mb-12 border-b border-gray-200">
                     <div className="flex gap-8">
                         {[
                             { id: 'orders', label: 'My Orders', icon: Package },

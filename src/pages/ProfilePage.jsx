@@ -1,8 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate, Link, useSearchParams } from 'react-router-dom';
-import { customerAccountFetch, getCustomerProfileQuery, getCustomerOrdersQuery, customerAddressCreateMutation } from '../utils/shopify';
-import { Package, User as UserIcon, LogOut, ShoppingBag, Clock, Plus, Pencil } from 'lucide-react';
+import { 
+    customerAccountFetch, 
+    getCustomerProfileQuery, 
+    getCustomerOrdersQuery, 
+    customerAddressCreateMutation,
+    customerAddressUpdateMutation,
+    customerAddressDeleteMutation,
+    customerUpdateMutation
+} from '../utils/shopify';
+import { Package, User as UserIcon, LogOut, ShoppingBag, Clock, Plus, Pencil, X } from 'lucide-react';
+
+// Reusable Modal Component
+const Modal = ({ isOpen, onClose, title, children }) => {
+    if (!isOpen) return null;
+    return (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose}></div>
+            <div className="relative bg-white w-full max-w-xl rounded-sm shadow-2xl animate-in zoom-in-95 duration-200">
+                <div className="flex items-center justify-between p-6 border-b-2 border-gray-100">
+                    <h3 className="text-sm font-bold uppercase tracking-widest">{title}</h3>
+                    <button onClick={onClose} className="text-gray-400 hover:text-black transition-colors"><X className="w-5 h-5" /></button>
+                </div>
+                <div className="p-8">{children}</div>
+            </div>
+        </div>
+    );
+};
 
 const FormInput = ({ label, value, onChange }) => (
     <div>
@@ -17,25 +42,22 @@ const FormInput = ({ label, value, onChange }) => (
     </div>
 );
 
-const AddressForm = ({ newAddress, setNewAddress, isSaving, onSave, onCancel }) => (
-    <form onSubmit={onSave} className="space-y-6 max-w-lg animate-in fade-in duration-300">
+const AddressFormFields = ({ address, setAddress, isSaving, onSave, submitLabel }) => (
+    <form onSubmit={onSave} className="space-y-6">
         <div className="grid grid-cols-2 gap-4">
-            <FormInput label="First Name" value={newAddress.firstName} onChange={(v) => setNewAddress({...newAddress, firstName: v})} />
-            <FormInput label="Last Name" value={newAddress.lastName} onChange={(v) => setNewAddress({...newAddress, lastName: v})} />
+            <FormInput label="First Name" value={address.firstName} onChange={(v) => setAddress({...address, firstName: v})} />
+            <FormInput label="Last Name" value={address.lastName} onChange={(v) => setAddress({...address, lastName: v})} />
         </div>
-        <FormInput label="Street Address" value={newAddress.address1} onChange={(v) => setNewAddress({...newAddress, address1: v})} />
-        <FormInput label="Apartment / Suite" value={newAddress.address2} onChange={(v) => setNewAddress({...newAddress, address2: v})} />
+        <FormInput label="Street Address" value={address.address1} onChange={(v) => setAddress({...address, address1: v})} />
+        <FormInput label="Apartment / Suite" value={address.address2} onChange={(v) => setAddress({...address, address2: v})} />
         <div className="grid grid-cols-3 gap-4">
-            <FormInput label="City" value={newAddress.city} onChange={(v) => setNewAddress({...newAddress, city: v})} />
-            <FormInput label="Province" value={newAddress.province} onChange={(v) => setNewAddress({...newAddress, province: v})} />
-            <FormInput label="Zip Code" value={newAddress.zip} onChange={(v) => setNewAddress({...newAddress, zip: v})} />
+            <FormInput label="City" value={address.city} onChange={(v) => setAddress({...address, city: v})} />
+            <FormInput label="Province" value={address.province} onChange={(v) => setAddress({...address, province: v})} />
+            <FormInput label="Zip Code" value={address.zip} onChange={(v) => setAddress({...address, zip: v})} />
         </div>
-        <div className="flex gap-4 pt-4">
-            <button type="submit" disabled={isSaving} className="bg-black text-white px-8 py-3 text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-gray-800 disabled:opacity-50">
-                {isSaving ? 'Saving...' : 'Add New Address'}
-            </button>
-            <button type="button" onClick={onCancel} className="bg-gray-100 text-gray-500 px-8 py-3 text-xs font-bold uppercase tracking-widest rounded-sm">Cancel</button>
-        </div>
+        <button type="submit" disabled={isSaving} className="w-full bg-black text-white px-8 py-4 text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-gray-800 disabled:opacity-50 transition-all mt-4">
+            {isSaving ? 'Processing...' : submitLabel}
+        </button>
     </form>
 );
 
@@ -46,8 +68,11 @@ const ProfilePage = () => {
     const [customerData, setCustomerData] = useState(null);
     const [orders, setOrders] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [showAddressForm, setShowAddressForm] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+
+    // Modal States
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [editingAddress, setEditingAddress] = useState(null);
     const [newAddress, setNewAddress] = useState({ address1: '', address2: '', city: '', province: '', zip: '', country: 'India', firstName: '', lastName: '' });
 
     useEffect(() => {
@@ -73,13 +98,13 @@ const ProfilePage = () => {
         }
     };
 
-    const handleSaveAddress = async (e) => {
+    const handleCreateAddress = async (e) => {
         e.preventDefault();
         try {
             setIsSaving(true);
             const data = await customerAccountFetch({ query: customerAddressCreateMutation, variables: { address: newAddress } });
             if (!data.customerAddressCreate.userErrors.length) {
-                setShowAddressForm(false);
+                setShowAddModal(false);
                 fetchProfileData();
                 setNewAddress({ address1: '', address2: '', city: '', province: '', zip: '', country: 'India', firstName: '', lastName: '' });
             }
@@ -87,6 +112,43 @@ const ProfilePage = () => {
             alert('Error saving address');
         } finally {
             setIsSaving(false);
+        }
+    };
+
+    const handleUpdateAddress = async (e) => {
+        e.preventDefault();
+        try {
+            setIsSaving(true);
+            // Prepare clean data for Shopify
+            const { id, ...cleanAddress } = editingAddress;
+            const data = await customerAccountFetch({ 
+                query: customerAddressUpdateMutation, 
+                variables: { address: cleanAddress, addressId: id } 
+            });
+            if (!data.customerAddressUpdate.userErrors.length) {
+                setEditingAddress(null);
+                fetchProfileData();
+            }
+        } catch (error) {
+            alert('Error updating address');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleDeleteAddress = async (addressId) => {
+        if (!window.confirm('Are you sure you want to delete this address?')) return;
+        try {
+            setIsLoading(true);
+            await customerAccountFetch({ 
+                query: customerAddressDeleteMutation, 
+                variables: { addressId } 
+            });
+            fetchProfileData();
+        } catch (error) {
+            alert('Error deleting address');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -122,7 +184,7 @@ const ProfilePage = () => {
                                             {item.image ? <img src={item.image.url} alt={item.title} className="w-full h-full object-contain" /> : <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-200 uppercase">img</div>}
                                         </div>
                                         <div>
-                                            <div className="text-sm font-bold leading-tight">{item.title}</div>
+                                            <div className="text-sm font-bold leading-tight line-clamp-2">{item.title}</div>
                                             <div className="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-tighter">Qty: {item.quantity}</div>
                                         </div>
                                     </div>
@@ -139,14 +201,14 @@ const ProfilePage = () => {
         <div className="space-y-16">
             <section>
                 <h2 className="text-2xl font-bold uppercase tracking-tight mb-8">Personal Information</h2>
-                <div className="p-6 border-2 border-gray-200 rounded-sm space-y-6">
+                <div className="p-6 border-2 border-gray-200 rounded-sm space-y-6 bg-gray-50/5">
                     <div>
                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Full Name</label>
                         <p className="text-sm font-bold">{customerData?.firstName} {customerData?.lastName}</p>
                     </div>
                     <div>
                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Email Address</label>
-                        <p className="text-sm font-bold break-all underline decoration-gray-200 underline-offset-2 underline-offset-4">{customerData?.emailAddress?.emailAddress}</p>
+                        <p className="text-sm font-bold break-all">{customerData?.emailAddress?.emailAddress}</p>
                     </div>
                 </div>
             </section>
@@ -154,49 +216,57 @@ const ProfilePage = () => {
             <section className="space-y-8">
                 <div className="flex items-center justify-between">
                     <h3 className="text-xl font-bold uppercase tracking-tighter">Shipping Addresses</h3>
-                    {!showAddressForm && <button onClick={() => setShowAddressForm(true)} className="text-[10px] font-bold uppercase tracking-widest border-2 border-black px-4 py-1.5 hover:bg-black hover:text-white transition-all">+ Add New</button>}
+                    <button onClick={() => setShowAddModal(true)} className="text-[10px] font-bold uppercase tracking-widest border-2 border-black px-4 py-1.5 hover:bg-black hover:text-white transition-all">+ Add New</button>
                 </div>
-                {showAddressForm ? (
-                    <div className="p-8 border-2 border-gray-200 rounded-sm">
-                        <AddressForm newAddress={newAddress} setNewAddress={setNewAddress} isSaving={isSaving} onSave={handleSaveAddress} onCancel={() => setShowAddressForm(false)} />
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {(customerData?.addresses?.edges || []).map(({ node: addr }) => (
-                            <div key={addr.id} className="p-6 border-2 border-gray-200 rounded-sm relative group hover:border-black transition-all">
-                                <span className="absolute top-4 right-4 text-[9px] font-bold uppercase tracking-widest text-gray-300 group-hover:text-black">
-                                    {customerData.defaultAddress?.id === addr.id ? 'Default' : 'Regular'}
-                                </span>
-                                <div className="space-y-1 text-sm font-medium text-gray-600 leading-relaxed">
-                                    <p className="font-bold text-black mb-2">{addr.firstName} {addr.lastName}</p>
-                                    <p>{addr.address1}</p>
-                                    {addr.address2 && <p>{addr.address2}</p>}
-                                    <p>{addr.city}, {addr.province} {addr.zip}</p>
-                                    <p className="text-black uppercase">{addr.country}</p>
-                                </div>
-                                <div className="mt-4 pt-4 border-t-2 border-gray-50 flex gap-4 text-[9px] font-bold uppercase tracking-widest">
-                                    <button className="underline opacity-50 hover:opacity-100">Edit</button>
-                                    <button className="underline text-red-500 opacity-50 hover:opacity-100">Delete</button>
-                                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {(customerData?.addresses?.edges || []).map(({ node: addr }) => (
+                        <div key={addr.id} className="p-6 border-2 border-gray-200 rounded-sm relative group hover:border-black transition-all bg-white">
+                            <span className="absolute top-4 right-4 text-[9px] font-bold uppercase tracking-widest text-gray-300 group-hover:text-black italic">
+                                {customerData.defaultAddress?.id === addr.id ? 'Default' : 'Regular'}
+                            </span>
+                            <div className="space-y-1 text-sm font-medium text-gray-600 leading-relaxed">
+                                <p className="font-bold text-black mb-2">{addr.firstName} {addr.lastName}</p>
+                                <p>{addr.address1}</p>
+                                {addr.address2 && <p>{addr.address2}</p>}
+                                <p>{addr.city}, {addr.province} {addr.zip}</p>
+                                <p className="text-black uppercase">{addr.country}</p>
                             </div>
-                        ))}
-                    </div>
-                )}
+                            <div className="mt-6 pt-4 border-t-2 border-gray-50 flex gap-6 text-[10px] font-bold uppercase tracking-widest">
+                                <button onClick={() => setEditingAddress(addr)} className="text-black hover:underline underline-offset-4 flex items-center gap-1.5">
+                                    <Pencil className="w-3 h-3" /> Edit
+                                </button>
+                                <button onClick={() => handleDeleteAddress(addr.id)} className="text-red-500 hover:underline underline-offset-4">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </section>
+
+            {/* Modals */}
+            <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="Add New Address">
+                <AddressFormFields address={newAddress} setAddress={setNewAddress} isSaving={isSaving} onSave={handleCreateAddress} submitLabel="Save Address" />
+            </Modal>
+
+            <Modal isOpen={!!editingAddress} onClose={() => setEditingAddress(null)} title="Edit Address">
+                {editingAddress && (
+                    <AddressFormFields address={editingAddress} setAddress={setEditingAddress} isSaving={isSaving} onSave={handleUpdateAddress} submitLabel="Update Address" />
+                )}
+            </Modal>
         </div>
     );
-
-    const tabs = [
-        { id: 'orders', label: 'Orders', icon: Package },
-        { id: 'profile', label: 'Profile', icon: UserIcon }
-    ];
 
     return (
         <div className="min-h-screen pt-24 pb-20 bg-white font-sans text-gray-900">
             <div className="max-w-4xl mx-auto px-6">
                 <div className="flex items-center justify-between mb-12 border-b-2 border-gray-200">
                     <div className="flex gap-8">
-                        {tabs.map((tab) => (
+                        {[
+                            { id: 'orders', label: 'Orders', icon: Package },
+                            { id: 'profile', label: 'Profile', icon: UserIcon }
+                        ].map((tab) => (
                             <button 
                                 key={tab.id} 
                                 onClick={() => { setActiveTab(tab.id); setSearchParams({ tab: tab.id }); }} 
@@ -207,7 +277,6 @@ const ProfilePage = () => {
                             </button>
                         ))}
                     </div>
-                    {/* Sign Out hidden on mobile, visible on desktop */}
                     <button onClick={logoutUser} className="hidden lg:flex pb-4 text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-black items-center gap-2">
                         <LogOut className="w-4 h-4" />
                         Sign Out

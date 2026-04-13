@@ -128,7 +128,16 @@ export default function Navbar() {
                                 </button>
                             </div>
 
-                            <Link to="/" className="shrink-0 flex items-center gap-2 cursor-pointer">
+                            <Link 
+                                to="/" 
+                                onClick={(e) => {
+                                    if (window.location.pathname === '/') {
+                                        e.preventDefault();
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }
+                                }}
+                                className="shrink-0 flex items-center gap-2 cursor-pointer"
+                            >
                                 <span className="font-heading font-extrabold text-2xl tracking-tight text-[#2b124c]">MagicWish</span>
                             </Link>
                         </div>

@@ -97,10 +97,13 @@ export default function BooksPage() {
     const [isSortDrawerOpen, setIsSortDrawerOpen] = useState(false);
     const [activeMobileTab, setActiveMobileTab] = useState('gender');
     const [visibleCount, setVisibleCount] = useState(6);
-    const [isFiltering, setIsFiltering] = useState(false);
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
 
     useEffect(() => {
-        getShopifyBooks().then(setBooks);
+        getShopifyBooks().then(data => {
+            setBooks(data);
+            setIsInitialLoading(false);
+        });
     }, []);
 
     useEffect(() => {
@@ -453,7 +456,7 @@ export default function BooksPage() {
 
                         {/* Content area */}
                         <div className="px-6 pb-20 md:px-10 md:pb-24 min-h-[calc(100vh-180px)]">
-                            {isFiltering ? (
+                            {(isInitialLoading || isFiltering) ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
                                     {[1, 2, 3, 4, 5, 6].map(i => <SkeletonCard key={i} />)}
                                 </div>

@@ -200,6 +200,21 @@ export default function BookPreviewPage() {
                             </p>
                         </div>
 
+                        <div className="hidden lg:block space-y-4">
+                            <button 
+                                onClick={handleAddToCart}
+                                disabled={!canContinue}
+                                className={`w-full py-5 rounded-sm font-black text-xl uppercase tracking-widest transition-all flex items-center justify-center gap-3 ${!canContinue ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#624da0] hover:bg-[#4d3a82] text-white shadow-xl shadow-purple-200/50 hover:scale-[1.02] active:scale-95'}`}
+                            >
+                                {!canContinue ? (isUploading ? 'Securing Preview...' : 'Generating...') : 'Add to Cart'}
+                                {canContinue && <ArrowRight className="w-6 h-6" />}
+                                {!canContinue && <Loader2 className="w-6 h-6 animate-spin" />}
+                            </button>
+                            <p className="text-center text-xs font-bold text-gray-400 flex items-center justify-center gap-2">
+                                <CheckCircle2 className="w-4 h-4 text-green-500" /> Premium Hardcover Print Quality Verified
+                            </p>
+                        </div>
+
                         {/* Order Summary Card */}
                         <div className="bg-white rounded-sm p-6 shadow-xl shadow-blue-100/50 border border-blue-50 space-y-4">
                             <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-3">Personalization Details</h3>
@@ -223,21 +238,6 @@ export default function BookPreviewPage() {
                                     </p>
                                 </div>
                             </div>
-                        </div>
-
-                        <div className="hidden lg:block space-y-4">
-                            <button 
-                                onClick={handleAddToCart}
-                                disabled={!canContinue}
-                                className={`w-full py-5 rounded-sm font-black text-xl uppercase tracking-widest transition-all flex items-center justify-center gap-3 ${!canContinue ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#624da0] hover:bg-[#4d3a82] text-white shadow-xl shadow-purple-200/50 hover:scale-[1.02] active:scale-95'}`}
-                            >
-                                {!canContinue ? (isUploading ? 'Securing Preview...' : 'Generating...') : 'Add to Cart'}
-                                {canContinue && <ArrowRight className="w-6 h-6" />}
-                                {!canContinue && <Loader2 className="w-6 h-6 animate-spin" />}
-                            </button>
-                            <p className="text-center text-xs font-bold text-gray-400 flex items-center justify-center gap-2">
-                                <CheckCircle2 className="w-4 h-4 text-green-500" /> Premium Hardcover Print Quality Verified
-                            </p>
                         </div>
                     </div>
 

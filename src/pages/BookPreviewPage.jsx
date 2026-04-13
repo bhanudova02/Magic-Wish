@@ -182,7 +182,7 @@ export default function BookPreviewPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                     
                     {/* Left side: Book Information */}
-                    <div className="lg:col-span-5 space-y-10 animate-in slide-in-from-left duration-700">
+                    <div className="lg:col-span-5 space-y-10 animate-in slide-in-from-left duration-700 order-2 lg:order-1">
                         <div className="space-y-6">
                             <button 
                                 onClick={() => navigate(-1)}
@@ -242,7 +242,7 @@ export default function BookPreviewPage() {
                     </div>
 
                     {/* Right side: Interactive Book Mockup */}
-                    <div className="lg:col-span-7 relative animate-in zoom-in duration-700 delay-200 max-w-[480px] mx-auto w-full">
+                    <div className="lg:col-span-7 relative animate-in zoom-in duration-700 delay-200 max-w-[480px] mx-auto w-full order-1 lg:order-2">
                         <div className="absolute -inset-10 bg-[#624da0]/10 blur-[100px] rounded-sm -z-10"></div>
                         
                         <div className="relative aspect-[4/5] bg-white rounded-sm shadow-[0_30px_60px_-12px_rgba(37,99,235,0.25)] border-l-[12px] border-white overflow-hidden group">
@@ -287,11 +287,13 @@ export default function BookPreviewPage() {
                         </div>
 
                         {/* Floating elements for depth */}
-                        <div className="hidden lg:block absolute -top-6 -right-6 w-32 h-40 bg-white p-2 rounded-sm shadow-2xl rotate-6 border border-gray-50">
-                            <div className="w-full h-full bg-[#FDE2FF] rounded-sm flex items-center justify-center">
-                                <BookOpen className="w-8 h-8 text-[#624da0]/40" />
+                        {!isGenerating && !isUploading && generatedImage && (
+                            <div className="hidden lg:block absolute -top-8 -right-8 w-32 h-40 bg-white p-2 rounded-sm shadow-2xl rotate-6 border border-gray-50 animate-in fade-in slide-in-from-top-4 duration-700 delay-500">
+                                <div className="w-full h-full bg-[#FDE2FF] rounded-sm overflow-hidden shadow-inner">
+                                    <img src={generatedImage} className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity" alt="Mini Preview" />
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </div>
 

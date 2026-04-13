@@ -98,6 +98,7 @@ export default function BooksPage() {
     const [activeMobileTab, setActiveMobileTab] = useState('gender');
     const [visibleCount, setVisibleCount] = useState(6);
     const [isInitialLoading, setIsInitialLoading] = useState(true);
+    const [isFiltering, setIsFiltering] = useState(false);
 
     useEffect(() => {
         getShopifyBooks().then(data => {

@@ -363,6 +363,7 @@ export default function PersonalizationSection({ book }) {
                                                     productId: book.id,
                                                     variantId: book.variantId,
                                                     title: book.title,
+                                                    description: book.description,
                                                     coverpagePrompt: book.coverpagePrompt
                                                 }));
                                                 navigate('/preview');

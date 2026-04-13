@@ -53,9 +53,12 @@ export default function BookPreviewPage() {
             const parsedData = JSON.parse(stored);
             setPersonalization(parsedData);
             
-            if (parsedData.generatedImage && parsedData.generatedImage.includes('cloudinary')) {
+            // Check if we already have a generated image (either Cloudinary or Pollinations)
+            if (parsedData.generatedImage) {
                 setGeneratedImage(parsedData.generatedImage);
-                setCloudinaryUrl(parsedData.generatedImage);
+                if (parsedData.generatedImage.includes('cloudinary')) {
+                    setCloudinaryUrl(parsedData.generatedImage);
+                }
                 setIsGenerating(false);
                 setIsUploading(false);
                 setProgress(100);
@@ -80,6 +83,17 @@ export default function BookPreviewPage() {
         const pollUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(activePrompt)}?width=1024&height=1024&seed=${seed}&nologo=true`;
         
         setGeneratedImage(pollUrl);
+        
+        // Instant save to prevent re-generation if user refreshes during generation
+        try {
+            const currentData = JSON.parse(localStorage.getItem('last_personalization') || '{}');
+            localStorage.setItem('last_personalization', JSON.stringify({
+                ...currentData,
+                generatedImage: pollUrl
+            }));
+        } catch (e) {
+            console.error("Failed to save temporary preview:", e);
+        }
 
         try {
             setIsUploading(true);

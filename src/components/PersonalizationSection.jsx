@@ -398,12 +398,10 @@ export default function PersonalizationSection({ book }) {
                                         <button 
                                             disabled={isValidating}
                                             onClick={async () => {
-                                                /* Temporarily disabled login check for local development
                                                 if (!user) {
                                                     setShowLoginModal(true);
                                                     return;
                                                 }
-                                                */
 
                                                 const nameRegex = /^[a-zA-Z]/;
                                                 const newErrors = {};

@@ -382,12 +382,15 @@ export default function PersonalizationSection({ book }) {
                                                 }
 
                                                 try {
-                                                    setIsValidating(true); // Re-use loading state for upload
+                                                    setIsValidating(true);
                                                     
-                                                    // Prepare Cloudinary Upload
                                                     const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
                                                     const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
                                                     
+                                                    if (!cloudName || !preset) {
+                                                        throw new Error("Cloudinary configuration missing in environment variables.");
+                                                    }
+
                                                     const uploadData = new FormData();
                                                     uploadData.append('file', uploadedPhoto);
                                                     uploadData.append('upload_preset', preset);
@@ -398,14 +401,15 @@ export default function PersonalizationSection({ book }) {
                                                     });
                                                     
                                                     const result = await response.json();
-                                                    
+                                                    console.log("Cloudinary Response:", result);
+
                                                     if (!result.secure_url) {
-                                                        throw new Error("Upload failed");
+                                                        throw new Error(result.error?.message || "Upload failed");
                                                     }
 
                                                     localStorage.setItem('last_personalization', JSON.stringify({
                                                         ...formData,
-                                                        photo: result.secure_url, // Store the Cloudinary URL!
+                                                        photo: result.secure_url,
                                                         productId: book.id,
                                                         variantId: book.variantId,
                                                         title: book.title,
@@ -414,8 +418,8 @@ export default function PersonalizationSection({ book }) {
                                                     }));
                                                     navigate('/preview');
                                                 } catch (err) {
-                                                    console.error("Cloudinary Error:", err);
-                                                    alert("Failed to upload photo. Please try again.");
+                                                    console.error("Cloudinary Error Detail:", err);
+                                                    alert(`Upload Error: ${err.message || 'Check your connection'}`);
                                                 } finally {
                                                     setIsValidating(false);
                                                 }

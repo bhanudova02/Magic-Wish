@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ShoppingCart, Sparkles, CheckCircle2, User, Calendar, Globe, Terminal } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Sparkles, CheckCircle2, User, Calendar, Globe, Terminal, X, Check } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 export default function BookPreviewPage() {
@@ -65,7 +65,9 @@ export default function BookPreviewPage() {
 
     const handleImageError = () => {
         setIsGenerating(false);
-        setError("AI Service is busy. Please try refreshing!");
+        // Use a high-quality fallback image if AI is busy
+        setGeneratedImage('https://images.unsplash.com/photo-1618519764620-7403abdb0991?q=80&w=1200&h=1200&auto=format&fit=crop');
+        setError("AI artist is busy. Showing sample artwork instead!");
     };
 
     if (!personalization) return null;
@@ -120,7 +122,7 @@ export default function BookPreviewPage() {
                                     <div className="space-y-4 w-full max-w-xs">
                                         <div className="space-y-2">
                                             <h3 className="text-2xl font-black text-gray-900 tracking-tight">Generating Magic Artwork...</h3>
-                                            <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">{progress < 90 ? `Painting for ${personalization.name}` : 'Adding final touches...'}</p>
+                                            <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">{progress < 90 ? `Painting for ${personalization?.name || 'your hero'}` : 'Adding final touches...'}</p>
                                         </div>
                                         {/* Progress Bar Container */}
                                         <div className="w-full h-3 bg-purple-50 rounded-full overflow-hidden border border-purple-100 p-0.5">
@@ -145,10 +147,10 @@ export default function BookPreviewPage() {
                                     />
                                 )}
                                 {error && (
-                                    <div className="text-center p-8 space-y-4">
-                                        <X className="w-12 h-12 text-red-500 mx-auto" />
-                                        <p className="text-gray-500 font-bold">{error}</p>
-                                        <button onClick={() => window.location.reload()} className="text-purple-600 font-black underline">Retry</button>
+                                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 bg-yellow-50/90 backdrop-blur-sm border border-yellow-200 px-6 py-2 rounded-full shadow-lg">
+                                        <p className="text-yellow-700 font-bold text-xs flex items-center gap-2">
+                                            <Sparkles className="w-4 h-4" /> {error}
+                                        </p>
                                     </div>
                                 )}
                             </div>
@@ -163,11 +165,11 @@ export default function BookPreviewPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6">
                             <div className="bg-gray-50 p-6 rounded-3xl flex items-center gap-4">
                                 <div className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-purple-600 relative overflow-hidden">
-                                    <img src={personalization.photo} className="w-full h-full object-cover" />
+                                    {personalization?.photo && <img src={personalization.photo} className="w-full h-full object-cover" />}
                                 </div>
                                 <div>
                                     <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Child's Name</p>
-                                    <p className="text-xl font-black text-gray-900">{personalization.name}</p>
+                                    <p className="text-xl font-black text-gray-900">{personalization?.name || '...'}</p>
                                 </div>
                             </div>
                             <div className="bg-gray-50 p-6 rounded-3xl flex items-center gap-4">
@@ -176,7 +178,7 @@ export default function BookPreviewPage() {
                                 </div>
                                 <div>
                                     <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Child's Age</p>
-                                    <p className="text-xl font-black text-gray-900">{personalization.age} Years old</p>
+                                    <p className="text-xl font-black text-gray-900">{personalization?.age || '...'} Years old</p>
                                 </div>
                             </div>
                         </div>
@@ -188,7 +190,7 @@ export default function BookPreviewPage() {
                             </div>
                             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-inner">
                                 <p className="text-gray-700 font-bold text-lg leading-relaxed">
-                                    "Generate a premium <span className="text-purple-600">book front cover artwork</span> featuring <span className="text-purple-600 underline">a {personalization.age} year old child named {personalization.name}</span> in a scene described as: <span className="text-gray-900 italic">{personalization.coverpagePrompt}</span>. Maintain a magical, cinematic, and vibrant fantasy style."
+                                    "Generate a premium <span className="text-purple-600">book front cover artwork</span> featuring <span className="text-purple-600 underline">a {personalization?.age || '...'} year old child named {personalization?.name || '...'}</span> in a scene described as: <span className="text-gray-900 italic">{personalization?.coverpagePrompt}</span>. Maintain a magical, cinematic, and vibrant fantasy style."
                                 </p>
                             </div>
                             <p className="text-[10px] text-purple-400 font-medium text-center italic mt-2 italic">* This instruction will be sent to our AI artist to craft your unique book cover.</p>

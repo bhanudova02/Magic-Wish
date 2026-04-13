@@ -127,7 +127,7 @@ export default function BookPreviewPage() {
                             </div>
                             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-inner">
                                 <p className="text-gray-700 font-bold text-lg leading-relaxed">
-                                    "Generate a premium book cover artwork featuring <span className="text-purple-600 underline">a {personalization.age} year old child named {personalization.name}</span> in a scene described as: <span className="text-gray-900 italic">{personalization.coverpagePrompt}</span>. Maintain a magical, cinematic, and vibrant fantasy style."
+                                    "Generate a premium <span className="text-purple-600">book front cover artwork</span> featuring <span className="text-purple-600 underline">a {personalization.age} year old child named {personalization.name}</span> in a scene described as: <span className="text-gray-900 italic">{personalization.coverpagePrompt}</span>. Maintain a magical, cinematic, and vibrant fantasy style."
                                 </p>
                             </div>
                             <p className="text-[10px] text-purple-400 font-medium text-center italic mt-2 italic">* This instruction will be sent to our AI artist to craft your unique book cover.</p>

@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Upload, Check, X, Lock, Sparkles, Image as ImageIcon, Printer } from 'lucide-react';
+import * as faceapi from 'https://esm.sh/@vladmandic/face-api';
 
 export default function PersonalizationSection() {
+    const navigate = useNavigate();
     const [uploadedPhoto, setUploadedPhoto] = React.useState(null);
+    const [isValidating, setIsValidating] = React.useState(false);
+    const [showWarning, setShowWarning] = React.useState(false);
     const [formData, setFormData] = React.useState({
         language: 'English',
         name: '',
@@ -11,18 +16,48 @@ export default function PersonalizationSection() {
     
     const fileInputRef = React.useRef(null);
 
+    // Load models on mount
+    useEffect(() => {
+        const loadModels = async () => {
+            const MODEL_URL = 'https://vladmandic.github.io/face-api/model/';
+            await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+        };
+        loadModels();
+    }, []);
+
     const handleUploadClick = () => {
         if (fileInputRef.current) {
             fileInputRef.current.click();
         }
     };
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (file && file.type.startsWith('image/')) {
+            setIsValidating(true);
             const reader = new FileReader();
-            reader.onload = (event) => {
-                setUploadedPhoto(event.target.result);
+            reader.onload = async (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = async () => {
+                    try {
+                        // Detect faces
+                        const detections = await faceapi.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions());
+                        
+                        if (detections.length > 0) {
+                            setUploadedPhoto(event.target.result);
+                            setShowWarning(false);
+                        } else {
+                            setShowWarning(true);
+                        }
+                    } catch (err) {
+                        console.error("Face detection error:", err);
+                        // Fallback: accept if detection fails but log it
+                        setUploadedPhoto(event.target.result);
+                    } finally {
+                        setIsValidating(false);
+                    }
+                };
             };
             reader.readAsDataURL(file);
         } else {
@@ -38,7 +73,28 @@ export default function PersonalizationSection() {
     };
 
     return (
-        <section className="bg-[#fdf2f8] py-16 md:py-24 overflow-hidden">
+        <section className="bg-[#fdf2f8] py-16 md:py-24 overflow-hidden relative">
+            {/* Warning Modal */}
+            {showWarning && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl space-y-6 text-center animate-in zoom-in-95 duration-300">
+                        <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto">
+                            <X className="w-10 h-10 text-red-500" />
+                        </div>
+                        <div className="space-y-2">
+                            <h3 className="text-2xl font-black text-gray-900 leading-tight">No Face Detected!</h3>
+                            <p className="text-gray-500 font-medium">We couldn't find a clear face in this photo. Please upload a front-facing photo of your child for the best results.</p>
+                        </div>
+                        <button 
+                            onClick={() => setShowWarning(false)}
+                            className="w-full bg-gray-900 text-white py-4 rounded-2xl font-bold hover:bg-gray-800 transition shadow-lg"
+                        >
+                            Try Another Photo
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                     
@@ -61,7 +117,7 @@ export default function PersonalizationSection() {
                             <div className="flex flex-col items-center text-center space-y-4">
                                 <div className="relative">
                                     <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-dashed ${uploadedPhoto ? 'border-green-500 bg-green-50' : 'border-purple-300 bg-white'} flex items-center justify-center shadow-sm`}>
-                                        {uploadedPhoto ? <Check className="w-8 h-8 text-green-600" /> : <Upload className="w-8 h-8 text-purple-600" />}
+                                        {isValidating ? <div className="w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div> : (uploadedPhoto ? <Check className="w-8 h-8 text-green-600" /> : <Upload className="w-8 h-8 text-purple-600" />)}
                                     </div>
                                     <div className="absolute -bottom-2 -left-2 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm border-2 border-[#fdf2f8]">
                                         1
@@ -71,16 +127,16 @@ export default function PersonalizationSection() {
                             </div>
 
                             {/* Step 2 */}
-                            <div className="flex flex-col items-center text-center space-y-4 opacity-50">
+                            <div className={`flex flex-col items-center text-center space-y-4 transition ${uploadedPhoto ? 'opacity-100' : 'opacity-50'}`}>
                                 <div className="relative">
-                                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-dashed border-purple-300 flex items-center justify-center bg-white shadow-sm overflow-hidden text-purple-300">
+                                    <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-dashed ${uploadedPhoto ? 'border-purple-600' : 'border-purple-300'} flex items-center justify-center bg-white shadow-sm overflow-hidden text-purple-600`}>
                                         <Sparkles className="w-8 h-8" />
                                     </div>
-                                    <div className="absolute -bottom-2 -left-2 w-8 h-8 bg-purple-200 text-white rounded-full flex items-center justify-center font-bold text-sm border-2 border-[#fdf2f8]">
+                                    <div className="absolute -bottom-2 -left-2 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm border-2 border-[#fdf2f8]">
                                         2
                                     </div>
                                 </div>
-                                <span className="text-sm font-bold text-gray-400 leading-tight">Preview Book and Order</span>
+                                <span className={`text-sm font-bold leading-tight ${uploadedPhoto ? 'text-gray-800' : 'text-gray-400'}`}>Preview Book and Order</span>
                             </div>
 
                             {/* Step 3 */}
@@ -102,7 +158,17 @@ export default function PersonalizationSection() {
                     <div className="lg:col-span-5 relative">
                         <div className="bg-white rounded-3xl p-8 shadow-2xl shadow-purple-200/50 border border-purple-50 relative z-10 min-h-[480px] flex flex-col justify-center">
                             
-                            {!uploadedPhoto ? (
+                            {isValidating ? (
+                                <div className="text-center space-y-6 animate-pulse">
+                                    <div className="w-24 h-24 bg-purple-50 rounded-full flex items-center justify-center mx-auto border-4 border-dashed border-purple-200">
+                                        <div className="w-10 h-10 border-4 border-purple-100 border-t-purple-600 rounded-full animate-spin"></div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <h3 className="text-xl font-black text-gray-900">Validating Photo...</h3>
+                                        <p className="text-gray-500 font-medium">Our AI is checking for a clear face.</p>
+                                    </div>
+                                </div>
+                            ) : !uploadedPhoto ? (
                                 <>
                                     {/* TIPS View */}
                                     <div className="text-center mb-8 animate-in fade-in duration-500">
@@ -234,7 +300,21 @@ export default function PersonalizationSection() {
                                         </div>
                                     </div>
 
-                                    <button className="w-full bg-[#a21caf] hover:bg-[#86198f] text-white py-5 px-6 rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-purple-200 mt-4">
+                                    <button 
+                                        onClick={() => {
+                                            if (!formData.name) {
+                                                alert("Please enter your child's name.");
+                                                return;
+                                            }
+                                            localStorage.setItem('last_personalization', JSON.stringify({
+                                                ...formData,
+                                                photo: uploadedPhoto,
+                                                title: 'The Boy and the Cosmic Journey'
+                                            }));
+                                            navigate('/preview');
+                                        }}
+                                        className="w-full bg-[#a21caf] hover:bg-[#86198f] text-white py-5 px-6 rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-purple-200 mt-4"
+                                    >
                                         Preview My Book <Sparkles className="w-6 h-6" />
                                     </button>
                                 </div>

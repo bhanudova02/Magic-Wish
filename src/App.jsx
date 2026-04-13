@@ -16,6 +16,7 @@ import CartDrawer from './components/CartDrawer';
 import CartPage from './pages/CartPage';
 import AuthCallback from './pages/AuthCallback';
 import ProfilePage from './pages/ProfilePage';
+import BookPreviewPage from './pages/BookPreviewPage';
 
 function App() {
     return (
@@ -38,6 +39,7 @@ function App() {
                                 <Route path="/cart" element={<CartPage />} />
                                 <Route path="/callback" element={<AuthCallback />} />
                                 <Route path="/profile" element={<ProfilePage />} />
+                                <Route path="/preview" element={<BookPreviewPage />} />
                             </Routes>
                         </main>
                         <Footer />

@@ -2,6 +2,41 @@ import React from 'react';
 import { Upload, Check, X, Lock, Sparkles, Image as ImageIcon, Printer } from 'lucide-react';
 
 export default function PersonalizationSection() {
+    const [uploadedPhoto, setUploadedPhoto] = React.useState(null);
+    const [formData, setFormData] = React.useState({
+        language: 'English',
+        name: '',
+        age: ''
+    });
+    
+    const fileInputRef = React.useRef(null);
+
+    const handleUploadClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                setUploadedPhoto(event.target.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            alert("Please upload a valid image file.");
+        }
+    };
+
+    const handleRemovePhoto = () => {
+        setUploadedPhoto(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
+
     return (
         <section className="bg-[#fdf2f8] py-16 md:py-24 overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -25,8 +60,8 @@ export default function PersonalizationSection() {
                             {/* Step 1 */}
                             <div className="flex flex-col items-center text-center space-y-4">
                                 <div className="relative">
-                                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-dashed border-purple-300 flex items-center justify-center bg-white shadow-sm">
-                                        <Upload className="w-8 h-8 text-purple-600" />
+                                    <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-dashed ${uploadedPhoto ? 'border-green-500 bg-green-50' : 'border-purple-300 bg-white'} flex items-center justify-center shadow-sm`}>
+                                        {uploadedPhoto ? <Check className="w-8 h-8 text-green-600" /> : <Upload className="w-8 h-8 text-purple-600" />}
                                     </div>
                                     <div className="absolute -bottom-2 -left-2 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm border-2 border-[#fdf2f8]">
                                         1
@@ -36,100 +71,177 @@ export default function PersonalizationSection() {
                             </div>
 
                             {/* Step 2 */}
-                            <div className="flex flex-col items-center text-center space-y-4">
+                            <div className="flex flex-col items-center text-center space-y-4 opacity-50">
                                 <div className="relative">
-                                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-dashed border-purple-300 flex items-center justify-center bg-white shadow-sm overflow-hidden">
-                                        <Sparkles className="w-8 h-8 text-purple-600" />
+                                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-dashed border-purple-300 flex items-center justify-center bg-white shadow-sm overflow-hidden text-purple-300">
+                                        <Sparkles className="w-8 h-8" />
                                     </div>
-                                    <div className="absolute -bottom-2 -left-2 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm border-2 border-[#fdf2f8]">
+                                    <div className="absolute -bottom-2 -left-2 w-8 h-8 bg-purple-200 text-white rounded-full flex items-center justify-center font-bold text-sm border-2 border-[#fdf2f8]">
                                         2
                                     </div>
                                 </div>
-                                <span className="text-sm font-bold text-gray-800 leading-tight">Preview Book and Order</span>
+                                <span className="text-sm font-bold text-gray-400 leading-tight">Preview Book and Order</span>
                             </div>
 
                             {/* Step 3 */}
-                            <div className="flex flex-col items-center text-center space-y-4">
+                            <div className="flex flex-col items-center text-center space-y-4 opacity-50 text-purple-300">
                                 <div className="relative">
                                     <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-dashed border-purple-300 flex items-center justify-center bg-white shadow-sm">
-                                        <Printer className="w-8 h-8 text-purple-600" />
+                                        <Printer className="w-8 h-8" />
                                     </div>
-                                    <div className="absolute -bottom-2 -left-2 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm border-2 border-[#fdf2f8]">
+                                    <div className="absolute -bottom-2 -left-2 w-8 h-8 bg-purple-200 text-white rounded-full flex items-center justify-center font-bold text-sm border-2 border-[#fdf2f8]">
                                         3
                                     </div>
                                 </div>
-                                <span className="text-sm font-bold text-gray-800 leading-tight">Premium Print, Delivered to Your Door</span>
+                                <span className="text-sm font-bold text-gray-400 leading-tight">Premium Print, Delivered to Your Door</span>
                             </div>
                         </div>
                     </div>
 
-                    {/* Right side: Upload Card */}
+                    {/* Right side: Action Card */}
                     <div className="lg:col-span-5 relative">
-                        <div className="bg-white rounded-3xl p-8 shadow-2xl shadow-purple-200/50 border border-purple-50 relative z-10">
-                            {/* Tips Header */}
-                            <div className="text-center mb-8">
-                                <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-6">TIPS</h3>
-                                <div className="flex justify-between items-start gap-2">
-                                    <div className="flex-1 flex flex-col items-center gap-2">
-                                        <div className="relative">
-                                            <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-green-500 p-0.5">
-                                                <img src="https://images.unsplash.com/photo-1544126592-807daa215a05?q=80&w=200&h=200&auto=format&fit=crop" alt="Good" className="w-full h-full object-cover rounded-full" />
+                        <div className="bg-white rounded-3xl p-8 shadow-2xl shadow-purple-200/50 border border-purple-50 relative z-10 min-h-[480px] flex flex-col justify-center">
+                            
+                            {!uploadedPhoto ? (
+                                <>
+                                    {/* TIPS View */}
+                                    <div className="text-center mb-8 animate-in fade-in duration-500">
+                                        <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-6">TIPS</h3>
+                                        <div className="flex justify-between items-start gap-2">
+                                            <div className="flex-1 flex flex-col items-center gap-2">
+                                                <div className="relative">
+                                                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-green-500 p-0.5">
+                                                        <img src="https://images.unsplash.com/photo-1544126592-807daa215a05?q=80&w=200&h=200&auto=format&fit=crop" alt="Good" className="w-full h-full object-cover rounded-full" />
+                                                    </div>
+                                                    <div className="absolute -top-1 -right-1 bg-green-500 text-white rounded-full p-0.5 border-2 border-white">
+                                                        <Check className="w-3 h-3" />
+                                                    </div>
+                                                </div>
+                                                <span className="text-[10px] md:text-xs font-bold text-gray-500 leading-tight">Clear front-facing photo</span>
                                             </div>
-                                            <div className="absolute -top-1 -right-1 bg-green-500 text-white rounded-full p-0.5 border-2 border-white">
-                                                <Check className="w-3 h-3" />
+
+                                            <div className="flex-1 flex flex-col items-center gap-2">
+                                                <div className="relative opacity-60">
+                                                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-red-500 p-0.5">
+                                                        <img src="https://images.unsplash.com/photo-1596464716127-f2a82984de30?q=80&w=200&h=200&auto=format&fit=crop" alt="Bad" className="w-full h-full object-cover rounded-full" />
+                                                    </div>
+                                                    <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 border-2 border-white">
+                                                        <X className="w-3 h-3" />
+                                                    </div>
+                                                </div>
+                                                <span className="text-[10px] md:text-xs font-bold text-gray-400 leading-tight">No eating or covered face</span>
+                                            </div>
+
+                                            <div className="flex-1 flex flex-col items-center gap-2">
+                                                <div className="relative opacity-60">
+                                                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-red-500 p-0.5">
+                                                        <img src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?q=80&w=200&h=200&auto=format&fit=crop" alt="Bad" className="w-full h-full object-cover rounded-full" />
+                                                    </div>
+                                                    <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 border-2 border-white">
+                                                        <X className="w-3 h-3" />
+                                                    </div>
+                                                </div>
+                                                <span className="text-[10px] md:text-xs font-bold text-gray-400 leading-tight">No accessories</span>
+                                            </div>
+
+                                            <div className="flex-1 flex flex-col items-center gap-2">
+                                                <div className="relative opacity-60">
+                                                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-red-500 p-0.5">
+                                                        <img src="https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?q=80&w=200&h=200&auto=format&fit=crop" alt="Bad" className="w-full h-full object-cover rounded-full" />
+                                                    </div>
+                                                    <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 border-2 border-white">
+                                                        <X className="w-3 h-3" />
+                                                    </div>
+                                                </div>
+                                                <span className="text-[10px] md:text-xs font-bold text-gray-400 leading-tight">No far away or side angle</span>
                                             </div>
                                         </div>
-                                        <span className="text-[10px] md:text-xs font-bold text-gray-500 leading-tight">Clear front-facing photo</span>
                                     </div>
 
-                                    <div className="flex-1 flex flex-col items-center gap-2">
-                                        <div className="relative opacity-60">
-                                            <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-red-500 p-0.5">
-                                                <img src="https://images.unsplash.com/photo-1596464716127-f2a82984de30?q=80&w=200&h=200&auto=format&fit=crop" alt="Bad" className="w-full h-full object-cover rounded-full" />
-                                            </div>
-                                            <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 border-2 border-white">
-                                                <X className="w-3 h-3" />
-                                            </div>
+                                    {/* Main Button */}
+                                    <div className="space-y-4">
+                                        <input 
+                                            type="file" 
+                                            ref={fileInputRef} 
+                                            onChange={handleFileChange} 
+                                            accept="image/*" 
+                                            className="hidden" 
+                                        />
+                                        <button 
+                                            onClick={handleUploadClick}
+                                            className="w-full bg-[#a21caf] hover:bg-[#86198f] text-white py-5 px-6 rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-purple-200"
+                                        >
+                                            Child's Photo <Upload className="w-6 h-6" />
+                                        </button>
+                                        <p className="text-center text-sm font-bold text-gray-400">drop a photo or click on the button</p>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="space-y-6 animate-in slide-in-from-right duration-500">
+                                    {/* Uploaded Preview */}
+                                    <div className="flex justify-center relative">
+                                        <div className="w-28 h-28 rounded-full border-2 border-purple-200 relative p-1 shadow-sm">
+                                            <img src={uploadedPhoto} alt="Uploaded" className="w-full h-full object-cover object-center rounded-full" />
+                                            <button 
+                                                onClick={handleRemovePhoto}
+                                                className="absolute -top-1 -right-1 bg-white border border-gray-100 shadow-md rounded-full p-1.5 hover:bg-gray-50 transition z-20"
+                                            >
+                                                <X className="w-3 h-3 text-gray-500" />
+                                            </button>
                                         </div>
-                                        <span className="text-[10px] md:text-xs font-bold text-gray-400 leading-tight">No eating or covered face</span>
                                     </div>
 
-                                    <div className="flex-1 flex flex-col items-center gap-2">
-                                        <div className="relative opacity-60">
-                                            <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-red-500 p-0.5">
-                                                <img src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?q=80&w=200&h=200&auto=format&fit=crop" alt="Bad" className="w-full h-full object-cover rounded-full" />
+                                    {/* Form Fields */}
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="block text-sm font-black text-gray-800 mb-2 uppercase tracking-wide">Book Language</label>
+                                            <select 
+                                                className="w-full bg-gray-50 border border-gray-100 rounded-2xl py-4 px-6 focus:ring-2 focus:ring-purple-200 outline-none font-bold text-gray-700 transition"
+                                                value={formData.language}
+                                                onChange={(e) => setFormData({...formData, language: e.target.value})}
+                                            >
+                                                <option>English</option>
+                                                <option>Telugu</option>
+                                                <option>Hindi</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-sm font-black text-gray-800 mb-2 uppercase tracking-wide">Child's Name</label>
+                                                <div className="relative">
+                                                    <input 
+                                                        type="text" 
+                                                        maxLength={25}
+                                                        placeholder="Name"
+                                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl py-4 px-6 focus:ring-2 focus:ring-purple-200 outline-none font-bold text-gray-700 transition"
+                                                        value={formData.name}
+                                                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                                    />
+                                                    <span className="absolute right-4 bottom-2 text-[10px] font-bold text-gray-300">{formData.name.length}/25</span>
+                                                </div>
                                             </div>
-                                            <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 border-2 border-white">
-                                                <X className="w-3 h-3" />
+                                            <div>
+                                                <label className="block text-sm font-black text-gray-800 mb-2 uppercase tracking-wide">Child's Age</label>
+                                                <input 
+                                                    type="number" 
+                                                    placeholder="Age"
+                                                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl py-4 px-6 focus:ring-2 focus:ring-purple-200 outline-none font-bold text-gray-700 transition"
+                                                    value={formData.age}
+                                                    onChange={(e) => setFormData({...formData, age: e.target.value})}
+                                                />
                                             </div>
                                         </div>
-                                        <span className="text-[10px] md:text-xs font-bold text-gray-400 leading-tight">No accessories</span>
                                     </div>
 
-                                    <div className="flex-1 flex flex-col items-center gap-2">
-                                        <div className="relative opacity-60">
-                                            <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-red-500 p-0.5">
-                                                <img src="https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?q=80&w=200&h=200&auto=format&fit=crop" alt="Bad" className="w-full h-full object-cover rounded-full" />
-                                            </div>
-                                            <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 border-2 border-white">
-                                                <X className="w-3 h-3" />
-                                            </div>
-                                        </div>
-                                        <span className="text-[10px] md:text-xs font-bold text-gray-400 leading-tight">No far away or side angle</span>
-                                    </div>
+                                    <button className="w-full bg-[#a21caf] hover:bg-[#86198f] text-white py-5 px-6 rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-purple-200 mt-4">
+                                        Preview My Book <Sparkles className="w-6 h-6" />
+                                    </button>
                                 </div>
-                            </div>
+                            )}
 
-                            {/* Main Button */}
-                            <div className="space-y-4">
-                                <button className="w-full bg-[#a21caf] hover:bg-[#86198f] text-white py-5 px-6 rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-purple-200">
-                                    Child's Photo <Upload className="w-6 h-6" />
-                                </button>
-                                <p className="text-center text-sm font-bold text-gray-400">drop a photo or click on the button</p>
-                            </div>
-
-                            <button className="w-full mt-6 py-4 px-6 rounded-2xl border-2 border-purple-100 hover:border-purple-200 flex items-center justify-center gap-2 text-purple-600 font-bold text-sm transition-colors group">
-                                <Sparkles className="w-4 h-4 text-purple-400 group-hover:text-purple-600 transition-colors" />
+                            <button className="w-full mt-6 py-4 px-6 rounded-2xl border-2 border-purple-50 hover:border-purple-100 flex items-center justify-center gap-2 text-purple-600 font-bold text-sm transition-colors group">
+                                <ImageIcon className="w-4 h-4 text-purple-400 group-hover:text-purple-600 transition-colors" />
                                 Photo Formats & Dimensions Info
                             </button>
                         </div>

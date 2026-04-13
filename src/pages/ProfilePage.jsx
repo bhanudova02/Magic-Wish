@@ -175,7 +175,7 @@ const ProfilePage = () => {
             <section className="space-y-8">
                 <div className="flex items-center justify-between">
                     <h3 className="text-xl font-bold uppercase tracking-tighter">Shipping Addresses</h3>
-                    <button onClick={() => setShowAddModal(true)} className="text-[10px] font-bold uppercase tracking-widest border-2 border-black px-4 py-1.5 hover:bg-black hover:text-white transition-all">+ Add New</button>
+                    <button onClick={() => setShowAddModal(true)} className="hidden md:block text-[10px] font-bold uppercase tracking-widest border-2 border-black px-4 py-1.5 hover:bg-black hover:text-white transition-all">+ Add New</button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

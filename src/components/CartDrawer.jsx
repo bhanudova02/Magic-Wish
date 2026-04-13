@@ -36,7 +36,7 @@ export default function CartDrawer() {
             ></div>
 
             {/* Drawer */}
-            <div className={`fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl z-[160] flex flex-col transform transition-transform duration-500 ease-in-out ${isCartOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            <div className={`fixed inset-y-0 right-0 w-[85%] md:w-full max-w-md bg-white shadow-2xl z-[160] flex flex-col transform transition-transform duration-500 ease-in-out ${isCartOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white">
                     <div className="flex items-center gap-3">

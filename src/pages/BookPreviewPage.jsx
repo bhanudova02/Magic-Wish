@@ -173,16 +173,16 @@ export default function BookPreviewPage() {
     const canContinue = !isGenerating && !isUploading && cloudinaryUrl;
 
     return (
-        <div className="bg-[#E0EBFF] min-h-screen pt-24 pb-20 overflow-hidden relative">
+        <div className="bg-[#E0EBFF] min-h-screen pt-24 pb-10 lg:pb-20 overflow-hidden relative">
             {/* Background Accents */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-[#FDE2FF] rounded-sm mix-blend-multiply filter blur-3xl opacity-40 -translate-y-1/2 translate-x-1/2"></div>
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#E2E0FF] rounded-sm mix-blend-multiply filter blur-3xl opacity-40 translate-y-1/2 -translate-x-1/2"></div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                     
                     {/* Left side: Book Information */}
-                    <div className="lg:col-span-5 space-y-10 animate-in slide-in-from-left duration-700 order-2 lg:order-1">
+                    <div className="lg:col-span-5 space-y-10 animate-in slide-in-from-right duration-700 order-2 lg:order-2">
                         <div className="space-y-6">
                             <button 
                                 onClick={() => navigate(-1)}
@@ -242,7 +242,7 @@ export default function BookPreviewPage() {
                     </div>
 
                     {/* Right side: Interactive Book Mockup */}
-                    <div className="lg:col-span-7 relative animate-in zoom-in duration-700 delay-200 max-w-[480px] mx-auto w-full order-1 lg:order-2 space-y-8">
+                    <div className="lg:col-span-7 relative animate-in zoom-in duration-700 delay-200 max-w-[480px] mx-auto w-full order-1 lg:order-1 space-y-8">
                         <div className="relative">
                             <div className="absolute -inset-10 bg-[#624da0]/10 blur-[100px] rounded-sm -z-10"></div>
                             

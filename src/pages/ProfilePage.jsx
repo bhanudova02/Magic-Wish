@@ -48,7 +48,7 @@ const ProfilePage = () => {
             ]);
             
             setCustomerData(profileRes.customer);
-            setOrders(ordersRes.customer.orders.edges.map(e => e.node));
+            setOrders(ordersRes.customer.orders.nodes || []);
         } catch (error) {
             console.error('Error fetching profile data:', error);
         } finally {
@@ -250,21 +250,9 @@ const ProfilePage = () => {
                                                                 </div>
                                                             </div>
                                                             
-                                                            <div className="flex flex-wrap gap-2">
-                                                                {order.lineItems.edges.map((item, idx) => (
-                                                                    <div key={idx} className="w-16 h-20 bg-gray-50 rounded-lg overflow-hidden border border-gray-100 p-1">
-                                                                        {item.node.image ? (
-                                                                            <img src={item.node.image.url} alt={item.node.title} className="w-full h-full object-contain" />
-                                                                        ) : (
-                                                                            <div className="w-full h-full bg-gray-100 flex items-center justify-center text-[8px] text-gray-400 text-center">No Image</div>
-                                                                        )}
-                                                                    </div>
-                                                                ))}
-                                                                {order.lineItems.edges.length > 5 && (
-                                                                    <div className="w-16 h-20 bg-gray-50 rounded-lg flex items-center justify-center border border-gray-100 text-xs font-bold text-gray-400">
-                                                                        +{order.lineItems.edges.length - 5}
-                                                                    </div>
-                                                                )}
+                                                            {/* Line items hidden temporarily to verify base query */}
+                                                            <div className="text-xs text-gray-400 mt-2 italic">
+                                                                Order items processing...
                                                             </div>
                                                         </div>
                                                     ))}

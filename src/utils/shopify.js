@@ -180,29 +180,16 @@ export const getCustomerOrdersQuery = `
   query getCustomerOrders($first: Int!) {
     customer {
       orders(first: $first) {
-        edges {
-          node {
-            id
-            name
-            processedAt
-            totalPrice {
-              amount
-              currencyCode
-            }
-            financialStatus
-            fulfillmentStatus
-            lineItems(first: 5) {
-              edges {
-                node {
-                  title
-                  quantity
-                  image {
-                    url
-                  }
-                }
-              }
-            }
+        nodes {
+          id
+          name
+          processedAt
+          totalPrice {
+            amount
+            currencyCode
           }
+          financialStatus
+          fulfillmentStatus
         }
       }
     }

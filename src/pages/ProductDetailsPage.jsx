@@ -11,9 +11,7 @@ export default function ProductDetailsPage() {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('how-it-works');
     const [openAccordion, setOpenAccordion] = useState('personalization');
-    const [showSticky, setShowSticky] = useState(false);
     const [activeImage, setActiveImage] = useState(null);
-    const ctaRef = useRef(null);
     const personalizationRef = useRef(null);
     const { addToCart } = useCart();
 
@@ -76,31 +74,19 @@ export default function ProductDetailsPage() {
         window.scrollTo(0, 0);
     }, [id]);
 
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                setShowSticky(!entry.isIntersecting);
-            },
-            { threshold: 0 }
-        );
 
-        if (ctaRef.current) {
-            observer.observe(ctaRef.current);
-        }
-
-        return () => {
-            if (ctaRef.current) {
-                observer.unobserve(ctaRef.current);
-            }
-        };
-    }, [book]);
 
     const toggleAccordion = (id) => {
         setOpenAccordion(openAccordion === id ? null : id);
     };
 
     const scrollToPersonalization = () => {
-        personalizationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const element = document.getElementById('upload-image-section');
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            personalizationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     };
 
     if (loading) {
@@ -214,7 +200,7 @@ export default function ProductDetailsPage() {
                             )}
                         </div>
 
-                        <div className="space-y-6" ref={ctaRef}>
+                        <div className="space-y-6">
                             <button 
                                 onClick={scrollToPersonalization}
                                 className="w-full bg-[#5e2ca0] hover:bg-[#5e2ca0] text-white py-5 px-8 rounded-sm font-black text-xl transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 shadow-lg"
@@ -260,14 +246,7 @@ export default function ProductDetailsPage() {
                 </div>
             </div>
 
-            <div className={`fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-lg border-t border-gray-100 z-[100] lg:hidden transition-all duration-500 transform ${showSticky ? 'translate-y-0 opacity-100 shadow-xl' : 'translate-y-full opacity-0'}`}>
-                <button 
-                    onClick={scrollToPersonalization}
-                    className="w-full bg-[#5e2ca0] text-white py-4 rounded-sm font-black text-lg active:scale-95 transition-transform"
-                >
-                    Personalise My Book
-                </button>
-            </div>
+
         </div>
     );
 }

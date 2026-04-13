@@ -102,19 +102,19 @@ export default function PersonalizationSection({ book }) {
 
     if (!book?.coverpagePrompt) {
         return (
-            <section className="bg-gray-50 py-16 md:py-24">
+            <section className="bg-gray-50 py-10 md:py-16">
                 <div className="max-w-3xl mx-auto px-4 text-center space-y-6">
-                    <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto animate-pulse">
-                        <Sparkles className="w-10 h-10 text-purple-600" />
+                    <div className="w-20 h-20 bg-[#E2E0FF] rounded-sm flex items-center justify-center mx-auto animate-pulse">
+                        <Sparkles className="w-10 h-10 text-[#2563EB]" />
                     </div>
                     <div className="space-y-4">
                         <h2 className="text-3xl font-black text-gray-900 leading-tight">Magic in Progress!</h2>
                         <p className="text-gray-500 font-medium text-lg leading-relaxed">
-                            We are currently preparing the magical adventure for <span className="text-purple-600 font-bold">{book?.title}</span>. 
+                            We are currently preparing the magical adventure for <span className="text-[#2563EB] font-bold">{book?.title}</span>. 
                             This book will be available for personalization very soon.
                         </p>
                     </div>
-                    <div className="inline-block bg-white border border-purple-100 px-6 py-3 rounded-full text-purple-600 font-bold text-sm shadow-sm">
+                    <div className="inline-block bg-white border border-[#2563EB]/10 px-6 py-3 rounded-sm text-[#2563EB] font-bold text-sm shadow-sm">
                         Status: Under Process 🛠️
                     </div>
                 </div>
@@ -123,13 +123,13 @@ export default function PersonalizationSection({ book }) {
     }
 
     return (
-        <section className="bg-[#fdf2f8] py-16 md:py-24 overflow-hidden relative">
+        <section className="bg-[#E0EBFF] pt-9 pb-5 md:pt-11 md:pb-9 overflow-hidden relative">
             {/* Login Required Modal */}
             {showLoginModal && (
                 <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl space-y-6 text-center animate-in zoom-in-95 duration-300">
-                        <div className="w-20 h-20 bg-purple-50 rounded-full flex items-center justify-center mx-auto">
-                            <Lock className="w-10 h-10 text-purple-600" />
+                    <div className="bg-white rounded-sm p-8 max-w-sm w-full shadow-2xl space-y-6 text-center animate-in zoom-in-95 duration-300">
+                        <div className="w-20 h-20 bg-[#FDE2FF] rounded-sm flex items-center justify-center mx-auto">
+                            <Lock className="w-10 h-10 text-[#2563EB]" />
                         </div>
                         <div className="space-y-2">
                             <h3 className="text-2xl font-black text-gray-900 leading-tight">Save Your Magic!</h3>
@@ -145,13 +145,13 @@ export default function PersonalizationSection({ book }) {
                                         console.error("Login redirect failed:", err);
                                     }
                                 }}
-                                className="w-full bg-[#a21caf] text-white py-4 rounded-2xl font-bold hover:bg-[#86198f] transition shadow-lg flex items-center justify-center gap-2"
+                                className="w-full bg-[#2563EB] text-white py-4 rounded-sm font-bold hover:bg-[#1d4ed8] transition shadow-lg flex items-center justify-center gap-2"
                             >
                                 <Sparkles className="w-5 h-5" /> Sign In
                             </button>
                             <button 
                                 onClick={() => setShowLoginModal(false)}
-                                className="w-full text-gray-500 py-3 rounded-2xl font-bold hover:bg-gray-50 transition"
+                                className="w-full text-gray-500 py-3 rounded-sm font-bold hover:bg-gray-50 transition"
                             >
                                 Maybe Later
                             </button>
@@ -163,8 +163,8 @@ export default function PersonalizationSection({ book }) {
             {/* Warning Modal */}
             {showWarning && (
                 <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl space-y-6 text-center animate-in zoom-in-95 duration-300">
-                        <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto">
+                    <div className="bg-white rounded-sm p-8 max-w-sm w-full shadow-2xl space-y-6 text-center animate-in zoom-in-95 duration-300">
+                        <div className="w-20 h-20 bg-[#FFE2E2] rounded-sm flex items-center justify-center mx-auto">
                             <X className="w-10 h-10 text-red-500" />
                         </div>
                         <div className="space-y-2">
@@ -173,7 +173,7 @@ export default function PersonalizationSection({ book }) {
                         </div>
                         <button 
                             onClick={() => setShowWarning(false)}
-                            className="w-full bg-gray-900 text-white py-4 rounded-2xl font-bold hover:bg-gray-800 transition shadow-lg"
+                            className="w-full bg-gray-900 text-white py-4 rounded-sm font-bold hover:bg-gray-800 transition shadow-lg"
                         >
                             Try Another Photo
                         </button>
@@ -202,10 +202,10 @@ export default function PersonalizationSection({ book }) {
                             {/* Step 1 */}
                             <div className="flex flex-col items-center text-center space-y-4">
                                 <div className="relative">
-                                    <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-dashed ${uploadedPhoto ? 'border-green-500 bg-green-50' : 'border-purple-300 bg-white'} flex items-center justify-center shadow-sm`}>
-                                        {isValidating ? <div className="w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div> : (uploadedPhoto ? <Check className="w-8 h-8 text-green-600" /> : <Upload className="w-8 h-8 text-purple-600" />)}
+                                    <div className={`w-20 h-20 md:w-24 md:h-24 rounded-sm border-2 border-dashed ${uploadedPhoto ? 'border-green-500 bg-green-50' : 'border-[#2563EB]/30 bg-white'} flex items-center justify-center shadow-sm`}>
+                                        {isValidating ? <div className="w-8 h-8 border-4 border-blue-200 border-t-[#2563EB] rounded-sm animate-spin"></div> : (uploadedPhoto ? <Check className="w-8 h-8 text-green-600" /> : <Upload className="w-8 h-8 text-[#2563EB]" />)}
                                     </div>
-                                    <div className="absolute -bottom-2 -left-2 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm border-2 border-[#fdf2f8]">
+                                    <div className="absolute -bottom-2 -left-2 w-8 h-8 bg-[#2563EB] text-white rounded-sm flex items-center justify-center font-bold text-sm border-2 border-[#E0EBFF]">
                                         1
                                     </div>
                                 </div>
@@ -215,10 +215,10 @@ export default function PersonalizationSection({ book }) {
                             {/* Step 2 */}
                             <div className={`flex flex-col items-center text-center space-y-4 transition ${uploadedPhoto ? 'opacity-100' : 'opacity-50'}`}>
                                 <div className="relative">
-                                    <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-dashed ${uploadedPhoto ? 'border-purple-600' : 'border-purple-300'} flex items-center justify-center bg-white shadow-sm overflow-hidden text-purple-600`}>
+                                    <div className={`w-20 h-20 md:w-24 md:h-24 rounded-sm border-2 border-dashed ${uploadedPhoto ? 'border-[#2563EB]' : 'border-[#2563EB]/30'} flex items-center justify-center bg-white shadow-sm overflow-hidden text-[#2563EB]`}>
                                         <Sparkles className="w-8 h-8" />
                                     </div>
-                                    <div className="absolute -bottom-2 -left-2 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm border-2 border-[#fdf2f8]">
+                                    <div className="absolute -bottom-2 -left-2 w-8 h-8 bg-[#2563EB] text-white rounded-sm flex items-center justify-center font-bold text-sm border-2 border-[#E0EBFF]">
                                         2
                                     </div>
                                 </div>
@@ -226,12 +226,12 @@ export default function PersonalizationSection({ book }) {
                             </div>
 
                             {/* Step 3 */}
-                            <div className="flex flex-col items-center text-center space-y-4 opacity-50 text-purple-300">
+                            <div className="flex flex-col items-center text-center space-y-4 opacity-50 text-[#2563EB]/40">
                                 <div className="relative">
-                                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-dashed border-purple-300 flex items-center justify-center bg-white shadow-sm">
+                                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-sm border-2 border-dashed border-[#2563EB]/30 flex items-center justify-center bg-white shadow-sm">
                                         <Printer className="w-8 h-8" />
                                     </div>
-                                    <div className="absolute -bottom-2 -left-2 w-8 h-8 bg-purple-200 text-white rounded-full flex items-center justify-center font-bold text-sm border-2 border-[#fdf2f8]">
+                                    <div className="absolute -bottom-2 -left-2 w-8 h-8 bg-[#2563EB]/20 text-white rounded-sm flex items-center justify-center font-bold text-sm border-2 border-[#E0EBFF]">
                                         3
                                     </div>
                                 </div>
@@ -241,13 +241,13 @@ export default function PersonalizationSection({ book }) {
                     </div>
 
                     {/* Right side: Action Card */}
-                    <div className="lg:col-span-5 relative">
-                        <div className="bg-white rounded-3xl p-8 shadow-2xl shadow-purple-200/50 border border-purple-50 relative z-10 min-h-[480px] flex flex-col justify-center">
+                    <div id="upload-image-section" className="lg:col-span-5 relative">
+                        <div className="bg-white rounded-md p-8 shadow-2xl shadow-blue-100/50 border border-blue-50 relative z-10 min-h-[480px] flex flex-col justify-center">
                             
                             {isValidating ? (
                                 <div className="text-center space-y-6 animate-pulse">
-                                    <div className="w-24 h-24 bg-purple-50 rounded-full flex items-center justify-center mx-auto border-4 border-dashed border-purple-200">
-                                        <div className="w-10 h-10 border-4 border-purple-100 border-t-purple-600 rounded-full animate-spin"></div>
+                                    <div className="w-24 h-24 bg-[#E2E0FF] rounded-sm flex items-center justify-center mx-auto border-4 border-dashed border-blue-200">
+                                        <div className="w-10 h-10 border-4 border-blue-100 border-t-[#2563EB] rounded-sm animate-spin"></div>
                                     </div>
                                     <div className="space-y-2">
                                         <h3 className="text-xl font-black text-gray-900">Validating Photo...</h3>
@@ -262,10 +262,10 @@ export default function PersonalizationSection({ book }) {
                                         <div className="flex justify-between items-start gap-2">
                                             <div className="flex-1 flex flex-col items-center gap-2">
                                                 <div className="relative">
-                                                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-green-500 p-0.5">
-                                                        <img src="https://images.unsplash.com/photo-1544126592-807daa215a05?q=80&w=200&h=200&auto=format&fit=crop" alt="Good" className="w-full h-full object-cover rounded-full" />
+                                                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-sm overflow-hidden border-2 border-green-500 p-0.5">
+                                                        <img src="https://images.unsplash.com/photo-1544126592-807daa215a05?q=80&w=200&h=200&auto=format&fit=crop" alt="Good" className="w-full h-full object-cover rounded-sm" />
                                                     </div>
-                                                    <div className="absolute -top-1 -right-1 bg-green-500 text-white rounded-full p-0.5 border-2 border-white">
+                                                    <div className="absolute -top-1 -right-1 bg-green-500 text-white rounded-sm p-0.5 border-2 border-white">
                                                         <Check className="w-3 h-3" />
                                                     </div>
                                                 </div>
@@ -274,10 +274,10 @@ export default function PersonalizationSection({ book }) {
 
                                             <div className="flex-1 flex flex-col items-center gap-2">
                                                 <div className="relative opacity-60">
-                                                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-red-500 p-0.5">
-                                                        <img src="https://images.unsplash.com/photo-1596464716127-f2a82984de30?q=80&w=200&h=200&auto=format&fit=crop" alt="Bad" className="w-full h-full object-cover rounded-full" />
+                                                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-sm overflow-hidden border-2 border-red-500 p-0.5">
+                                                        <img src="https://images.unsplash.com/photo-1596464716127-f2a82984de30?q=80&w=200&h=200&auto=format&fit=crop" alt="Bad" className="w-full h-full object-cover rounded-sm" />
                                                     </div>
-                                                    <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 border-2 border-white">
+                                                    <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-sm p-0.5 border-2 border-white">
                                                         <X className="w-3 h-3" />
                                                     </div>
                                                 </div>
@@ -286,10 +286,10 @@ export default function PersonalizationSection({ book }) {
 
                                             <div className="flex-1 flex flex-col items-center gap-2">
                                                 <div className="relative opacity-60">
-                                                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-red-500 p-0.5">
-                                                        <img src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?q=80&w=200&h=200&auto=format&fit=crop" alt="Bad" className="w-full h-full object-cover rounded-full" />
+                                                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-sm overflow-hidden border-2 border-red-500 p-0.5">
+                                                        <img src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?q=80&w=200&h=200&auto=format&fit=crop" alt="Bad" className="w-full h-full object-cover rounded-sm" />
                                                     </div>
-                                                    <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 border-2 border-white">
+                                                    <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-sm p-0.5 border-2 border-white">
                                                         <X className="w-3 h-3" />
                                                     </div>
                                                 </div>
@@ -298,10 +298,10 @@ export default function PersonalizationSection({ book }) {
 
                                             <div className="flex-1 flex flex-col items-center gap-2">
                                                 <div className="relative opacity-60">
-                                                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-red-500 p-0.5">
-                                                        <img src="https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?q=80&w=200&h=200&auto=format&fit=crop" alt="Bad" className="w-full h-full object-cover rounded-full" />
+                                                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-sm overflow-hidden border-2 border-red-500 p-0.5">
+                                                        <img src="https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?q=80&w=200&h=200&auto=format&fit=crop" alt="Bad" className="w-full h-full object-cover rounded-sm" />
                                                     </div>
-                                                    <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 border-2 border-white">
+                                                    <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-sm p-0.5 border-2 border-white">
                                                         <X className="w-3 h-3" />
                                                     </div>
                                                 </div>
@@ -321,7 +321,7 @@ export default function PersonalizationSection({ book }) {
                                         />
                                         <button 
                                             onClick={handleUploadClick}
-                                            className="w-full bg-[#a21caf] hover:bg-[#86198f] text-white py-5 px-6 rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-purple-200"
+                                            className="w-full bg-[#2563EB] hover:bg-[#1d4ed8] text-white py-5 px-6 rounded-sm font-black text-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-blue-100"
                                         >
                                             Child's Photo <Upload className="w-6 h-6" />
                                         </button>
@@ -332,11 +332,11 @@ export default function PersonalizationSection({ book }) {
                                 <div className="space-y-6 animate-in slide-in-from-right duration-500">
                                     {/* Uploaded Preview */}
                                     <div className="flex justify-center relative">
-                                        <div className="w-28 h-28 rounded-full border-2 border-purple-200 relative p-1 shadow-sm">
-                                            <img src={uploadedPhoto} alt="Uploaded" className="w-full h-full object-cover object-center rounded-full" />
+                                        <div className="w-28 h-28 rounded-sm border-2 border-blue-200 relative p-1 shadow-sm">
+                                            <img src={uploadedPhoto} alt="Uploaded" className="w-full h-full object-cover object-center rounded-sm" />
                                             <button 
                                                 onClick={handleRemovePhoto}
-                                                className="absolute -top-1 -right-1 bg-white border border-gray-100 shadow-md rounded-full p-1.5 hover:bg-gray-50 transition z-20"
+                                                className="absolute -top-1 -right-1 bg-white border border-gray-100 shadow-md rounded-sm p-1.5 hover:bg-gray-50 transition z-20"
                                             >
                                                 <X className="w-3 h-3 text-gray-500" />
                                             </button>
@@ -348,7 +348,7 @@ export default function PersonalizationSection({ book }) {
                                         <div>
                                             <label className="block text-sm font-black text-gray-800 mb-2 uppercase tracking-wide">Book Language</label>
                                             <select 
-                                                className="w-full bg-gray-50 border border-gray-100 rounded-2xl py-4 px-6 focus:ring-2 focus:ring-purple-200 outline-none font-bold text-gray-700 transition"
+                                                className="w-full bg-gray-50 border border-gray-100 rounded-sm py-4 px-6 focus:ring-2 focus:ring-[#2563EB]/20 outline-none font-bold text-gray-700 transition"
                                                 value={formData.language}
                                                 onChange={(e) => setFormData({...formData, language: e.target.value})}
                                             >
@@ -366,7 +366,7 @@ export default function PersonalizationSection({ book }) {
                                                         type="text" 
                                                         maxLength={25}
                                                         placeholder="Name"
-                                                        className={`w-full bg-gray-50 border ${errors.name ? 'border-red-500' : 'border-gray-100'} rounded-2xl py-4 px-6 focus:ring-2 focus:ring-purple-200 outline-none font-bold text-gray-700 transition`}
+                                                        className={`w-full bg-gray-50 border ${errors.name ? 'border-red-500' : 'border-gray-100'} rounded-sm py-4 px-6 focus:ring-2 focus:ring-[#2563EB]/20 outline-none font-bold text-gray-700 transition`}
                                                         value={formData.name}
                                                         onChange={(e) => {
                                                             setFormData({...formData, name: e.target.value});
@@ -382,7 +382,7 @@ export default function PersonalizationSection({ book }) {
                                                 <input 
                                                     type="number" 
                                                     placeholder="Age"
-                                                    className={`w-full bg-gray-50 border ${errors.age ? 'border-red-500' : 'border-gray-100'} rounded-2xl py-4 px-6 focus:ring-2 focus:ring-purple-200 outline-none font-bold text-gray-700 transition`}
+                                                    className={`w-full bg-gray-50 border ${errors.age ? 'border-red-500' : 'border-gray-100'} rounded-sm py-4 px-6 focus:ring-2 focus:ring-[#2563EB]/20 outline-none font-bold text-gray-700 transition`}
                                                     value={formData.age}
                                                     onChange={(e) => {
                                                         setFormData({...formData, age: e.target.value});
@@ -469,7 +469,7 @@ export default function PersonalizationSection({ book }) {
                                                     setIsValidating(false);
                                                 }
                                             }}
-                                            className="w-full bg-[#a21caf] hover:bg-[#86198f] text-white py-5 px-6 rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-purple-200 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="w-full bg-[#2563EB] hover:bg-[#1d4ed8] text-white py-5 px-6 rounded-sm font-black text-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-blue-100 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {isValidating ? 'Finishing Up...' : 'Preview My Book'} <Sparkles className="w-6 h-6" />
                                         </button>
@@ -478,15 +478,15 @@ export default function PersonalizationSection({ book }) {
                                 </div>
                             )}
 
-                            <button className="w-full mt-6 py-4 px-6 rounded-2xl border-2 border-purple-50 hover:border-purple-100 flex items-center justify-center gap-2 text-purple-600 font-bold text-sm transition-colors group">
-                                <ImageIcon className="w-4 h-4 text-purple-400 group-hover:text-purple-600 transition-colors" />
+                            <button className="w-full mt-6 py-4 px-6 rounded-sm border-2 border-blue-50 hover:border-[#2563EB]/30 flex items-center justify-center gap-2 text-[#2563EB] font-bold text-sm transition-colors group">
+                                <ImageIcon className="w-4 h-4 text-[#2563EB]/40 group-hover:text-[#2563EB] transition-colors" />
                                 Photo Formats & Dimensions Info
                             </button>
                         </div>
 
                         {/* Security Badge */}
                         <div className="mt-8 flex items-center justify-center gap-3 text-gray-500">
-                            <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                            <div className="w-10 h-10 rounded-sm bg-gray-100 flex items-center justify-center">
                                 <Lock className="w-5 h-5 text-gray-400" />
                             </div>
                             <div className="text-left">
@@ -496,7 +496,7 @@ export default function PersonalizationSection({ book }) {
                         </div>
 
                         {/* Background Decoration */}
-                        <div className="absolute -top-12 -right-12 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
+                        <div className="absolute -top-12 -right-12 w-64 h-64 bg-[#E2E0FF] rounded-sm mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
                     </div>
                 </div>
             </div>

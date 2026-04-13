@@ -135,6 +135,9 @@ export const getProductQuery = `
           }
         }
       }
+      coverpage_prompt: metafield(namespace: "custom", key: "coverpage_prompt") {
+        value
+      }
     }
   }
 `;

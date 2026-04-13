@@ -58,7 +58,8 @@ export default function ProductDetailsPage() {
                     currencyCode: variant?.price?.currencyCode || 'USD',
                     originalPrice: parseFloat(compareAtMatch) > parseFloat(priceMatch) ? `$${compareAtMatch}` : null,
                     badge,
-                    age
+                    age,
+                    coverpagePrompt: node.coverpage_prompt?.value || ''
                 };
                 
                 setBook(formattedBook);
@@ -263,7 +264,7 @@ export default function ProductDetailsPage() {
 
                 {/* New Personalization UI Component */}
                 <div className="mt-20 -mx-4 sm:-mx-6 lg:-mx-8">
-                    <PersonalizationSection />
+                    <PersonalizationSection book={book} />
                 </div>
             </div>
 

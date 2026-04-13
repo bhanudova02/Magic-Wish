@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Upload, Check, X, Lock, Sparkles, Image as ImageIcon, Printer } from 'lucide-react';
 import * as faceapi from 'https://esm.sh/@vladmandic/face-api';
 
-export default function PersonalizationSection() {
+export default function PersonalizationSection({ book }) {
     const navigate = useNavigate();
     const [uploadedPhoto, setUploadedPhoto] = React.useState(null);
     const [isValidating, setIsValidating] = React.useState(false);
@@ -338,7 +338,10 @@ export default function PersonalizationSection() {
                                                 localStorage.setItem('last_personalization', JSON.stringify({
                                                     ...formData,
                                                     photo: uploadedPhoto,
-                                                    title: 'The Boy and the Cosmic Journey'
+                                                    productId: book.id,
+                                                    variantId: book.variantId,
+                                                    title: book.title,
+                                                    coverpagePrompt: book.coverpagePrompt
                                                 }));
                                                 navigate('/preview');
                                             }}

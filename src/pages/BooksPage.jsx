@@ -99,6 +99,8 @@ export default function BooksPage() {
     const [visibleCount, setVisibleCount] = useState(6);
     const [isInitialLoading, setIsInitialLoading] = useState(true);
     const [isFiltering, setIsFiltering] = useState(false);
+    const [isMoreLoading, setIsMoreLoading] = useState(false);
+    const loaderRef = React.useRef(null);
 
     useEffect(() => {
         getShopifyBooks().then(data => {
@@ -106,6 +108,30 @@ export default function BooksPage() {
             setIsInitialLoading(false);
         });
     }, []);
+
+    // Infinite Scroll Logic
+    useEffect(() => {
+        if (isInitialLoading || isFiltering) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && visibleCount < filteredBooks.length && !isMoreLoading) {
+                setIsMoreLoading(true);
+                // Artificial delay for smooth feel
+                setTimeout(() => {
+                    setVisibleCount(prev => prev + 6);
+                    setIsMoreLoading(false);
+                }, 800);
+            }
+        }, { threshold: 0.1 });
+
+        if (loaderRef.current) {
+            observer.observe(loaderRef.current);
+        }
+
+        return () => {
+            if (loaderRef.current) observer.unobserve(loaderRef.current);
+        };
+    }, [isInitialLoading, isFiltering, visibleCount, filteredBooks.length, isMoreLoading]);
 
     useEffect(() => {
         if (location.state?.selectedAge) {
@@ -119,16 +145,15 @@ export default function BooksPage() {
         }
     }, [location.state]);
 
-    // Optimize Loading State - only fire when search/filter/sort actually changes, 
-    // and skip the initial data load to avoid "loading from scratch" on mount.
+    // Optimize Loading State
     useEffect(() => {
         if (books.length === 0) return;
         
         setIsFiltering(true);
         const timer = setTimeout(() => {
             setIsFiltering(false);
-            setVisibleCount(6); // Reset pagination when filters change
-        }, 600); // Reduced delay for snappier feel
+            setVisibleCount(6); 
+        }, 600);
         
         return () => clearTimeout(timer);
     }, [searchQuery, selectedGenders, selectedAges, selectedCategories, sortBy]);
@@ -469,14 +494,11 @@ export default function BooksPage() {
                                         ))}
                                     </div>
                                     
+                                    {/* Infinite Scroll Loader / Sentinel */}
                                     {visibleCount < filteredBooks.length && (
-                                        <div className="mt-12 flex justify-center">
-                                            <button 
-                                                onClick={() => setVisibleCount(prev => prev + 6)}
-                                                className="px-10 py-4 bg-white border-2 border-[#2b124c] text-[#2b124c] font-black uppercase tracking-widest text-sm hover:bg-[#2b124c] hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-purple-100"
-                                            >
-                                                Show More Stories
-                                            </button>
+                                        <div ref={loaderRef} className="mt-16 flex flex-col items-center justify-center gap-4">
+                                            <div className="w-10 h-10 border-4 border-purple-100 border-t-purple-600 rounded-full animate-spin"></div>
+                                            <p className="text-xs font-black text-gray-400 uppercase tracking-widest animate-pulse">Loading more magical tales...</p>
                                         </div>
                                     )}
                                 </>

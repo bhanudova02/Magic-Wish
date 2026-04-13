@@ -41,64 +41,62 @@ export default function CartPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#fbfbff] pt-[64px]">
-            <div className="max-w-7xl mx-auto px-6 py-12 lg:py-20 lg:px-8">
+        <div className="min-h-screen bg-white pt-16">
+            <div className="max-w-4xl mx-auto px-4 py-8 lg:py-16">
                 
-                <div className="flex items-end justify-between border-b-2 border-gray-100 pb-6 mb-10">
-                    <div>
-                        <h1 className="text-3xl lg:text-5xl font-black text-[#2b124c] tracking-tight">Your Bag</h1>
-                        <p className="text-gray-500 mt-2 font-medium">{getCartCount()} items ready for checkout</p>
-                    </div>
+                <div className="border-b border-gray-100 pb-4 mb-8">
+                    <h1 className="text-2xl lg:text-3xl font-black text-[#2b124c] tracking-tight uppercase">Your Bag</h1>
+                    <p className="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-widest leading-none bg-purple-50 inline-block px-2 py-1 rounded-sm">{getCartCount()} Items</p>
                 </div>
 
-                <div className="flex flex-col lg:flex-row gap-12">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                     {/* Items List */}
-                    <div className="flex-1 space-y-4">
+                    <div className="lg:col-span-12 space-y-4">
                         {cartItems.map((item) => (
-                            <div key={item.id} className="bg-white p-4 rounded-sm border border-gray-100 flex flex-col sm:flex-row gap-6 items-center sm:items-start group transition hover:border-purple-100 shadow-sm">
+                            <div key={item.id} className="bg-white p-3 border-b border-gray-50 flex gap-4 transition hover:bg-gray-50/50">
                                 
-                                <div className="w-24 h-32 bg-gray-50 rounded-sm flex-shrink-0 overflow-hidden border border-gray-100">
+                                <div className="w-20 h-28 bg-gray-50 rounded-sm flex-shrink-0 overflow-hidden border border-gray-100 shadow-sm">
                                     {item.image ? (
-                                        <img src={item.image} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                        <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center">
-                                            <ShoppingBag className="w-8 h-8 text-gray-200" />
+                                            <ShoppingBag className="w-6 h-6 text-gray-200" />
                                         </div>
                                     )}
                                 </div>
                                 
-                                <div className="flex-1 flex flex-col min-w-0 py-1">
+                                <div className="flex-1 flex flex-col min-w-0">
                                     <div className="flex justify-between items-start gap-4">
-                                        <h3 className="text-xl font-black text-[#2b124c] tracking-tight uppercase truncate">{item.title}</h3>
-                                        <div className="text-lg font-black text-blue-600">${(parseFloat(item.price.replace('$', '')) * item.quantity).toFixed(2)}</div>
+                                        <h3 className="text-sm font-black text-[#2b124c] tracking-tight uppercase truncate">{item.title}</h3>
+                                        <div className="text-sm font-black text-blue-600">${(parseFloat(item.price.replace('$', '')) * item.quantity).toFixed(2)}</div>
                                     </div>
                                     
-                                    <div className="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-widest">{item.gender} • {item.age}</div>
+                                    <div className="text-[10px] font-bold text-gray-400 mt-0.5 uppercase tracking-widest italic">{item.gender} • {item.age}</div>
 
-                                    <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-50">
+                                    <div className="mt-auto flex items-center justify-between gap-4 pt-4">
                                         
-                                        <div className="flex items-center gap-2 bg-gray-50 rounded-sm p-1 border border-gray-100">
+                                        <div className="flex items-center gap-1.5 bg-gray-50 rounded-sm p-0.5 border border-gray-100">
                                             <button 
                                                 onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                                className="w-10 h-10 rounded-sm bg-white flex items-center justify-center text-gray-400 shadow-sm border border-gray-100 hover:text-purple-600 active:scale-95 transition-all cursor-pointer"
+                                                className="w-8 h-8 rounded-sm bg-white flex items-center justify-center text-gray-400 shadow-sm border border-gray-100 hover:text-purple-600 active:scale-95 transition-all cursor-pointer"
                                             >
-                                                <Minus className="w-4 h-4" />
+                                                <Minus className="w-3.5 h-3.5" />
                                             </button>
-                                            <span className="text-sm font-black text-[#2b124c] w-10 text-center">{item.quantity}</span>
+                                            <span className="text-xs font-black text-[#2b124c] w-8 text-center">{item.quantity}</span>
                                             <button 
                                                 onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                                className="w-10 h-10 rounded-sm bg-white flex items-center justify-center text-gray-400 shadow-sm border border-gray-100 hover:text-purple-600 active:scale-95 transition-all cursor-pointer"
+                                                className="w-8 h-8 rounded-sm bg-white flex items-center justify-center text-gray-400 shadow-sm border border-gray-100 hover:text-purple-600 active:scale-95 transition-all cursor-pointer"
                                             >
-                                                <Plus className="w-4 h-4" />
+                                                <Plus className="w-3.5 h-3.5" />
                                             </button>
                                         </div>
 
                                         <button 
                                             onClick={() => removeFromCart(item.id)}
-                                            className="flex items-center gap-2 text-[10px] font-black text-gray-300 hover:text-red-500 transition-colors uppercase tracking-widest cursor-pointer group/remove"
+                                            className="p-2 text-gray-300 hover:text-red-500 transition-colors cursor-pointer"
+                                            title="Remove item"
                                         >
-                                            <Trash2 className="w-4 h-4 group-hover/remove:translate-y-[-1px] transition-transform" />
-                                            Remove Item
+                                            <Trash2 className="w-4 h-4" />
                                         </button>
 
                                     </div>
@@ -107,43 +105,40 @@ export default function CartPage() {
                         ))}
                     </div>
 
-                    {/* Order Summary */}
-                    <div className="lg:w-[400px]">
-                        <div className="bg-white rounded-sm p-8 shadow-sm border border-gray-100 lg:sticky lg:top-[120px]">
-                            <h3 className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] mb-6 italic">Order Summary</h3>
-                            
-                            <div className="space-y-4 mb-8 pb-6 border-b border-gray-50">
-                                <div className="flex justify-between text-gray-400 font-bold uppercase text-[10px] tracking-widest">
-                                    <span>Subtotal</span>
-                                    <span className="text-gray-900 font-black text-base">${getCartTotal().toFixed(2)}</span>
+                    {/* Simple Order Footer (Inspired by drawer) */}
+                    <div className="lg:col-span-12 mt-4">
+                        <div className="bg-[#fbfcff] p-6 border border-gray-100 rounded-sm shadow-sm">
+                            <div className="flex justify-between items-center mb-6">
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1 italic">Total Payable</span>
+                                    <span className="text-3xl font-black text-[#2b124c] leading-none">${getCartTotal().toFixed(2)}</span>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-[9px] font-bold text-gray-300 uppercase tracking-widest italic leading-none mb-1">Items: {getCartCount()}</p>
+                                    <p className="text-[9px] font-bold text-green-500 uppercase tracking-widest leading-none">Shipping: FREE</p>
                                 </div>
                             </div>
 
-                            <div className="flex justify-between items-baseline mb-10">
-                                <span className="text-gray-400 font-black uppercase tracking-[0.2em] text-[10px] italic">Total Amount</span>
-                                <span className="text-4xl font-black text-[#2b124c]">${getCartTotal().toFixed(2)}</span>
+                            <div className="space-y-3">
+                                <button 
+                                    onClick={checkout}
+                                    disabled={isCheckingOut}
+                                    className="w-full py-5 flex items-center justify-center gap-3 text-white font-black bg-[#2b124c] rounded-sm hover:bg-black transition-all uppercase tracking-[0.15em] shadow-xl shadow-purple-50 transform active:scale-[0.98] text-xs cursor-pointer disabled:opacity-70"
+                                >
+                                    {isCheckingOut ? (
+                                        <>Processing Order... <Loader2 className="w-4 h-4 animate-spin" /></>
+                                    ) : (
+                                        <>Finalize & Pay <ArrowRight className="w-5 h-5" /></>
+                                    )}
+                                </button>
+                                
+                                <Link to="/books" className="flex items-center justify-center gap-2 py-3 text-[10px] font-black text-gray-300 hover:text-purple-600 transition-all uppercase tracking-widest cursor-pointer">
+                                    Continue Shopping
+                                </Link>
                             </div>
-
-                            <button 
-                                onClick={checkout}
-                                disabled={isCheckingOut}
-                                className="w-full py-5 flex items-center justify-center gap-3 text-white font-black bg-[#2b124c] rounded-sm hover:bg-black transition-all uppercase tracking-[0.2em] shadow-xl shadow-purple-100 transform active:scale-[0.98] text-[11px] cursor-pointer disabled:opacity-70"
-                            >
-                                {isCheckingOut ? (
-                                    <>Processing Order... <Loader2 className="w-4 h-4 animate-spin" /></>
-                                ) : (
-                                    <>Complete Payment <ArrowRight className="w-5 h-5" /></>
-                                )}
-                            </button>
-                            
-                            <Link to="/books" className="block text-center mt-6 text-[10px] font-black text-gray-300 hover:text-purple-600 transition-all uppercase tracking-[0.2em] cursor-pointer group">
-                                <span className="group-hover:mr-2 transition-all">←</span> Back to Books
-                            </Link>
-
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     );

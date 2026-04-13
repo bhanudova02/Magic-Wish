@@ -96,7 +96,8 @@ export default function BooksPage() {
     const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
     const [isSortDrawerOpen, setIsSortDrawerOpen] = useState(false);
     const [activeMobileTab, setActiveMobileTab] = useState('gender');
-    const [isFiltering, setIsFiltering] = useState(true);
+    const [visibleCount, setVisibleCount] = useState(6);
+    const [isFiltering, setIsFiltering] = useState(false);
 
     useEffect(() => {
         getShopifyBooks().then(setBooks);
@@ -114,37 +115,38 @@ export default function BooksPage() {
         }
     }, [location.state]);
 
-    // Artificial Loading Simulator for better UX
+    // Optimize Loading State - only fire when search/filter/sort actually changes, 
+    // and skip the initial data load to avoid "loading from scratch" on mount.
     useEffect(() => {
+        if (books.length === 0) return;
+        
         setIsFiltering(true);
         const timer = setTimeout(() => {
             setIsFiltering(false);
-        }, 2000); // 2-second delay
+            setVisibleCount(6); // Reset pagination when filters change
+        }, 600); // Reduced delay for snappier feel
         
         return () => clearTimeout(timer);
-    }, [searchQuery, selectedGenders, selectedAges, selectedCategories, sortBy, books]);
+    }, [searchQuery, selectedGenders, selectedAges, selectedCategories, sortBy]);
 
     useEffect(() => {
         if (isFilterDrawerOpen || isSortDrawerOpen) {
-            // Push a temporary state to history for handles back button
             window.history.pushState({ drawerOpen: true }, '');
-
             const handleHardwareBack = () => {
-                // If the user clicks hardware back, close the drawers
                 setIsFilterDrawerOpen(false);
                 setIsSortDrawerOpen(false);
             };
-
             window.addEventListener('popstate', handleHardwareBack);
             return () => window.removeEventListener('popstate', handleHardwareBack);
         }
     }, [isFilterDrawerOpen, isSortDrawerOpen]);
 
+    // Only scroll to top when filters change, NOT when drawers open/close
     useEffect(() => {
         if (!isFilterDrawerOpen && !isSortDrawerOpen) {
-            window.scrollTo(0, 0);
+            window.scrollTo({ top: 0, behavior: 'auto' });
         }
-    }, [searchQuery, selectedGenders, selectedAges, selectedCategories, sortBy, isFilterDrawerOpen, isSortDrawerOpen]);
+    }, [searchQuery, selectedGenders, selectedAges, selectedCategories, sortBy]);
 
     const closeAllDrawers = () => {
         setIsFilterDrawerOpen(false);
@@ -450,17 +452,30 @@ export default function BooksPage() {
                         </div>
 
                         {/* Content area */}
-                        <div className="px-6 pb-10 md:px-10 md:pb-12 min-h-[calc(100vh-180px)]">
+                        <div className="px-6 pb-20 md:px-10 md:pb-24 min-h-[calc(100vh-180px)]">
                             {isFiltering ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
                                     {[1, 2, 3, 4, 5, 6].map(i => <SkeletonCard key={i} />)}
                                 </div>
                             ) : filteredBooks.length > 0 ? (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8 animate-in fade-in duration-500">
-                                    {filteredBooks.map((book) => (
-                                        <BookCard key={book.id} {...book} />
-                                    ))}
-                                </div>
+                                <>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8 animate-in fade-in duration-500">
+                                        {filteredBooks.slice(0, visibleCount).map((book) => (
+                                            <BookCard key={book.id} {...book} />
+                                        ))}
+                                    </div>
+                                    
+                                    {visibleCount < filteredBooks.length && (
+                                        <div className="mt-12 flex justify-center">
+                                            <button 
+                                                onClick={() => setVisibleCount(prev => prev + 6)}
+                                                className="px-10 py-4 bg-white border-2 border-[#2b124c] text-[#2b124c] font-black uppercase tracking-widest text-sm hover:bg-[#2b124c] hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-purple-100"
+                                            >
+                                                Show More Stories
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
                             ) : (
                                 <div className="text-center py-32 bg-white border border-dashed border-gray-200 rounded-3xl animate-in fade-in duration-500">
                                     <Search className="w-12 h-12 text-gray-200 mx-auto mb-4" />

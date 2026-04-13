@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ShoppingCart, Sparkles, CheckCircle2, User, Calendar, Globe, Terminal, X, Check } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Sparkles, CheckCircle2, User, Calendar, Globe, Terminal, X, Check, ArrowRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 export default function BookPreviewPage() {
@@ -22,7 +22,6 @@ export default function BookPreviewPage() {
                         clearInterval(interval);
                         return 98;
                     }
-                    // Fast at start, slow at end
                     const increment = prev < 50 ? 5 : prev < 80 ? 2 : 0.5;
                     return Math.min(prev + increment, 98);
                 });
@@ -51,9 +50,8 @@ export default function BookPreviewPage() {
                 const seed = Math.floor(Math.random() * 999999);
                 const pollUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}?width=1024&height=1024&seed=${seed}&nologo=true`;
                 
-                setGeneratedImage(pollUrl); // Show the initial AI image fast
+                setGeneratedImage(pollUrl);
 
-                // BACKGROUND TASK: Save AI image to Cloudinary for permanence
                 try {
                     const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
                     const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
@@ -73,12 +71,12 @@ export default function BookPreviewPage() {
                         
                         const cloudResult = await cloudRes.json();
                         if (cloudResult.secure_url) {
-                            console.log("AI Image Permanent URL:", cloudResult.secure_url);
-                            setGeneratedImage(cloudResult.secure_url); // Switch to permanent URL
+                            console.log("AI Image Permanent URL Saved");
+                            setGeneratedImage(cloudResult.secure_url);
                         }
                     }
                 } catch (err) {
-                    console.warn("Could not save AI image to Cloudinary (Permanence skipped):", err);
+                    console.warn("Could not save AI image to Cloudinary:", err);
                 }
             };
 
@@ -91,17 +89,16 @@ export default function BookPreviewPage() {
 
     const handleImageLoad = () => {
         setProgress(100);
-        setTimeout(() => setIsGenerating(false), 500); // Small delay to show 100%
+        setTimeout(() => setIsGenerating(false), 500);
     };
 
     const handleImageError = () => {
         setIsGenerating(false);
-        // Best fallback: Use the child's own photo if AI fails
         if (personalization?.photo) {
             setGeneratedImage(personalization.photo);
-            setError("AI is taking longer than expected. Previewing with your photo!");
+            setError("AI is taking longer. Previewing with your photo!");
         } else {
-            setError("Unable to load preview. Please check your connection.");
+            setError("Unable to load preview.");
         }
     };
 
@@ -114,7 +111,7 @@ export default function BookPreviewPage() {
             { key: "Language", value: personalization?.language || "English" },
             { key: "Child Photo", value: personalization?.photo || "" },
             { key: "AI Cover URL", value: generatedImage || "" },
-            { key: "Manufacturing Prompt", value: `Professional storybook cover titled "${personalization.title}". ${personalization.description}. The hero is a ${personalization.age} year old child named ${personalization.name}. Scene: ${personalization.coverpagePrompt}.` }
+            { key: "Manufacturing Instruction", value: finalAIInstruction }
         ];
 
         addToCart({ 
@@ -124,143 +121,99 @@ export default function BookPreviewPage() {
         }, attributes);
     };
 
+    const finalAIInstruction = `Professional storybook cover titled "${personalization?.title}". ${personalization?.description}. The hero is a ${personalization?.age} year old child named ${personalization?.name}. Scene: ${personalization?.coverpagePrompt}. Maintain a magical fantasy and vibrant 8k style.`;
+
+    useEffect(() => {
+        if (!isGenerating) {
+            console.log("%cFinal AI Manufacturing Instruction:", "color: #a21caf; font-weight: bold; font-size: 14px;");
+            console.log(finalAIInstruction);
+        }
+    }, [isGenerating, finalAIInstruction]);
+
     return (
-        <div className="bg-[#fdf2f8] min-h-screen pt-24 pb-20">
-            <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-                
-                {/* Back Button */}
-                <button 
-                    onClick={() => navigate(-1)}
-                    className="flex items-center gap-2 text-gray-500 font-bold hover:text-purple-600 transition group w-fit"
-                >
-                    <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center group-hover:bg-purple-50 transition">
-                        <ArrowLeft className="w-5 h-5" />
-                    </div>
-                    Back to Edit
-                </button>
+        <div className="bg-white min-h-screen flex flex-col relative overflow-hidden font-sans">
+            {/* Ambient Blurred Background */}
+            <div className="fixed inset-0 z-0">
+                <div 
+                    className="absolute inset-0 bg-cover bg-center scale-110 blur-[100px] opacity-20 transition-all duration-1000"
+                    style={{ backgroundImage: `url(${generatedImage || personalization?.photo})` }}
+                ></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-white/80"></div>
+            </div>
 
-                {/* Info Card */}
-                <div className="bg-white rounded-[2.5rem] overflow-hidden shadow-2xl shadow-purple-200/50 border border-purple-50">
+            {/* Main Canvas Area */}
+            <div className="flex-1 flex items-center justify-center p-4 md:p-12 relative z-10 pt-20 pb-32">
+                <div className="relative group w-full max-w-[500px]">
+                    <div className="absolute -inset-4 bg-black/10 blur-3xl rounded-[3rem] -z-10"></div>
                     
-                    {/* Header Banner */}
-                    <div className="bg-purple-600 p-8 text-center space-y-2">
-                        <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-white font-bold text-xs uppercase tracking-widest">
-                            <Sparkles className="w-3 h-3" /> Preview Confirmation
-                        </div>
-                        <h1 className="text-3xl font-black text-white leading-tight">Child's Personalisation</h1>
-                    </div>
-
-                    <div className="p-8 md:p-12 space-y-10">
-                        
-                        {/* AI Generated Preview Section */}
-                        <div className="relative aspect-[4/5] md:aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white group">
-                             {/* AI Generating Overlay */}
-                             {isGenerating && (
-                                <div className="absolute inset-0 z-50 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center space-y-8 text-center p-6">
-                                    <div className="relative">
-                                        <div className="w-24 h-24 border-4 border-purple-100 border-t-purple-600 rounded-full animate-spin"></div>
-                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-lg font-black text-purple-600">
-                                            {Math.round(progress)}%
+                    <div className="relative aspect-[4/5] bg-white rounded-[1.5rem] shadow-2xl border-x-[12px] border-white overflow-hidden ring-1 ring-black/5 flex flex-col items-center justify-center">
+                        {isGenerating && (
+                            <div className="absolute inset-0 z-20 bg-white flex flex-col items-center justify-center text-center p-8 space-y-12">
+                                <h2 className="text-2xl font-black text-gray-800 tracking-tight">Your story is coming together...</h2>
+                                <div className="relative">
+                                    <div className="w-32 h-32 rounded-3xl bg-gray-50 overflow-hidden relative border-4 border-white shadow-xl ring-1 ring-purple-100">
+                                        {personalization?.photo ? (
+                                            <img src={personalization.photo} className="w-full h-full object-cover" alt="Hero" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center bg-purple-50">
+                                                <User className="w-12 h-12 text-purple-200" />
+                                            </div>
+                                        )}
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <Sparkles className="w-16 h-16 text-white opacity-40 animate-pulse" />
                                         </div>
                                     </div>
-                                    <div className="space-y-4 w-full max-w-xs">
-                                        <div className="space-y-2">
-                                            <h3 className="text-2xl font-black text-gray-900 tracking-tight">Generating Magic Artwork...</h3>
-                                            <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">{progress < 90 ? `Painting for ${personalization?.name || 'your hero'}` : 'Adding final touches...'}</p>
-                                        </div>
-                                        {/* Progress Bar Container */}
-                                        <div className="w-full h-3 bg-purple-50 rounded-full overflow-hidden border border-purple-100 p-0.5">
-                                            <div 
-                                                className="h-full bg-gradient-to-r from-purple-400 to-purple-600 rounded-full transition-all duration-500 ease-out"
-                                                style={{ width: `${progress}%` }}
-                                            ></div>
-                                        </div>
+                                    <div className="absolute -inset-4 border-[3px] border-purple-50 border-t-purple-600 rounded-full animate-spin"></div>
+                                </div>
+                                <div className="flex items-center gap-3 bg-gray-50 px-5 py-2.5 rounded-full border border-gray-100 text-sm font-black text-gray-600">
+                                    Please wait.
+                                    <div className="w-7 h-7 bg-gray-900 text-white rounded-full flex items-center justify-center text-[11px]">
+                                        {Math.max(0, 30 - Math.floor((progress / 100) * 30))}
                                     </div>
                                 </div>
+                            </div>
+                        )}
+                        <div className="w-full h-full bg-gray-50 flex items-center justify-center">
+                            {generatedImage && (
+                                <img 
+                                    src={generatedImage} 
+                                    alt="Book Preview" 
+                                    onLoad={handleImageLoad}
+                                    onError={handleImageError}
+                                    className={`w-full h-full object-cover transition-all duration-1000 ${isGenerating ? 'scale-110 blur-xl grayscale' : 'scale-100 blur-0 grayscale-0'}`}
+                                />
                             )}
-
-                            {/* Generated Artwork */}
-                            <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
-                                {generatedImage && (
-                                    <img 
-                                        src={generatedImage} 
-                                        alt="Book Preview" 
-                                        onLoad={handleImageLoad}
-                                        onError={handleImageError}
-                                        className="w-full h-full object-cover object-center"
-                                    />
-                                )}
-                                {error && (
-                                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 bg-yellow-50/90 backdrop-blur-sm border border-yellow-200 px-6 py-2 rounded-full shadow-lg">
-                                        <p className="text-yellow-700 font-bold text-xs flex items-center gap-2">
-                                            <Sparkles className="w-4 h-4" /> {error}
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Overlay Branding */}
-                            <div className="absolute top-6 left-6 z-10 bg-black/40 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/20 text-white font-black text-[10px] uppercase tracking-widest">
-                                Front Cover Design
-                            </div>
-                        </div>
-
-                        {/* Details Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6">
-                            <div className="bg-gray-50 p-6 rounded-3xl flex items-center gap-4">
-                                <div className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-purple-600 relative overflow-hidden">
-                                    {personalization?.photo && <img src={personalization.photo} className="w-full h-full object-cover" />}
-                                </div>
-                                <div>
-                                    <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Child's Name</p>
-                                    <p className="text-xl font-black text-gray-900">{personalization?.name || '...'}</p>
-                                </div>
-                            </div>
-                            <div className="bg-gray-50 p-6 rounded-3xl flex items-center gap-4">
-                                <div className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-purple-600">
-                                    <Calendar className="w-6 h-6" />
-                                </div>
-                                <div>
-                                    <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Child's Age</p>
-                                    <p className="text-xl font-black text-gray-900">{personalization?.age || '...'} Years old</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Final Combined Prompt Box */}
-                        <div className="bg-purple-50 rounded-[2rem] p-8 border-2 border-dashed border-purple-200 space-y-4">
-                            <div className="flex items-center gap-2 text-purple-600 font-extrabold text-sm uppercase tracking-[0.15em]">
-                                <Sparkles className="w-5 h-5" /> Final AI Manufacturing Instruction
-                            </div>
-                            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-inner">
-                                <p className="text-gray-700 font-bold text-lg leading-relaxed">
-                                    "Professional storybook cover titled <span className="text-purple-600">"{personalization?.title}"</span>. 
-                                    <span className="text-gray-500 font-medium"> {(personalization?.description || "").substring(0, 100)}...</span>
-                                    The hero is a <span className="text-purple-600 underline">{personalization?.age || '...'} year old</span> child named <span className="text-purple-600 underline font-black">{personalization?.name || '...'}</span>. 
-                                    Scene: <span className="text-gray-900 italic">"{personalization?.coverpagePrompt}"</span>. 
-                                    Maintain a magical fantasy and vibrant 8k style."
-                                </p>
-                            </div>
-                            <p className="text-[10px] text-purple-400 font-medium text-center italic mt-2 italic">* This instruction is sent to our AI production engine to craft your unique book cover.</p>
-                        </div>
-
-                        {/* Checkout Section */}
-                        <div className="pt-8 border-t border-gray-100 flex flex-col items-center space-y-4">
-                            <button 
-                                onClick={handleAddToCart}
-                                className="w-full max-w-sm bg-purple-600 hover:bg-purple-700 text-white py-5 rounded-2xl font-black text-2xl flex items-center justify-center gap-4 transition-all transform hover:scale-[1.05] active:scale-95 shadow-xl shadow-purple-100"
-                            >
-                                <ShoppingCart className="w-7 h-7" /> Add to Cart
-                            </button>
-                            <div className="flex items-center gap-6 text-gray-400 text-[10px] font-black uppercase tracking-[0.2em]">
-                                <span>Verified Order</span>
-                                <span>•</span>
-                                <span>Fast Delivery</span>
-                                <span>•</span>
-                                <span>24/7 Support</span>
-                            </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            {/* Bottom Navigation */}
+            <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-t border-gray-100 py-6 px-4 md:px-12 flex items-center justify-between">
+                <div className="hidden md:flex items-center flex-1 max-w-2xl px-8">
+                    <div className="flex-1 flex items-center gap-2">
+                        <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                            <Check className="w-3.5 h-3.5" />
+                        </div>
+                        <span className="text-xs font-black text-purple-600 uppercase tracking-widest border-b-4 border-purple-600 pb-1">Book</span>
+                    </div>
+                    <div className="w-32 h-[1px] bg-purple-100 mx-4"></div>
+                    <div className="flex-1 flex-row items-center gap-2 flex">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white ${isGenerating ? 'bg-gray-200' : 'bg-purple-600'}`}>
+                            <span className="text-[10px] font-black">{isGenerating ? '2' : <Check className="w-3.5 h-3.5" />}</span>
+                        </div>
+                        <span className={`text-xs font-black uppercase tracking-widest border-b-4 pb-1 ${isGenerating ? 'text-gray-400 border-gray-100' : 'text-purple-600 border-purple-600'}`}>Preview</span>
+                    </div>
+                </div>
+                <div className="flex-1 md:flex-none flex items-center justify-end">
+                    <button 
+                        onClick={handleAddToCart}
+                        disabled={isGenerating}
+                        className={`min-w-[160px] md:min-w-[200px] py-4 px-8 rounded-xl font-black text-sm uppercase tracking-widest transition-all shadow-xl flex items-center justify-center gap-3 ${isGenerating ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none' : 'bg-[#6366f1] hover:bg-[#4f46e5] text-white shadow-indigo-100 hover:-translate-y-1'}`}
+                    >
+                        {isGenerating ? 'Processing...' : 'Continue'}
+                        <ArrowRight className="w-4 h-4" />
+                    </button>
                 </div>
             </div>
         </div>

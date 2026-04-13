@@ -1,19 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Upload, Check, X, Lock, Sparkles, Image as ImageIcon, Printer } from 'lucide-react';
-import * as faceapi from 'https://esm.sh/@vladmandic/face-api';
+import { useAuth } from '../context/AuthContext';
+// ... (other imports)
 
 export default function PersonalizationSection({ book }) {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [uploadedPhoto, setUploadedPhoto] = React.useState(null);
     const [isValidating, setIsValidating] = React.useState(false);
     const [showWarning, setShowWarning] = React.useState(false);
-    const [errors, setErrors] = React.useState({});
-    const [formData, setFormData] = React.useState({
-        language: 'English',
-        name: '',
-        age: ''
-    });
+    const [showLoginModal, setShowLoginModal] = React.useState(false);
+    // ... rest of state
     
     const fileInputRef = React.useRef(null);
 

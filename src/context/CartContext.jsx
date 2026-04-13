@@ -131,7 +131,14 @@ export const CartProvider = ({ children }) => {
         if (!product.variantId) return;
         setIsSynchronizing(true);
         try {
-            const cartId = localStorage.getItem(getCartIdKey(user));
+            let cartId = localStorage.getItem(getCartIdKey(user));
+            
+            // Safety: if cartId is missing, try to create it first
+            if (!cartId) {
+                await fetchOrCreateCart();
+                cartId = localStorage.getItem(getCartIdKey(user));
+            }
+
             const res = await shopifyFetch({ 
                 query: cartLinesAddMutation, 
                 variables: { 
@@ -140,13 +147,24 @@ export const CartProvider = ({ children }) => {
                 } 
             });
             
-            if (res.cartLinesAdd.userErrors?.length > 0) throw new Error(res.cartLinesAdd.userErrors[0].message);
+            if (res?.cartLinesAdd?.userErrors?.length > 0) {
+                const error = res.cartLinesAdd.userErrors[0];
+                console.error("Add to cart user error:", error);
+                
+                // If it's a 'not found' error, clear cartId and retry once
+                if (error.message.toLowerCase().includes("not found") || error.field?.includes("cartId")) {
+                    localStorage.removeItem(getCartIdKey(user));
+                    await fetchOrCreateCart();
+                    return addToCart(product); // Recursive retry
+                }
+                throw new Error(error.message);
+            }
             
             await fetchOrCreateCart();
             setIsCartOpen(true);
         } catch (error) {
             console.error("Add to cart failed:", error);
-            alert("Failed to add item. Please try again.");
+            alert(`Could not add item: ${error.message || "Please refresh and try again."}`);
         } finally {
             setIsSynchronizing(false);
         }

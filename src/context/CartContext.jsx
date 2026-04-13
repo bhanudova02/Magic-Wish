@@ -18,13 +18,26 @@ export const CartProvider = ({ children }) => {
     const [isCheckingOut, setIsCheckingOut] = useState(false);
 
     useEffect(() => {
-        // Check if we just came back from a checkout attempt
-        const pendingCheckout = localStorage.getItem('magicwish_pending_checkout');
-        if (pendingCheckout === 'true') {
-            setCartItems([]);
-            localStorage.removeItem('magicwish_pending_checkout');
-            localStorage.removeItem('magicwish_cart');
-        }
+        const handleCheckPendingCheckout = () => {
+            const pendingCheckout = localStorage.getItem('magicwish_pending_checkout');
+            if (pendingCheckout === 'true') {
+                setCartItems([]);
+                localStorage.removeItem('magicwish_pending_checkout');
+                localStorage.removeItem('magicwish_cart');
+            }
+        };
+
+        // Initial check on mount
+        handleCheckPendingCheckout();
+
+        // Check again when page becomes visible or is shown from cache (back button)
+        window.addEventListener('pageshow', handleCheckPendingCheckout);
+        window.addEventListener('focus', handleCheckPendingCheckout);
+
+        return () => {
+            window.removeEventListener('pageshow', handleCheckPendingCheckout);
+            window.removeEventListener('focus', handleCheckPendingCheckout);
+        };
     }, []);
 
     useEffect(() => {

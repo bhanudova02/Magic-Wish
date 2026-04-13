@@ -1,0 +1,23 @@
+Sure! Mee books list chusi, prathi product ki high-quality `coverpage_prompt` suggest chesthunnanu. Meeru ee text ni Shopify Admin lo metafield section lo copy-paste cheyachu:
+
+| Book Title | Suggested `coverpage_prompt` (Metafield Text) | Style Note |
+| :--- | :--- | :--- |
+| **The Magic Paintbrush** | A magical enchanted forest where every leaf and flower is glowing with neon paint, whimsical art style, soft lighting, vibrant colors, dreamlike atmosphere | Whimsical Art |
+| **Guardians of the Ocean** | Underwater kingdom with massive glowing jellyfish, bioluminescent coral reefs, friendly sea creatures, cinematic depth, 8k, serene blue lighting | Cinematic Sea |
+| **The Brave Little Explorer** | A lush tropical jungle with hidden ancient ruins, sunlight streaming through giant ferns, adventure vibes, Pixar-style digital art | Adventure/Pixar |
+| **The Boy & Cosmic Journey** | A child floating in a nebula-filled outer space, surrounded by friendly smiling planets and a glowing space dragon, ethereal lighting, sparkles | Galaxy Fantasy |
+| **Boy The Dinos Need You** | A prehistoric valley with a friendly Brachiosaurus, lush volcanoes in distance, golden hour sun, high-detail 3D animation style | Dino World |
+| **Princess & Glowing Flower** | A moonlit fairy garden with a single giant glowing lotus in the center, glittery dust in the air, dreamy pastel colors, elegant fairy tale style | Fairy Tale |
+| **Curious Little Alchemist** | A cluttered magical laboratory with bubbling colorful potions, floating books, and golden sparks, intricate details, cozy warm lighting | Magic Lab |
+| **Maya & Rainbow Unicorn** | A kingdom above the clouds with a massive crystalline rainbow bridge and a majestic unicorn, pearlescent colors, magical atmosphere | Dreamy Cloud |
+| **Fairy Princess of Moonlit Woods** | A dark mystical forest with glowing mushrooms and tiny fireflies, a hidden waterfall reflecting the moonlight, magical sparkles, high fantasy | Dark Mystic |
+| **The Speedster of Neon City** | A futuristic cyberpunk city with neon lights and flying cars, high speed trails, sleek metalic surfaces, vibrant purple and blue glow | Cyberpunk |
+| **Dino-Land Expedition** | A scientific basecamp in a desert canyon filled with friendly dinosaurs and high-tech gadgets, sunset lighting, vibrant adventure illustration | Safari Dino |
+| **The Galactic Commander** | A futuristic spaceship bridge overlooking a massive star-base, holographic screens, friendly robots, epic sci-fi space opera style | Sci-Fi Epic |
+
+### How to use:
+1.  Shopify Admin lo **Product** open cheyandi.
+2.  Metafields section lo `coverpage_prompt` (custom namespace) daggara paina unna text copy-paste cheyandi.
+3.  Save chesina ventane, mana frontend automatic ga ee prompts ni use chesi Preview Page lo unique AI images create chesthundhi.
+
+Ee prompts thoti AI chala "premium" images generate chesthundhi. Inka emina dynamic changes kavalante cheppu!

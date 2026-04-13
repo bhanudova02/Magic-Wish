@@ -73,6 +73,28 @@ export default function PersonalizationSection({ book }) {
         }
     };
 
+    if (!book?.coverpagePrompt) {
+        return (
+            <section className="bg-gray-50 py-16 md:py-24">
+                <div className="max-w-3xl mx-auto px-4 text-center space-y-6">
+                    <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto animate-pulse">
+                        <Sparkles className="w-10 h-10 text-purple-600" />
+                    </div>
+                    <div className="space-y-4">
+                        <h2 className="text-3xl font-black text-gray-900 leading-tight">Magic in Progress!</h2>
+                        <p className="text-gray-500 font-medium text-lg leading-relaxed">
+                            We are currently preparing the magical adventure for <span className="text-purple-600 font-bold">{book?.title}</span>. 
+                            This book will be available for personalization very soon.
+                        </p>
+                    </div>
+                    <div className="inline-block bg-white border border-purple-100 px-6 py-3 rounded-full text-purple-600 font-bold text-sm shadow-sm">
+                        Status: Under Process 🛠️
+                    </div>
+                </div>
+            </section>
+        );
+    }
+
     return (
         <section className="bg-[#fdf2f8] py-16 md:py-24 overflow-hidden relative">
             {/* Warning Modal */}

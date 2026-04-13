@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { shopifyFetch, cartCreateMutation } from '../utils/shopify';
+import { useAuth } from './AuthContext';
 
 const CartContext = createContext();
 
@@ -8,6 +9,7 @@ export const useCart = () => {
 };
 
 export const CartProvider = ({ children }) => {
+    const { user } = useAuth();
     const [cartItems, setCartItems] = useState(() => {
         const savedCart = localStorage.getItem('magicwish_cart');
         return savedCart ? JSON.parse(savedCart) : [];
@@ -79,13 +81,22 @@ export const CartProvider = ({ children }) => {
                 throw new Error("No valid products found in cart. Please try re-adding items.");
             }
 
+            const variables = {
+                input: {
+                    lines: lines
+                }
+            };
+
+            // If user is logged in, pass their email as buyer identity
+            if (user && user.email) {
+                variables.input.buyerIdentity = {
+                    email: user.email
+                };
+            }
+
             const data = await shopifyFetch({
                 query: cartCreateMutation,
-                variables: {
-                    input: {
-                        lines: lines
-                    }
-                }
+                variables: variables
             });
 
             if (data.cartCreate.userErrors && data.cartCreate.userErrors.length > 0) {

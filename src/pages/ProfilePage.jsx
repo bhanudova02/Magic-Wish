@@ -52,7 +52,7 @@ const ProfilePage = () => {
             // Try fetching orders separately
             const ordersRes = await customerAccountFetch({ query: getCustomerOrdersQuery, variables: { first: 10 } });
             if (ordersRes?.customer?.orders) {
-                setOrders(ordersRes.customer.orders.nodes || []);
+                setOrders(ordersRes.customer.orders.edges.map(e => e.node) || []);
             } else {
                 console.warn('Orders data format unexpected:', ordersRes);
             }

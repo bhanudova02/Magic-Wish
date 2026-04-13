@@ -3,15 +3,16 @@ export const storefrontToken = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN;
 export const shopId = import.meta.env.VITE_SHOPIFY_SHOP_ID;
 
 export async function customerAccountFetch({ query, variables = {} }) {
-  const endpoint = `https://customer-accounts.shopify.com/api/2024-04/graphql`;
+  const endpoint = `https://shopify.com/65892843582/account/api/2024-04/graphql`;
   const token = localStorage.getItem('shopify_access_token')?.trim();
+  const authHeader = token ? (token.startsWith('Bearer ') ? token : `Bearer ${token}`) : "";
   
   try {
     const result = await fetch(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token || "",
+        "Authorization": authHeader,
       },
       body: JSON.stringify({
         query,
@@ -180,25 +181,17 @@ export const getCustomerOrdersQuery = `
   query getCustomerOrders($first: Int!) {
     customer {
       orders(first: $first) {
-        totalCount
-        nodes {
-          id
-          name
-          processedAt
-          totalPrice {
-            amount
-            currencyCode
-          }
-          financialStatus
-          fulfillmentStatus
-          lineItems(first: 5) {
-            nodes {
-              title
-              quantity
-              image {
-                url
-              }
+        edges {
+          node {
+            id
+            name
+            processedAt
+            totalPrice {
+              amount
+              currencyCode
             }
+            financialStatus
+            fulfillmentStatus
           }
         }
       }

@@ -3,7 +3,7 @@ export const storefrontToken = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN;
 export const shopId = import.meta.env.VITE_SHOPIFY_SHOP_ID;
 
 export async function customerAccountFetch({ query, variables = {} }) {
-  const endpoint = `https://shopify.com/65892843582/account/api/2024-04/graphql`;
+  const endpoint = `https://customer-accounts.shopify.com/api/2024-04/graphql`;
   const token = localStorage.getItem('shopify_access_token')?.trim();
   const authHeader = token ? (token.startsWith('Bearer ') ? token : `Bearer ${token}`) : "";
 

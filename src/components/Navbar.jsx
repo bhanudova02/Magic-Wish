@@ -84,6 +84,28 @@ export default function Navbar() {
     const linkClass = ({ isActive }) => 
         `transition-colors font-medium ${isActive ? 'text-purple-700' : 'text-gray-600 hover:text-purple-600'}`;
 
+    const MobileNavLink = ({ to, icon: Icon, label, onClick }) => (
+        <NavLink 
+            to={to} 
+            onClick={onClick}
+        >
+            {({ isActive }) => (
+                <div className={`
+                    flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-300 group
+                    ${isActive ? 'bg-purple-50 text-purple-700 shadow-sm shadow-purple-100/50' : 'text-gray-600 hover:bg-gray-50 hover:text-purple-600'}
+                `}>
+                    <div className={`
+                        w-10 h-10 rounded-xl flex items-center justify-center transition-colors
+                        ${isActive ? 'bg-white text-purple-600 shadow-sm' : 'bg-gray-50 text-gray-400 group-hover:bg-white group-hover:text-purple-400 shadow-inner'}
+                    `}>
+                        <Icon className="w-5 h-5" />
+                    </div>
+                    <span className="text-md font-bold tracking-tight">{label}</span>
+                </div>
+            )}
+        </NavLink>
+    );
+
     const mobileLinkClass = ({ isActive }) => 
         `block py-4 text-xl font-bold border-b border-gray-100 ${isActive ? 'text-purple-700' : 'text-gray-800 hover:text-purple-600'}`;
 
@@ -295,63 +317,84 @@ export default function Navbar() {
             </div>
 
             {/* Mobile Side Navigation Menu */}
-            <div className={`fixed inset-0 z-[150] md:hidden transition-all duration-300 ${isMenuOpen ? 'visible' : 'invisible'}`}>
+            <div className={`fixed inset-0 z-[150] md:hidden transition-all duration-500 ${isMenuOpen ? 'visible' : 'invisible'}`}>
                 {/* Backdrop */}
                 <div 
-                    className={`absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${isMenuOpen ? 'opacity-100' : 'opacity-0'}`}
+                    className={`absolute inset-0 bg-[#2b124c]/30 backdrop-blur-md transition-opacity duration-500 ${isMenuOpen ? 'opacity-100' : 'opacity-0'}`}
                     onClick={() => setIsMenuOpen(false)}
                 ></div>
                 
                 {/* Side Menu */}
-                <div className={`absolute top-0 right-0 h-full w-[80%] max-w-xs bg-white shadow-2xl transition-transform duration-300 ease-in-out transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-                    <div className="flex flex-col h-full bg-white">
-                        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                            <span className="font-heading font-extrabold text-xl text-[#2b124c]">Menu</span>
+                <div className={`absolute top-0 left-0 h-full w-[85%] max-w-sm bg-white shadow-[10px_0_40px_rgba(0,0,0,0.1)] transition-transform duration-500 ease-[cubic-bezier(0.32,0,0.67,0)] transform flex flex-col ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                    
+                    {/* Menu Header */}
+                    <div className="bg-[#fbfcff] px-6 pt-8 pb-6 border-b border-gray-100 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-purple-50 rounded-full -mr-16 -mt-16 opacity-50"></div>
+                        <div className="flex items-center justify-between relative z-10">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-purple-200">
+                                    <span className="font-heading font-black text-xl">M</span>
+                                </div>
+                                <span className="font-heading font-black text-2xl tracking-tight text-[#2b124c]">MagicWish</span>
+                            </div>
                             <button 
                                 onClick={() => setIsMenuOpen(false)}
-                                className="p-2 text-gray-500 hover:text-purple-600"
+                                className="p-2 text-gray-400 hover:text-purple-600 bg-white rounded-full shadow-sm"
                             >
-                                <X className="w-6 h-6" />
+                                <X className="w-5 h-5" />
                             </button>
                         </div>
-                        
-                        <div className="flex-grow px-6 py-8 overflow-y-auto">
-                            <nav className="flex flex-col">
-                                <NavLink to="/" className={mobileLinkClass}>Home</NavLink>
-                                <NavLink to="/books" className={mobileLinkClass}>Books</NavLink>
-                                <NavLink to="/support" className={mobileLinkClass}>Support</NavLink>
-                                
-                                <div className="mt-8 pt-8 border-t border-gray-100 italic text-sm text-gray-400 uppercase tracking-widest px-1">
-                                    Account
-                                </div>
-                                
-                                {isAuthenticated ? (
-                                    <>
-                                        <NavLink to="/profile?tab=profile" className={mobileLinkClass}>My Profile</NavLink>
-                                        <NavLink to="/profile?tab=orders" className={mobileLinkClass}>My Orders</NavLink>
-                                        <button 
-                                            onClick={() => {
-                                                setIsMenuOpen(false);
-                                                logoutUser();
-                                            }}
-                                            className="block py-4 text-xl font-bold text-red-500 text-left border-b border-gray-100"
-                                        >
-                                            Sign Out
-                                        </button>
-                                    </>
-                                ) : (
-                                    <button 
-                                        onClick={async () => {
-                                            const url = await getAuthorizeUrl();
-                                            window.location.href = url;
-                                        }}
-                                        className="block py-4 text-xl font-bold text-blue-600 text-left border-b border-gray-100"
-                                    >
-                                        Sign In / Register
-                                    </button>
-                                )}
-                            </nav>
+                    </div>
+                    
+                    {/* Navigation Items */}
+                    <div className="flex-grow px-4 py-8 overflow-y-auto">
+                        <div className="space-y-1">
+                            <MobileNavLink to="/" icon={Search} label="Home" onClick={() => setIsMenuOpen(false)} />
+                            <MobileNavLink to="/books" icon={ShoppingBag} label="Books" onClick={() => setIsMenuOpen(false)} />
+                            <MobileNavLink to="/support" icon={X} label="Support" onClick={() => setIsMenuOpen(false)} />
                         </div>
+                        
+                        <div className="mt-10 mb-4 px-2">
+                            <div className="h-px bg-gray-100 w-full mb-6"></div>
+                            <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] mb-4 pl-2 italic">Account</p>
+                            
+                            {isAuthenticated ? (
+                                <div className="space-y-1">
+                                    <MobileNavLink to="/profile?tab=profile" icon={User} label="My Profile" onClick={() => setIsMenuOpen(false)} />
+                                    <MobileNavLink to="/profile?tab=orders" icon={ShoppingBag} label="My Orders" onClick={() => setIsMenuOpen(false)} />
+                                    <button 
+                                        onClick={() => {
+                                            setIsMenuOpen(false);
+                                            logoutUser();
+                                        }}
+                                        className="w-full flex items-center gap-4 px-4 py-4 text-md font-bold text-red-500 hover:bg-red-50 rounded-2xl transition-all group"
+                                    >
+                                        <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-400 group-hover:bg-red-100 transition-colors">
+                                            <LogOut className="w-5 h-5" />
+                                        </div>
+                                        <span>Sign Out</span>
+                                    </button>
+                                </div>
+                            ) : (
+                                <button 
+                                    onClick={async () => {
+                                        const url = await getAuthorizeUrl();
+                                        window.location.href = url;
+                                    }}
+                                    className="w-full flex items-center gap-4 px-4 py-4 text-md font-bold text-blue-600 hover:bg-blue-50 rounded-2xl transition-all group"
+                                >
+                                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-400 group-hover:bg-blue-100 transition-colors">
+                                        <User className="w-5 h-5" />
+                                    </div>
+                                    <span>Sign In / Register</span>
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Footer / Extra info */}
+                    <div className="p-6 bg-gray-50 border-t border-gray-100 mt-auto">
+                        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest text-center opacity-50">© 2024 MagicWish Store</p>
                     </div>
                 </div>
             </div>

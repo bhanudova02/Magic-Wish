@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Sparkles, CheckCircle2, User, Calendar, Globe, Terminal, X, Check, ArrowRight, BookOpen, Clock, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { createFaceSwapJob, getJobStatus } from '../utils/magichour';
+
+
 
 export default function BookPreviewPage() {
     const navigate = useNavigate();
@@ -74,34 +77,74 @@ export default function BookPreviewPage() {
     const startGeneration = async (parsedData) => {
         setIsGenerating(true);
         setError(null);
+        setProgress(5);
         
-        const title = parsedData.title || "Magic Story";
-        const desc = (parsedData.description || "").substring(0, 150);
-        const activePrompt = `Professional storybook cover titled "${title}". ${desc}. The hero is a ${parsedData.age} year old child named ${parsedData.name}. Scene: ${parsedData.coverpagePrompt}. Magical fantasy, vibrant 8k`;
-        
-        const seed = Math.floor(Math.random() * 999999);
-        const pollUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(activePrompt)}?width=1024&height=1024&seed=${seed}&nologo=true`;
-        
-        setGeneratedImage(pollUrl);
-        
-        // Instant save to prevent re-generation if user refreshes during generation
         try {
-            const currentData = JSON.parse(localStorage.getItem('last_personalization') || '{}');
-            localStorage.setItem('last_personalization', JSON.stringify({
-                ...currentData,
-                generatedImage: pollUrl
-            }));
-        } catch (e) {
-            console.error("Failed to save temporary preview:", e);
-        }
+            const { photo, bookCover } = parsedData;
+            
+            if (!photo || !bookCover) {
+                throw new Error("Missing photo or book cover for personalization.");
+            }
 
+            // Start Magic Hour Job
+            const jobRes = await createFaceSwapJob(photo, bookCover);
+            const projectId = jobRes.id; // Corrected to jobRes.id based on typical Magic Hour response
+
+            if (!projectId) {
+                throw new Error("Failed to initialize magic generation.");
+            }
+
+            // Polling for completion
+            let jobDone = false;
+            let checkCount = 0;
+            const maxChecks = 60; // 2 minutes max (2s interval)
+
+            while (!jobDone && checkCount < maxChecks) {
+                await new Promise(resolve => setTimeout(resolve, 3000)); // Poll every 3s
+                checkCount++;
+                
+                const statusRes = await getJobStatus(projectId);
+                const status = statusRes.status;
+
+                // Update progress based on status (simplified)
+                setProgress(prev => Math.min(prev + 5, 90));
+
+                if (status === 'completed') {
+                    jobDone = true;
+                    // The output URL is typically in statusRes.output.file_url or statusRes.output_url
+                    const magicUrl = statusRes.preview_url || statusRes.output_url || (statusRes.output && statusRes.output.file_url);
+                    
+                    if (!magicUrl) throw new Error("Could not retrieve generated image.");
+
+                    setGeneratedImage(magicUrl);
+                    
+                    // Now upload the final result to Cloudinary for persistence
+                    await uploadToCloudinary(magicUrl);
+                } else if (status === 'failed') {
+                    throw new Error("Personalization failed. Please try a different photo.");
+                }
+            }
+
+            if (!jobDone) {
+                throw new Error("Request timed out. Please try again.");
+            }
+
+        } catch (err) {
+            console.error("Personalization error:", err);
+            setError(err.message || "An unexpected error occurred.");
+            setIsGenerating(false);
+            setIsUploading(false);
+        }
+    };
+
+    const uploadToCloudinary = async (imageUrl) => {
         try {
             setIsUploading(true);
             const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
             const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
             
             if (cloudName && preset) {
-                const response = await fetch(pollUrl);
+                const response = await fetch(imageUrl);
                 const blob = await response.blob();
                 const uploadData = new FormData();
                 uploadData.append('file', blob);
@@ -118,6 +161,8 @@ export default function BookPreviewPage() {
                     setCloudinaryUrl(finalUrl);
                     setGeneratedImage(finalUrl);
                     setIsUploading(false);
+                    setIsGenerating(false);
+                    setProgress(100);
                     
                     const currentData = JSON.parse(localStorage.getItem('last_personalization'));
                     localStorage.setItem('last_personalization', JSON.stringify({
@@ -129,8 +174,13 @@ export default function BookPreviewPage() {
         } catch (err) {
             console.warn("Cloudinary upload failed:", err);
             setIsUploading(false);
+            // Even if Cloudinary fails, we can still use the Magic Hour URL
+            setCloudinaryUrl(imageUrl);
+            setIsGenerating(false);
+            setProgress(100);
         }
     };
+
 
     const handleImageLoad = () => {
         if (!isUploading) {

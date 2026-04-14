@@ -459,8 +459,10 @@ export default function PersonalizationSection({ book }) {
                                                         variantId: book.variantId,
                                                         title: book.title,
                                                         description: book.description,
-                                                        coverpagePrompt: book.coverpagePrompt
+                                                        coverpagePrompt: book.coverpagePrompt,
+                                                        bookCover: book.image
                                                     }));
+
                                                     navigate('/preview');
                                                 } catch (err) {
                                                     console.error("Cloudinary Error Detail:", err);

@@ -1,20 +1,101 @@
-import React, { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { getAuthorizeUrl } from '../utils/auth';
+import { ChevronDown, Lock, Sparkles, X } from 'lucide-react';
 import ImaginationBanner from '../components/ImaginationBanner';
 
 export default function SupportPage() {
+    const navigate = useNavigate();
+    const { user } = useAuth();
     const [category, setCategory] = useState('');
     const [message, setMessage] = useState('');
     const [submitted, setSubmitted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showLoginModal, setShowLoginModal] = useState(false);
 
-    const handleSubmit = (e) => {
+    useEffect(() => {
+        if (!user) {
+            setShowLoginModal(true);
+        }
+    }, [user]);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!user) {
+            setShowLoginModal(true);
+            return;
+        }
         if (!category || !message.trim()) return;
-        setSubmitted(true);
+        
+        setIsSubmitting(true);
+        try {
+            const response = await fetch('/api/support', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: user.email,
+                    category,
+                    message
+                })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                setSubmitted(true);
+            } else {
+                alert(data.error || "Something went wrong. Please try again.");
+            }
+        } catch (error) {
+            console.error("Support Error:", error);
+            alert("An error occurred. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
         <div className="min-h-screen">
+            {/* Login Required Modal */}
+            {showLoginModal && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white rounded-sm p-8 max-w-sm w-full shadow-2xl space-y-6 text-center animate-in zoom-in-95 duration-300 relative">
+                        <button 
+                            onClick={() => {
+                                setShowLoginModal(false);
+                                navigate(-1);
+                            }}
+                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition cursor-pointer"
+                        >
+                            <X className="w-6 h-6" />
+                        </button>
+                        <div className="w-20 h-20 bg-[#FDE2FF] rounded-sm flex items-center justify-center mx-auto">
+                            <Lock className="w-10 h-10 text-[#2563EB]" />
+                        </div>
+                        <div className="space-y-2">
+                            <h3 className="text-2xl font-black text-gray-900 leading-tight">Login to Contact Us</h3>
+                            <p className="text-gray-500 font-medium">Please login to send your message. This helps us track your request and get back to you faster.</p>
+                        </div>
+                        <div className="space-y-3">
+                            <button 
+                                onClick={async () => {
+                                    try {
+                                        const url = await getAuthorizeUrl();
+                                        window.location.href = url;
+                                    } catch (err) {
+                                        console.error("Login redirect failed:", err);
+                                    }
+                                }}
+                                className="w-full bg-[#2563EB] text-white py-4 rounded-sm font-bold hover:bg-[#1d4ed8] transition shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+                            >
+                                <Sparkles className="w-5 h-5" /> Sign In
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             <div className="relative bg-white pt-24 pb-20 overflow-hidden">
                 {/* Suitable Magical Background Shade (HowItWorks style) */}
                 <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-blue-100/70 via-purple-50/40 to-transparent pointer-events-none" />
@@ -95,9 +176,10 @@ export default function SupportPage() {
 
                                         <button
                                             type="submit"
-                                            className="w-full bg-gray-900 hover:bg-black text-white font-semibold py-3.5 rounded-sm transition-colors shadow-md hover:shadow-lg active:scale-[0.99]"
+                                            disabled={isSubmitting}
+                                            className="w-full bg-gray-900 hover:bg-black text-white font-semibold py-3.5 rounded-sm transition-colors shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-50"
                                         >
-                                            Send Message
+                                            {isSubmitting ? 'Sending...' : 'Send Message'}
                                         </button>
                                     </form>
                                 </div>

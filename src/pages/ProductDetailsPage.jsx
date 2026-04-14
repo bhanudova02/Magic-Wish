@@ -93,11 +93,58 @@ export default function ProductDetailsPage() {
         return (
             <div className="bg-white min-h-screen pt-24 pb-20 animate-pulse">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                        <div className="bg-gray-100 rounded-sm aspect-square w-full"></div>
-                        <div className="space-y-6">
-                            <div className="h-10 bg-gray-100 rounded-full w-3/4"></div>
-                            <div className="h-4 bg-gray-100 rounded-full w-1/4"></div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start text-center md:text-left">
+                        {/* Left: Image Gallery Skeleton */}
+                        <div className="flex flex-col md:flex-row gap-4">
+                            {/* Thumbnails */}
+                            <div className="flex flex-row md:flex-col gap-2 order-2 md:order-1 overflow-hidden">
+                                {[1, 2, 3, 4].map((i) => (
+                                    <div key={i} className="w-16 h-16 md:w-20 md:h-20 bg-gray-200 rounded-sm flex-shrink-0" />
+                                ))}
+                            </div>
+                            {/* Main Image */}
+                            <div className="flex-1 order-1 md:order-2">
+                                <div className="aspect-square md:aspect-[4/5] bg-gray-200 rounded-sm w-full shadow-sm" />
+                            </div>
+                        </div>
+
+                        {/* Right: Info Skeleton */}
+                        <div className="flex flex-col space-y-8">
+                            <div>
+                                <div className="h-12 bg-gray-200 rounded-sm w-3/4 mb-4" />
+                                <div className="h-4 bg-gray-200 rounded-sm w-1/4" />
+                            </div>
+
+                            <div className="space-y-3">
+                                <div className="h-4 bg-gray-200 rounded-sm w-full" />
+                                <div className="h-4 bg-gray-200 rounded-sm w-full" />
+                                <div className="h-4 bg-gray-200 rounded-sm w-2/3" />
+                            </div>
+
+                            {/* Benefit Boxes Skeleton */}
+                            <div className="bg-blue-50/50 p-6 rounded-sm space-y-4">
+                                {[1, 2, 3, 4].map(i => (
+                                    <div key={i} className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-full bg-white shadow-sm" />
+                                        <div className="h-4 bg-gray-200 rounded-full w-2/3" />
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Price Skeleton */}
+                            <div className="flex items-baseline gap-3">
+                                <div className="h-10 bg-gray-200 rounded-sm w-32" />
+                            </div>
+
+                            {/* Button Skeleton */}
+                            <div className="h-16 bg-gray-300 rounded-sm w-full" />
+
+                            {/* Accordion Skeleton */}
+                            <div className="space-y-3 pt-4">
+                                {[1, 2, 3].map(i => (
+                                    <div key={i} className="h-14 bg-gray-200 border border-gray-100 rounded-sm w-full" />
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>

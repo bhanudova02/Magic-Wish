@@ -110,7 +110,13 @@ export default function PersonalizationSection({ book }) {
             {/* Login Required Modal */}
             {showLoginModal && (
                 <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-white rounded-sm p-8 max-w-sm w-full shadow-2xl space-y-6 text-center animate-in zoom-in-95 duration-300">
+                    <div className="bg-white rounded-sm p-8 max-w-sm w-full shadow-2xl space-y-6 text-center animate-in zoom-in-95 duration-300 relative">
+                        <button 
+                            onClick={() => setShowLoginModal(false)}
+                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition cursor-pointer"
+                        >
+                            <X className="w-6 h-6" />
+                        </button>
                         <div className="w-20 h-20 bg-[#FDE2FF] rounded-sm flex items-center justify-center mx-auto">
                             <Lock className="w-10 h-10 text-[#2563EB]" />
                         </div>
@@ -128,15 +134,9 @@ export default function PersonalizationSection({ book }) {
                                         console.error("Login redirect failed:", err);
                                     }
                                 }}
-                                className="w-full bg-[#2563EB] text-white py-4 rounded-sm font-bold hover:bg-[#1d4ed8] transition shadow-lg flex items-center justify-center gap-2"
+                                className="w-full bg-[#2563EB] text-white py-4 rounded-sm font-bold hover:bg-[#1d4ed8] transition shadow-lg flex items-center justify-center gap-2 cursor-pointer"
                             >
                                 <Sparkles className="w-5 h-5" /> Sign In
-                            </button>
-                            <button 
-                                onClick={() => setShowLoginModal(false)}
-                                className="w-full text-gray-500 py-3 rounded-sm font-bold hover:bg-gray-50 transition"
-                            >
-                                Maybe Later
                             </button>
                         </div>
                     </div>
@@ -156,7 +156,7 @@ export default function PersonalizationSection({ book }) {
                         </div>
                         <button 
                             onClick={() => setShowWarning(false)}
-                            className="w-full bg-gray-900 text-white py-4 rounded-sm font-bold hover:bg-gray-800 transition shadow-lg"
+                            className="w-full bg-gray-900 text-white py-4 rounded-sm font-bold hover:bg-gray-800 transition shadow-lg cursor-pointer"
                         >
                             Try Another Photo
                         </button>
@@ -304,7 +304,7 @@ export default function PersonalizationSection({ book }) {
                                         />
                                         <button 
                                             onClick={handleUploadClick}
-                                            className="w-full bg-[#2563EB] hover:bg-[#1d4ed8] text-white py-5 px-6 rounded-sm font-black text-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-blue-100"
+                                            className="w-full bg-[#2563EB] hover:bg-[#1d4ed8] text-white py-5 px-6 rounded-sm font-black text-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-blue-100 cursor-pointer"
                                         >
                                             Child's Photo <Upload className="w-6 h-6" />
                                         </button>
@@ -319,7 +319,7 @@ export default function PersonalizationSection({ book }) {
                                             <img src={uploadedPhoto} alt="Uploaded" className="w-full h-full object-cover object-center rounded-sm" />
                                             <button 
                                                 onClick={handleRemovePhoto}
-                                                className="absolute -top-1 -right-1 bg-white border border-gray-100 shadow-md rounded-sm p-1.5 hover:bg-gray-50 transition z-20"
+                                                className="absolute -top-1 -right-1 bg-white border border-gray-100 shadow-md rounded-sm p-1.5 hover:bg-gray-50 transition z-20 cursor-pointer"
                                             >
                                                 <X className="w-3 h-3 text-gray-500" />
                                             </button>
@@ -402,6 +402,8 @@ export default function PersonalizationSection({ book }) {
 
                                                 if (!formData.age) {
                                                     newErrors.age = "Required";
+                                                } else if (parseInt(formData.age) > 10) {
+                                                    newErrors.age = "Max age is 10 years";
                                                 }
 
                                                 if (Object.keys(newErrors).length > 0) {
@@ -454,7 +456,7 @@ export default function PersonalizationSection({ book }) {
                                                     setIsValidating(false);
                                                 }
                                             }}
-                                            className="w-full bg-[#2563EB] hover:bg-[#1d4ed8] text-white py-5 px-6 rounded-sm font-black text-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-blue-100 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="w-full bg-[#2563EB] hover:bg-[#1d4ed8] text-white py-5 px-6 rounded-sm font-black text-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-blue-100 mt-4 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                                         >
                                             {isValidating ? 'Finishing Up...' : 'Preview My Book'} <Sparkles className="w-6 h-6" />
                                         </button>
@@ -463,7 +465,7 @@ export default function PersonalizationSection({ book }) {
                                 </div>
                             )}
 
-                            <button className="w-full mt-6 py-4 px-6 rounded-sm border-2 border-blue-50 hover:border-[#2563EB]/30 flex items-center justify-center gap-2 text-[#2563EB] font-bold text-sm transition-colors group">
+                            <button className="w-full mt-6 py-4 px-6 rounded-sm border-2 border-blue-50 hover:border-[#2563EB]/30 flex items-center justify-center gap-2 text-[#2563EB] font-bold text-sm transition-colors group cursor-pointer">
                                 <ImageIcon className="w-4 h-4 text-[#2563EB]/40 group-hover:text-[#2563EB] transition-colors" />
                                 Photo Formats & Dimensions Info
                             </button>

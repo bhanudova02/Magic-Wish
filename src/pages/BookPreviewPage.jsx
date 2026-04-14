@@ -233,7 +233,7 @@ export default function BookPreviewPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                     
                     {/* Left side: Book Information */}
-                    <div className="lg:col-span-5 space-y-10 animate-in slide-in-from-right duration-700 order-2 lg:order-2">
+                    <div className="lg:col-span-5 space-y-6 animate-in slide-in-from-right duration-700 order-2 lg:order-2">
                         <div className="space-y-6">
 
                             <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-tight">
@@ -264,28 +264,20 @@ export default function BookPreviewPage() {
                         {/* Order Summary Card */}
                         <div className="bg-white rounded-sm p-4 shadow-xl shadow-blue-100/50 border border-blue-50 space-y-3">
                             <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-3">Personalization Details</h3>
-                            <div className="flex flex-wrap gap-4 lg:flex-nowrap lg:justify-between">
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6">
                                 <div className="flex flex-col gap-1 min-w-0">
                                     <p className="text-[10px] font-black text-[#624da0]/60 uppercase tracking-widest whitespace-nowrap">Child's Name</p>
-                                    <p className="text-sm font-black text-gray-900 truncate">{personalization?.name}</p>
+                                    <p className="text-xs font-black text-gray-900 truncate">{personalization?.name}</p>
                                 </div>
-                                <div className="w-px bg-gray-100 hidden lg:block self-stretch"></div>
                                 <div className="flex flex-col gap-1 min-w-0">
                                     <p className="text-[10px] font-black text-[#624da0]/60 uppercase tracking-widest whitespace-nowrap">Language</p>
-                                    <p className="text-sm font-black text-gray-900">{personalization?.language}</p>
+                                    <p className="text-xs font-black text-gray-900">{personalization?.language}</p>
                                 </div>
-                                <div className="w-px bg-gray-100 hidden lg:block self-stretch"></div>
                                 <div className="flex flex-col gap-1 min-w-0">
                                     <p className="text-[10px] font-black text-[#624da0]/60 uppercase tracking-widest whitespace-nowrap">Book Title</p>
-                                    <p className="text-sm font-bold text-gray-700 truncate">{personalization?.title}</p>
+                                    <p className="text-xs font-bold text-gray-700 truncate">{personalization?.title}</p>
                                 </div>
-                                <div className="w-px bg-gray-100 hidden lg:block self-stretch"></div>
-                                <div className="flex flex-col gap-1 min-w-0">
-                                    <p className="text-[10px] font-black text-[#624da0]/60 uppercase tracking-widest whitespace-nowrap">Manufacturing</p>
-                                    <p className="text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                                        <Clock className="w-3.5 h-3.5" /> 3-5 Days
-                                    </p>
-                                </div>
+
                             </div>
                         </div>
                     </div>

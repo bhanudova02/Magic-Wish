@@ -19,8 +19,9 @@ export default function BookPreviewPage() {
 
     const getFinalAIInstruction = (data) => {
         if (!data) return "";
-        return `Professional storybook cover titled "${data.title}". ${data.description}. The hero is a ${data.age} year old child named ${data.name}. Scene: ${data.coverpagePrompt}. Maintain a magical fantasy and vibrant 8k style.`;
+        return `Professional storybook cover titled "${data.title}" for ${data.name} (${data.age} years old). Style: Magical fantasy and vibrant 8k. (Face swap applied via Magic Hour using original book cover).`;
     };
+
 
     const finalAIInstruction = personalization ? getFinalAIInstruction(personalization) : "";
 

@@ -100,27 +100,10 @@ export default function PersonalizationSection({ book }) {
         }
     };
 
-    if (!book?.coverpagePrompt) {
-        return (
-            <section className="bg-gray-50 py-10 md:py-16">
-                <div className="max-w-3xl mx-auto px-4 text-center space-y-6">
-                    <div className="w-20 h-20 bg-[#E2E0FF] rounded-sm flex items-center justify-center mx-auto animate-pulse">
-                        <Sparkles className="w-10 h-10 text-[#2563EB]" />
-                    </div>
-                    <div className="space-y-4">
-                        <h2 className="text-3xl font-black text-gray-900 leading-tight">Magic in Progress!</h2>
-                        <p className="text-gray-500 font-medium text-lg leading-relaxed">
-                            We are currently preparing the magical adventure for <span className="text-[#2563EB] font-bold">{book?.title}</span>. 
-                            This book will be available for personalization very soon.
-                        </p>
-                    </div>
-                    <div className="inline-block bg-white border border-[#2563EB]/10 px-6 py-3 rounded-sm text-[#2563EB] font-bold text-sm shadow-sm">
-                        Status: Under Process 🛠️
-                    </div>
-                </div>
-            </section>
-        );
+    if (!book?.image) {
+        return null;
     }
+
 
     return (
         <section className="bg-[#E0EBFF] pt-9 pb-5 md:pt-11 md:pb-9 overflow-hidden relative">
@@ -459,9 +442,9 @@ export default function PersonalizationSection({ book }) {
                                                         variantId: book.variantId,
                                                         title: book.title,
                                                         description: book.description,
-                                                        coverpagePrompt: book.coverpagePrompt,
                                                         bookCover: book.image
                                                     }));
+
 
                                                     navigate('/preview');
                                                 } catch (err) {

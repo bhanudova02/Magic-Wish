@@ -2,7 +2,3 @@
 #FDE2FF,
 #FFE2E2,
 #E2E0FF, #624da0
-
-
-
-Akool API or Replicate (FaceSwap models like InSwapper/Reactor)

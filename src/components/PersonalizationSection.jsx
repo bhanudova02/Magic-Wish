@@ -11,6 +11,7 @@ export default function PersonalizationSection({ book }) {
     const [uploadedPhoto, setUploadedPhoto] = React.useState(null);
     const [isValidating, setIsValidating] = React.useState(false);
     const [showWarning, setShowWarning] = React.useState(false);
+    const [warningMessage, setWarningMessage] = React.useState("Please upload a front-facing photo of your child with the full face clearly visible.");
     const [showLoginModal, setShowLoginModal] = React.useState(false);
     const [errors, setErrors] = React.useState({});
     const [formData, setFormData] = React.useState({
@@ -26,9 +27,80 @@ export default function PersonalizationSection({ book }) {
         const loadModels = async () => {
             const MODEL_URL = 'https://vladmandic.github.io/face-api/model/';
             await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+            await faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL);
         };
         loadModels();
     }, []);
+
+    const validateChildPhoto = async (img) => {
+        const detection = await faceapi
+            .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.5 }))
+            .withFaceLandmarks(true);
+
+        if (!detection) {
+            return {
+                isValid: false,
+                message: "We couldn't detect one clear face. Use a single front-facing child photo."
+            };
+        }
+
+        const { box } = detection.detection;
+        const imageArea = img.width * img.height;
+        const faceAreaRatio = (box.width * box.height) / imageArea;
+        const faceCenterX = box.x + (box.width / 2);
+        const faceCenterY = box.y + (box.height / 2);
+        const landmarks = detection.landmarks;
+        const leftEye = landmarks.getLeftEye();
+        const rightEye = landmarks.getRightEye();
+        const nose = landmarks.getNose();
+        const mouth = landmarks.getMouth();
+
+        if (faceAreaRatio < 0.08) {
+            return {
+                isValid: false,
+                message: "The face is too far away. Upload a closer front-facing photo."
+            };
+        }
+
+        if (
+            faceCenterX < img.width * 0.25 ||
+            faceCenterX > img.width * 0.75 ||
+            faceCenterY < img.height * 0.2 ||
+            faceCenterY > img.height * 0.8
+        ) {
+            return {
+                isValid: false,
+                message: "Keep the face centered and front-facing in the photo."
+            };
+        }
+
+        if (
+            leftEye.length < 4 ||
+            rightEye.length < 4 ||
+            nose.length < 5 ||
+            mouth.length < 10
+        ) {
+            return {
+                isValid: false,
+                message: "The full face must be visible. Avoid eating, hands, or objects covering the face."
+            };
+        }
+
+        const leftEyeCenter = leftEye.reduce((acc, point) => ({ x: acc.x + point.x, y: acc.y + point.y }), { x: 0, y: 0 });
+        const rightEyeCenter = rightEye.reduce((acc, point) => ({ x: acc.x + point.x, y: acc.y + point.y }), { x: 0, y: 0 });
+        const leftAvg = { x: leftEyeCenter.x / leftEye.length, y: leftEyeCenter.y / leftEye.length };
+        const rightAvg = { x: rightEyeCenter.x / rightEye.length, y: rightEyeCenter.y / rightEye.length };
+        const eyeTilt = Math.abs(leftAvg.y - rightAvg.y);
+
+        if (eyeTilt > box.height * 0.12) {
+            return {
+                isValid: false,
+                message: "Use a straight front-facing photo, not a side-angle image."
+            };
+        }
+
+        return { isValid: true };
+    };
 
     const handleUploadClick = () => {
         if (fileInputRef.current) {
@@ -70,18 +142,19 @@ export default function PersonalizationSection({ book }) {
                         ctx.drawImage(img, 0, 0, width, height);
                         const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
 
-                        // Detect faces on the original or compressed image
-                        const detections = await faceapi.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions());
-                        
-                        if (detections.length > 0) {
+                        const validation = await validateChildPhoto(img);
+
+                        if (validation.isValid) {
                             setUploadedPhoto(compressedBase64);
                             setShowWarning(false);
                         } else {
+                            setWarningMessage(validation.message);
                             setShowWarning(true);
                         }
                     } catch (err) {
                         console.error("Face detection error:", err);
-                        setUploadedPhoto(event.target.result);
+                        setWarningMessage("We couldn't verify this photo. Please upload a clear front-facing image with the full face visible.");
+                        setShowWarning(true);
                     } finally {
                         setIsValidating(false);
                     }
@@ -151,8 +224,8 @@ export default function PersonalizationSection({ book }) {
                             <X className="w-10 h-10 text-red-500" />
                         </div>
                         <div className="space-y-2">
-                            <h3 className="text-2xl font-black text-gray-900 leading-tight">No Face Detected!</h3>
-                            <p className="text-gray-500 font-medium">We couldn't find a clear face in this photo. Please upload a front-facing photo of your child for the best results.</p>
+                            <h3 className="text-2xl font-black text-gray-900 leading-tight">Photo Not Accepted</h3>
+                            <p className="text-gray-500 font-medium">{warningMessage}</p>
                         </div>
                         <button 
                             onClick={() => setShowWarning(false)}
@@ -246,7 +319,7 @@ export default function PersonalizationSection({ book }) {
                                             <div className="flex-1 flex flex-col items-center gap-2">
                                                 <div className="relative">
                                                     <div className="w-14 h-14 md:w-16 md:h-16 rounded-sm overflow-hidden border-2 border-green-500 p-0.5">
-                                                        <img src="https://images.unsplash.com/photo-1544126592-807daa215a05?q=80&w=200&h=200&auto=format&fit=crop" alt="Good" className="w-full h-full object-cover rounded-sm" />
+                                                        <img src="/tips/Clearfront-facing photo.jpeg" alt="Clear front-facing child photo" className="w-full h-full object-cover rounded-sm" />
                                                     </div>
                                                     <div className="absolute -top-1 -right-1 bg-green-500 text-white rounded-sm p-0.5 border-2 border-white">
                                                         <Check className="w-3 h-3" />
@@ -258,7 +331,7 @@ export default function PersonalizationSection({ book }) {
                                             <div className="flex-1 flex flex-col items-center gap-2">
                                                 <div className="relative opacity-60">
                                                     <div className="w-14 h-14 md:w-16 md:h-16 rounded-sm overflow-hidden border-2 border-red-500 p-0.5">
-                                                        <img src="https://images.unsplash.com/photo-1596464716127-f2a82984de30?q=80&w=200&h=200&auto=format&fit=crop" alt="Bad" className="w-full h-full object-cover rounded-sm" />
+                                                        <img src="/tips/Noeatingorcoveredface.jpeg" alt="Child photo with eating or covered face" className="w-full h-full object-cover rounded-sm" />
                                                     </div>
                                                     <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-sm p-0.5 border-2 border-white">
                                                         <X className="w-3 h-3" />
@@ -270,7 +343,7 @@ export default function PersonalizationSection({ book }) {
                                             <div className="flex-1 flex flex-col items-center gap-2">
                                                 <div className="relative opacity-60">
                                                     <div className="w-14 h-14 md:w-16 md:h-16 rounded-sm overflow-hidden border-2 border-red-500 p-0.5">
-                                                        <img src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?q=80&w=200&h=200&auto=format&fit=crop" alt="Bad" className="w-full h-full object-cover rounded-sm" />
+                                                        <img src="/tips/Noaccessories.jpeg" alt="Child photo with accessories" className="w-full h-full object-cover rounded-sm" />
                                                     </div>
                                                     <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-sm p-0.5 border-2 border-white">
                                                         <X className="w-3 h-3" />
@@ -282,7 +355,7 @@ export default function PersonalizationSection({ book }) {
                                             <div className="flex-1 flex flex-col items-center gap-2">
                                                 <div className="relative opacity-60">
                                                     <div className="w-14 h-14 md:w-16 md:h-16 rounded-sm overflow-hidden border-2 border-red-500 p-0.5">
-                                                        <img src="https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?q=80&w=200&h=200&auto=format&fit=crop" alt="Bad" className="w-full h-full object-cover rounded-sm" />
+                                                        <img src="/tips/Nofarawayorsideangle.jpeg" alt="Child photo far away or side angle" className="w-full h-full object-cover rounded-sm" />
                                                     </div>
                                                     <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-sm p-0.5 border-2 border-white">
                                                         <X className="w-3 h-3" />

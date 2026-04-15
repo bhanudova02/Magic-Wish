@@ -255,12 +255,7 @@ export default function ProductDetailsPage() {
                                 Personalise My Book <ArrowRight className="w-6 h-6" />
                             </button>
                             
-                            <div className="flex flex-wrap justify-center items-center gap-4 py-4 border-y border-gray-100">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-4 opacity-70 grayscale hover:grayscale-0 transition cursor-pointer" />
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-6 opacity-70 grayscale hover:grayscale-0 transition cursor-pointer" />
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-5 opacity-70 grayscale hover:grayscale-0 transition cursor-pointer" />
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/3/39/Google_Pay_logo_2020.svg" alt="GPay" className="h-5 opacity-70 grayscale hover:grayscale-0 transition cursor-pointer" />
-                            </div>
+                         
                         </div>
 
                         <div className="mt-10 space-y-3">

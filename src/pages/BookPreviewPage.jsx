@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Sparkles, CheckCircle2, User, Calendar, Globe, Terminal, X, Check, ArrowRight, BookOpen, Clock, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { createFaceSwapJob, getJobStatus } from '../utils/magichour';
+import { generateImageWithGemini } from '../utils/geminiImageGen';
 
 
 
@@ -87,48 +87,19 @@ export default function BookPreviewPage() {
                 throw new Error("Missing photo or book cover for personalization.");
             }
 
-            // Start Magic Hour Job
-            const jobRes = await createFaceSwapJob(photo, bookCover);
-            const projectId = jobRes.id; // Corrected to jobRes.id based on typical Magic Hour response
+            // Start Gemini Generation Job
+            const jobRes = await generateImageWithGemini(finalAIInstruction, photo, bookCover);
+            
+            setProgress(90);
+            
+            const magicUrl = jobRes.output_url;
+            
+            if (!magicUrl) throw new Error("Could not retrieve generated image.");
 
-            if (!projectId) {
-                throw new Error("Failed to initialize magic generation.");
-            }
-
-            // Polling for completion
-            let jobDone = false;
-            let checkCount = 0;
-            const maxChecks = 60; // 2 minutes max (2s interval)
-
-            while (!jobDone && checkCount < maxChecks) {
-                await new Promise(resolve => setTimeout(resolve, 3000)); // Poll every 3s
-                checkCount++;
-                
-                const statusRes = await getJobStatus(projectId);
-                const status = statusRes.status;
-
-                // Update progress based on status (simplified)
-                setProgress(prev => Math.min(prev + 5, 90));
-
-                if (status === 'completed') {
-                    jobDone = true;
-                    // The output URL is typically in statusRes.output.file_url or statusRes.output_url
-                    const magicUrl = statusRes.preview_url || statusRes.output_url || (statusRes.output && statusRes.output.file_url);
-                    
-                    if (!magicUrl) throw new Error("Could not retrieve generated image.");
-
-                    setGeneratedImage(magicUrl);
-                    
-                    // Now upload the final result to Cloudinary for persistence
-                    await uploadToCloudinary(magicUrl);
-                } else if (status === 'failed') {
-                    throw new Error("Personalization failed. Please try a different photo.");
-                }
-            }
-
-            if (!jobDone) {
-                throw new Error("Request timed out. Please try again.");
-            }
+            setGeneratedImage(magicUrl);
+            
+            // Now upload the final result to Cloudinary for persistence
+            await uploadToCloudinary(magicUrl);
 
         } catch (err) {
             console.error("Personalization error:", err);

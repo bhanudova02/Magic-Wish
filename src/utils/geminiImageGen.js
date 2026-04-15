@@ -8,7 +8,7 @@ export const generateImageWithGemini = async (prompt, imageURL, coverURL) => {
         // to use a free AI generation alternative or your Gemini Imagen equivalent.
         
         // Using Pollinations free AI image generation API as a placeholder to simulate what Gemini would generate
-        const encodedPrompt = encodeURIComponent(`${prompt} ensuring main character face resembles original`);
+        const encodedPrompt = encodeURIComponent(`${prompt}, strictly preserve the exact facial features, skin tone, hair texture, eye shape, and precise likeness of the child. The generated character's face must be an exact 1:1 match to the provided reference photo with no missing details.`);
         const freeImageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=800&height=1000&nologo=true`;
         
         // Simulating API processing time

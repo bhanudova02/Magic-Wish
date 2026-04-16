@@ -44,8 +44,8 @@ export default async function handler(req, res) {
     }
   }
 
-  // ---- Handle Face Swap (POST) ----
-  const { photo, bookCover } = req.body;
+  // ---- Handle Character Swap (POST) - InstantID Implementation ----
+  const { photo, bookCover, prompt, name } = req.body;
 
   if (!photo || !bookCover) {
     return res.status(400).json({ error: 'Missing required parameters: photo and bookCover' });
@@ -53,25 +53,30 @@ export default async function handler(req, res) {
 
   try {
     /**
-     * Model: codeplugtech/face-swap
-     * Verified working model that swaps faces on both real and cartoon images.
-     * input_image = target (book cover), swap_image = face source (child's photo)
-     * Docs: https://replicate.com/codeplugtech/face-swap
+     * Model: lucataco/instantid
+     * This is an Identity-Preserving Generation model.
+     * It uses the child's photo for identity and the book cover for structure (pose/background).
      */
     const response = await fetch('https://api.replicate.com/v1/predictions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${REPLICATE_API_TOKEN}`,
         'Content-Type': 'application/json',
-        Prefer: 'wait=5',
       },
       body: JSON.stringify({
-        version: '278a81e7ebb22db98bcba54de985d22cc1abeead2754eb1f2af717247be69b34',
+        // InstantID version that supports high-quality blending
+        version: "f2c418641bc3c60b540134421b476e3da8f80f9cb650a31633513a962a66f00f",
         input: {
-          // The stylized book cover — the target canvas
-          input_image: bookCover,
-          // The child's real photo — this face will be swapped onto the cover
-          swap_image: photo,
+          image: bookCover,      // Reference for background and pose
+          face_image: photo,     // Identity source
+          prompt: prompt || `A professional cinematic storybook character for ${name || 'the child'}, high resolution, 8k, magical lighting, matching the book cover style`,
+          negative_prompt: "(lowres, low quality, worst quality:1.2), (text:1.2), watermark, deformed face, ugly, cartoonish features, distorted, blurry",
+          identity_strength: 0.8,
+          adapter_strength: 0.8,
+          cfg: 4.5,
+          steps: 30,
+          enhance_face: true,
+          scheduler: "EulerDiscreteScheduler"
         },
       }),
     });

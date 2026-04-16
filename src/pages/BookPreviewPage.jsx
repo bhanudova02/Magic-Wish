@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Sparkles, CheckCircle2, User, Calendar, Globe, Terminal, X, Check, ArrowRight, BookOpen, Clock, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { startFalSwap } from '../utils/fal';
+import { startReplicateSwap, checkReplicateStatus } from '../utils/replicate';
 
 
 
@@ -20,7 +20,8 @@ export default function BookPreviewPage() {
 
     const getFinalAIInstruction = (data) => {
         if (!data) return "";
-        return `Professional storybook cover titled "${data.title}" for ${data.name} (${data.age} years old). Style: Magical fantasy and vibrant 8k. (Face swap applied via Magic Hour using original book cover).`;
+        // Gemini Solution Prompt: Focus on replacing the character while preserving everything else.
+        return `A professional storybook illustration for child named ${data.name}. Keep all the book cover details, background elements, and dinosaurs exactly the same, but replace the main character with the child from this photo. Style: cinematic 3D render, vibrant magical lighting, high resolution, matching the original book art style perfectly.`;
     };
 
 
@@ -82,28 +83,58 @@ export default function BookPreviewPage() {
         setProgress(5);
         
         try {
-            const { photo, bookCover } = parsedData;
+            const { photo, bookCover, name } = parsedData;
             
             if (!photo || !bookCover) {
                 throw new Error("Missing photo or book cover for personalization.");
             }
 
-            // Compute the prompt directly from parsedData (not from state, which isn't set yet)
             const prompt = getFinalAIInstruction(parsedData);
 
-            // Start Fal.ai Transformation
-            const resultUrl = await startFalSwap(photo, bookCover, prompt);
+            // 1. Start Replicate InstantID Job
+            const prediction = await startReplicateSwap(photo, bookCover, prompt, name);
+            let predictionId = prediction.id;
 
-            if (!resultUrl) {
-                throw new Error("Failed to initialize magic generation with Fal.ai.");
+            if (!predictionId) {
+                throw new Error("Failed to initialize magic generation with Replicate.");
             }
 
-            setProgress(85);
-            setGeneratedImage(resultUrl);
-            
-            // Now upload the final result to Cloudinary for persistence
-            await uploadToCloudinary(resultUrl);
+            // 2. Poll for results (InstantID takes time to illustrate)
+            let status = prediction.status;
+            let pollingCount = 0;
+            const maxPolls = 60; // 2 minutes timeout
 
+            while (status !== 'succeeded' && status !== 'failed' && pollingCount < maxPolls) {
+                await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
+                const updated = await checkReplicateStatus(predictionId);
+                status = updated.status;
+                
+                // Update progress based on polling
+                if (status === 'starting') setProgress(15);
+                else if (status === 'processing') {
+                    setProgress(prev => Math.min(prev + 5, 80));
+                }
+                
+                if (status === 'succeeded') {
+                    const resultUrl = updated.output && Array.isArray(updated.output) ? updated.output[0] : updated.output;
+                    if (!resultUrl) throw new Error("Generation succeeded but no image was returned.");
+                    
+                    setProgress(85);
+                    setGeneratedImage(resultUrl);
+                    await uploadToCloudinary(resultUrl);
+                    return;
+                }
+                
+                if (status === 'failed') {
+                    throw new Error("AI illustration failed. Please try a different photo.");
+                }
+                
+                pollingCount++;
+            }
+
+            if (pollingCount >= maxPolls) {
+                throw new Error("Generation timed out. Please try again.");
+            }
 
         } catch (err) {
             console.error("Personalization error:", err);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Sparkles, CheckCircle2, User, Calendar, Globe, Terminal, X, Check, ArrowRight, BookOpen, Clock, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { generateImageWithGemini } from '../utils/geminiImageGen';
+import { createFaceSwapJob, getJobStatus } from '../utils/magichour';
 
 
 
@@ -87,14 +87,40 @@ export default function BookPreviewPage() {
                 throw new Error("Missing photo or book cover for personalization.");
             }
 
-            // Start Gemini Generation Job
-            const jobRes = await generateImageWithGemini(finalAIInstruction, photo, bookCover);
+            // Start Magic Hour Job
+            const jobRes = await createFaceSwapJob(photo, bookCover);
+            const projectId = jobRes.id;
+
+            if (!projectId) {
+                throw new Error("Failed to initialize magic generation.");
+            }
+
+            // Polling for completion
+            let jobDone = false;
+            let checkCount = 0;
+            const maxChecks = 60; // 3 minutes max (3s interval)
+            let magicUrl = null;
+
+            while (!jobDone && checkCount < maxChecks) {
+                await new Promise(resolve => setTimeout(resolve, 3000)); // Poll every 3s
+                checkCount++;
+                
+                const statusRes = await getJobStatus(projectId);
+                const status = statusRes.status;
+
+                // Update progress
+                setProgress(prev => Math.min(prev + 5, 90));
+
+                if (status === 'complete' || status === 'completed') {
+                    jobDone = true;
+                    // Usually assets is populated upon completion
+                    magicUrl = statusRes.downloads?.[0]?.url || statusRes.assets?.[0]?.url || statusRes.url || statusRes.image_url;
+                } else if (status === 'failed' || status === 'error') {
+                    throw new Error("Face swap generation failed.");
+                }
+            }
             
-            setProgress(90);
-            
-            const magicUrl = jobRes.output_url;
-            
-            if (!magicUrl) throw new Error("Could not retrieve generated image.");
+            if (!magicUrl) throw new Error("Could not retrieve generated image. Process timed out.");
 
             setGeneratedImage(magicUrl);
             

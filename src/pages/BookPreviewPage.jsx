@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Sparkles, CheckCircle2, User, Calendar, Globe, Terminal, X, Check, ArrowRight, BookOpen, Clock, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { startReplicateSwap, checkReplicateStatus } from '../utils/replicate';
+import { startFalSwap } from '../utils/fal';
 
 
 
@@ -91,42 +91,14 @@ export default function BookPreviewPage() {
             // Compute the prompt directly from parsedData (not from state, which isn't set yet)
             const prompt = getFinalAIInstruction(parsedData);
 
-            // Start Replicate Job
-            const prediction = await startReplicateSwap(photo, bookCover, prompt);
-            const predictionId = prediction.id;
+            // Start Fal.ai Transformation
+            const resultUrl = await startFalSwap(photo, bookCover, prompt);
 
-            if (!predictionId) {
-                throw new Error("Failed to initialize magic generation.");
+            if (!resultUrl) {
+                throw new Error("Failed to initialize magic generation with Fal.ai.");
             }
 
-            // Polling for completion
-            let jobDone = false;
-            let checkCount = 0;
-            const maxChecks = 60; // 3 minutes max (3s interval)
-            let resultUrl = null;
-
-            while (!jobDone && checkCount < maxChecks) {
-                await new Promise(resolve => setTimeout(resolve, 3000)); // Poll every 3s
-                checkCount++;
-                
-                const statusRes = await checkReplicateStatus(predictionId);
-                const status = statusRes.status;
-
-                // Update progress based on status
-                if (status === 'starting') setProgress(15);
-                else if (status === 'processing') setProgress(prev => Math.min(prev + 5, 85));
-
-                if (status === 'succeeded') {
-                    jobDone = true;
-                    // Replicate output usually contains the final image URL or array of URLs
-                    resultUrl = Array.isArray(statusRes.output) ? statusRes.output[0] : statusRes.output;
-                } else if (status === 'failed' || status === 'canceled') {
-                    throw new Error(`Generation ${status}. Please try again.`);
-                }
-            }
-            
-            if (!resultUrl) throw new Error("Could not retrieve generated image. Process timed out.");
-
+            setProgress(85);
             setGeneratedImage(resultUrl);
             
             // Now upload the final result to Cloudinary for persistence

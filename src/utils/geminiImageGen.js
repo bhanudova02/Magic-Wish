@@ -2,25 +2,24 @@ const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 export const generateImageWithGemini = async (prompt, imageURL, coverURL) => {
     try {
-        console.log("Generating with Gemini API using prompt:", prompt);
+        console.log("Generating with Google Imagen API using prompt:", prompt);
         
-        // This attempts to replicate the Gemini Web UI behavior using the official Gemini API structure.
-        // It passes the prompt along with the image URLs to the Gemini model.
-        
+        // Google Imagen API requires instances with a prompt for image generation.
+        // Direct face-swapping via reference image might be limited by safety/API constraints,
+        // so we incorporate the prompt to guide the image generation as closely as possible.
         const requestBody = {
-            contents: [{
-                parts: [
-                    { text: "Use the following images (child face and book cover). " + prompt + " Generate a new image that exactly preserves the book cover details but replaces the character's face with the child's face perfectly." }
-                    // Note: If you are using base64 images, you'd add them as inlineData here.
-                ]
-            }],
-            generationConfig: {
-                temperature: 0.4
+            instances: [
+                {
+                    prompt: "Highly detailed illustration: " + prompt + ". The character should perfectly blend into the scene with consistent art style."
+                }
+            ],
+            parameters: {
+                sampleCount: 1,
+                aspectRatio: "1:1" // Or "3:4" depending on book cover size
             }
         };
 
-        // Standard Gemini text/vision interaction endpoint
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${API_KEY}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${API_KEY}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -30,23 +29,27 @@ export const generateImageWithGemini = async (prompt, imageURL, coverURL) => {
 
         if (!response.ok) {
             const errData = await response.json();
-            throw new Error(errData.error?.message || "Failed to generate via Gemini API");
+            throw new Error(errData.error?.message || "Failed to generate via Google Imagen API");
         }
 
         const data = await response.json();
-        console.log("Gemini API Response:", data);
+        console.log("Imagen API Response status:", data.predictions ? "Success" : "Failed");
         
-        // Based on the endpoint actually being used (whether standard Pro or Imagen API), 
-        // the resulting image base64 or URL needs to be parsed from the response.
-        
-        // Note: For now we return the cover URL as a placeholder until the exact layout of the 
-        // Image generation payload from your specific Gemini endpoint access is mapped here.
-        return {
-            status: 'completed',
-            output_url: coverURL 
-        };
+        // Extract the base64 image from the predictions array
+        if (data.predictions && data.predictions.length > 0) {
+            const base64Image = data.predictions[0].bytesBase64Encoded;
+            const mimeType = data.predictions[0].mimeType || 'image/png';
+            const dataUrl = `data:${mimeType};base64,${base64Image}`;
+            
+            return {
+                status: 'completed',
+                output_url: dataUrl
+            };
+        } else {
+             throw new Error("No predictions returned from Google Imagen API");
+        }
     } catch (error) {
-        console.error('Gemini API Error:', error);
+        console.error('Imagen API Error:', error);
         throw error;
     }
 };

@@ -53,10 +53,10 @@ export default async function handler(req, res) {
 
   try {
     /**
-     * Model: yan-ops/face-swap
-     * This model works on BOTH real photos AND cartoon/stylized images.
-     * It swaps the face from `swap_image` onto the target `target_image`.
-     * Docs: https://replicate.com/yan-ops/face-swap
+     * Model: codeplugtech/face-swap
+     * Verified working model that swaps faces on both real and cartoon images.
+     * input_image = target (book cover), swap_image = face source (child's photo)
+     * Docs: https://replicate.com/codeplugtech/face-swap
      */
     const response = await fetch('https://api.replicate.com/v1/predictions', {
       method: 'POST',
@@ -66,12 +66,12 @@ export default async function handler(req, res) {
         Prefer: 'wait=5',
       },
       body: JSON.stringify({
-        version: 'cff87316e31787df0a317cd3f8dbb9ae516bcb903b8f06d3d872b93e9b5df83c',
+        version: '278a81e7ebb22db98bcba54de985d22cc1abeead2754eb1f2af717247be69b34',
         input: {
-          // The child's real photo — this face will be transferred
+          // The stylized book cover — the target canvas
+          input_image: bookCover,
+          // The child's real photo — this face will be swapped onto the cover
           swap_image: photo,
-          // The stylized book cover — this is the target canvas
-          target_image: bookCover,
         },
       }),
     });

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Sparkles, CheckCircle2, User, Calendar, Globe, Terminal, X, Check, ArrowRight, BookOpen, Clock, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { createFaceSwapJob, getJobStatus } from '../utils/magichour';
+import { startReplicateSwap, checkReplicateStatus } from '../utils/replicate';
+
 
 
 
@@ -87,11 +88,11 @@ export default function BookPreviewPage() {
                 throw new Error("Missing photo or book cover for personalization.");
             }
 
-            // Start Magic Hour Job
-            const jobRes = await createFaceSwapJob(photo, bookCover);
-            const projectId = jobRes.id;
+            // Start Replicate Job
+            const prediction = await startReplicateSwap(photo, bookCover, finalAIInstruction);
+            const predictionId = prediction.id;
 
-            if (!projectId) {
+            if (!predictionId) {
                 throw new Error("Failed to initialize magic generation.");
             }
 
@@ -99,33 +100,35 @@ export default function BookPreviewPage() {
             let jobDone = false;
             let checkCount = 0;
             const maxChecks = 60; // 3 minutes max (3s interval)
-            let magicUrl = null;
+            let resultUrl = null;
 
             while (!jobDone && checkCount < maxChecks) {
                 await new Promise(resolve => setTimeout(resolve, 3000)); // Poll every 3s
                 checkCount++;
                 
-                const statusRes = await getJobStatus(projectId);
+                const statusRes = await checkReplicateStatus(predictionId);
                 const status = statusRes.status;
 
-                // Update progress
-                setProgress(prev => Math.min(prev + 5, 90));
+                // Update progress based on status
+                if (status === 'starting') setProgress(15);
+                else if (status === 'processing') setProgress(prev => Math.min(prev + 5, 85));
 
-                if (status === 'complete' || status === 'completed') {
+                if (status === 'succeeded') {
                     jobDone = true;
-                    // Usually assets or outputs is populated upon completion
-                    magicUrl = statusRes.outputs?.[0]?.url || statusRes.downloads?.[0]?.url || statusRes.assets?.[0]?.url || statusRes.url || statusRes.image_url;
-                } else if (status === 'failed' || status === 'error') {
-                    throw new Error("Face swap generation failed.");
+                    // Replicate output usually contains the final image URL or array of URLs
+                    resultUrl = Array.isArray(statusRes.output) ? statusRes.output[0] : statusRes.output;
+                } else if (status === 'failed' || status === 'canceled') {
+                    throw new Error(`Generation ${status}. Please try again.`);
                 }
             }
             
-            if (!magicUrl) throw new Error("Could not retrieve generated image. Process timed out.");
+            if (!resultUrl) throw new Error("Could not retrieve generated image. Process timed out.");
 
-            setGeneratedImage(magicUrl);
+            setGeneratedImage(resultUrl);
             
             // Now upload the final result to Cloudinary for persistence
-            await uploadToCloudinary(magicUrl);
+            await uploadToCloudinary(resultUrl);
+
 
         } catch (err) {
             console.error("Personalization error:", err);

@@ -27,8 +27,15 @@
 - Updated `App.jsx` to remove unused routes.
 - Updated `ProfilePage.jsx` and `AuthCallback.jsx` to redirect to home (`/`) instead of the deleted login page.
 
+### 7. AI Engine Migration (Magic Hour -> Replicate)
+- **New API Integration**: Replaced Magic Hour with Replicate API for superior face swap and character preservation.
+- **Model Used**: `lucataco/instantid` (Handles identity preservation while maintaining the book's art style).
+- **Backend Proxy**: Created `api/replicate-faceswap.js` to handle secure API calls and bypass CORS.
+- **Frontend Utility**: Added `src/utils/replicate.js` for clean integration in pages.
+- **Improved Blending**: The new logic ensures only the character on the cover changes, keeping the original background and composition intact.
+
 ---
-**Status**: Authentication is fully functional and optimized.
+**Status**: Ready for testing with Replicate API Token.
 
 
 

@@ -31,7 +31,7 @@ export const createFaceSwapJob = async (imageURL, coverURL) => {
 
 export const getJobStatus = async (projectId) => {
     try {
-        const response = await fetch(`${BASE_URL}/projects/${projectId}`, {
+        const response = await fetch(`${BASE_URL}/face-swap-photo/${projectId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${API_KEY}`

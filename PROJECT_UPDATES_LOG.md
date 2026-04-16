@@ -29,3 +29,28 @@
 
 ---
 **Status**: Authentication is fully functional and optimized.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Segmind API (InstantID / FaceSwap Comic v1):
+
+Idi asalu meeru chesthunna custom storybooks lantivatike famous. Real faces ni cartoon style lo blend cheyadaniki idi chala baga use avuthundi. Node.js/React integration chaala simple ga untundi.
+Replicate API (InstantID leda PuLID Models):
+
+Idi AI developers chala ekuvaga vadutharu. "InstantID" model lo meeru aa book cover pampi, pillodi photo pampithe.. exactly aa disney/pixar style lo aa kotha face ni geesi peduthundi. Asalu adhi graphics ah nijam face ah antha perfect ga untundi.
+Facemint API:
+
+Idi kuda educational cartoon storybooks lo real kids faces create chese valla kosame ekuva focus chesthunnaru.
+LightX API leda Prospolabs:
+
+Veetilo "Cartoon Face Swap" models separate ga unnai. General face swap vadakunda, specific cartoon mode select cheskoni integrate cheyochu.

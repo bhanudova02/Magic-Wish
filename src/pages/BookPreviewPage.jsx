@@ -113,8 +113,8 @@ export default function BookPreviewPage() {
 
                 if (status === 'complete' || status === 'completed') {
                     jobDone = true;
-                    // Usually assets is populated upon completion
-                    magicUrl = statusRes.downloads?.[0]?.url || statusRes.assets?.[0]?.url || statusRes.url || statusRes.image_url;
+                    // Usually assets or outputs is populated upon completion
+                    magicUrl = statusRes.outputs?.[0]?.url || statusRes.downloads?.[0]?.url || statusRes.assets?.[0]?.url || statusRes.url || statusRes.image_url;
                 } else if (status === 'failed' || status === 'error') {
                     throw new Error("Face swap generation failed.");
                 }

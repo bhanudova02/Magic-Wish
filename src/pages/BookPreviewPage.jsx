@@ -88,8 +88,11 @@ export default function BookPreviewPage() {
                 throw new Error("Missing photo or book cover for personalization.");
             }
 
+            // Compute the prompt directly from parsedData (not from state, which isn't set yet)
+            const prompt = getFinalAIInstruction(parsedData);
+
             // Start Replicate Job
-            const prediction = await startReplicateSwap(photo, bookCover, finalAIInstruction);
+            const prediction = await startReplicateSwap(photo, bookCover, prompt);
             const predictionId = prediction.id;
 
             if (!predictionId) {
@@ -359,7 +362,7 @@ export default function BookPreviewPage() {
                 {error && (
                     <div className="mt-12 max-w-md mx-auto bg-[#FFE2E2] text-[#624da0] px-6 py-4 rounded-sm text-sm font-bold border border-[#FFE2E2] text-center shadow-lg animate-bounce">
                         <span className="flex items-center justify-center gap-2">
-                             <Check className="w-4 h-4" /> {error}
+                             <X className="w-4 h-4" /> {error}
                         </span>
                     </div>
                 )}

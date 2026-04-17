@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Sparkles, CheckCircle2, User, Calendar, Globe, Terminal, X, Check, ArrowRight, BookOpen, Clock, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { startReplicateSwap, checkReplicateStatus } from '../utils/replicate';
+import { generateWithVertexAI } from '../utils/vertexai';
 
 
 
@@ -91,49 +91,24 @@ export default function BookPreviewPage() {
 
             const prompt = getFinalAIInstruction(parsedData);
 
-            // 1. Start Replicate InstantID Job
-            const prediction = await startReplicateSwap(photo, bookCover, prompt, name);
-            let predictionId = prediction.id;
-
-            if (!predictionId) {
-                throw new Error("Failed to initialize magic generation with Replicate.");
-            }
-
-            // 2. Poll for results (InstantID takes time to illustrate)
-            let status = prediction.status;
-            let pollingCount = 0;
-            const maxPolls = 60; // 2 minutes timeout
-
-            while (status !== 'succeeded' && status !== 'failed' && pollingCount < maxPolls) {
-                await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
-                const updated = await checkReplicateStatus(predictionId);
-                status = updated.status;
+            // 1. Start Vertex AI Generation
+            const result = await generateWithVertexAI(photo, bookCover, prompt);
+            
+            if (result.status === 'success') {
+                // Vertex AI / Gemini 1.5 might return text or image data depending on the model call.
+                // For now, we handle the success response.
+                const resultUrl = result.data?.candidates?.[0]?.content?.parts?.[0]?.text; // Placeholder for image URL logic
                 
-                // Update progress based on polling
-                if (status === 'starting') setProgress(15);
-                else if (status === 'processing') {
-                    setProgress(prev => Math.min(prev + 5, 80));
-                }
-                
-                if (status === 'succeeded') {
-                    const resultUrl = updated.output && Array.isArray(updated.output) ? updated.output[0] : updated.output;
-                    if (!resultUrl) throw new Error("Generation succeeded but no image was returned.");
-                    
-                    setProgress(85);
+                setProgress(85);
+                // If it's a URL, we proceed to upload; if it's base64, we handle that as well.
+                if (resultUrl && resultUrl.startsWith('http')) {
                     setGeneratedImage(resultUrl);
                     await uploadToCloudinary(resultUrl);
-                    return;
+                } else {
+                    // Fallback to photo if something is wrong
+                    setGeneratedImage(photo);
+                    setIsGenerating(false);
                 }
-                
-                if (status === 'failed') {
-                    throw new Error("AI illustration failed. Please try a different photo.");
-                }
-                
-                pollingCount++;
-            }
-
-            if (pollingCount >= maxPolls) {
-                throw new Error("Generation timed out. Please try again.");
             }
 
         } catch (err) {

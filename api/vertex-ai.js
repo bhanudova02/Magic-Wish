@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     // Google AI SDK with the Key for Gemini models while keeping Vertex structure
     const { GoogleGenerativeAI } = await import("@google/generative-ai");
     const genAI = new GoogleGenerativeAI(API_KEY);
-    const generativeModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash-002" });
+    const generativeModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     // Business Logic: Character Swap / Image Generation instruction
     const response = await generativeModel.generateContent({

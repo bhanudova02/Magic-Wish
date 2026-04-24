@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Sparkles, CheckCircle2, User, Calendar, Globe, Terminal, X, Check, ArrowRight, BookOpen, Clock, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { generateWithVertexAI } from '../utils/vertexai';
+import { startReplicateSwap } from '../utils/replicate';
 
 
 
@@ -83,32 +83,23 @@ export default function BookPreviewPage() {
         setProgress(5);
         
         try {
-            const { photo, bookCover, name } = parsedData;
+            const { photo, bookCover } = parsedData;
             
             if (!photo || !bookCover) {
                 throw new Error("Missing photo or book cover for personalization.");
             }
 
-            const prompt = getFinalAIInstruction(parsedData);
+            setProgress(20);
 
-            // 1. Start Vertex AI Generation
-            const result = await generateWithVertexAI(photo, bookCover, prompt);
+            // Using our new Replicate utility
+            const data = await startReplicateSwap(photo, bookCover);
             
-            if (result.status === 'success') {
-                // Vertex AI / Gemini 1.5 might return text or image data depending on the model call.
-                // For now, we handle the success response.
-                const resultUrl = result.data?.candidates?.[0]?.content?.parts?.[0]?.text; // Placeholder for image URL logic
-                
+            if (data && data.result) {
                 setProgress(85);
-                // If it's a URL, we proceed to upload; if it's base64, we handle that as well.
-                if (resultUrl && resultUrl.startsWith('http')) {
-                    setGeneratedImage(resultUrl);
-                    await uploadToCloudinary(resultUrl);
-                } else {
-                    // Fallback to photo if something is wrong
-                    setGeneratedImage(photo);
-                    setIsGenerating(false);
-                }
+                setGeneratedImage(data.result);
+                await uploadToCloudinary(data.result);
+            } else {
+                throw new Error(data.error || "Generation failed to return a result.");
             }
 
         } catch (err) {

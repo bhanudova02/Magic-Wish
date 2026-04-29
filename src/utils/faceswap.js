@@ -13,7 +13,14 @@ export const startFaceSwap = async ({ photo, bookCover, prompt, aspectRatio = '4
             body: JSON.stringify({ photo, bookCover, prompt, aspectRatio })
         });
 
-        const payload = await response.json();
+        const responseText = await response.text();
+        let payload = {};
+
+        try {
+            payload = responseText ? JSON.parse(responseText) : {};
+        } catch {
+            payload = { error: responseText || 'Server returned an invalid response' };
+        }
 
         if (!response.ok) {
             throw new Error(payload.error || 'Failed to generate personalized cover');

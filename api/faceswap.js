@@ -29,13 +29,39 @@ Scene:
 Goal:
 The same child must be clearly recognizable across the image.`;
 
+function normalizeCredentialsJson(value) {
+  if (!value) return null;
+
+  const trimmed = value.trim();
+
+  try {
+    const parsed = JSON.parse(trimmed);
+
+    if (typeof parsed === 'string') {
+      return parsed;
+    }
+
+    return JSON.stringify(parsed);
+  } catch {
+    return trimmed;
+  }
+}
+
 async function configureGoogleCredentials() {
   if (process.env.GOOGLE_APPLICATION_CREDENTIALS || !process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
     return;
   }
 
+  const credentialsJson = normalizeCredentialsJson(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+
+  try {
+    JSON.parse(credentialsJson);
+  } catch {
+    throw new Error('GOOGLE_APPLICATION_CREDENTIALS_JSON is not valid JSON. Paste the full service account JSON value in Vercel.');
+  }
+
   const credentialsPath = path.join(os.tmpdir(), 'google-application-credentials.json');
-  await fs.writeFile(credentialsPath, process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+  await fs.writeFile(credentialsPath, credentialsJson);
   process.env.GOOGLE_APPLICATION_CREDENTIALS = credentialsPath;
 }
 

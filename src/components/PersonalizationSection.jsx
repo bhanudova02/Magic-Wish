@@ -517,7 +517,8 @@ export default function PersonalizationSection({ book }) {
                                                         variantId: book.variantId,
                                                         title: book.title,
                                                         description: book.description,
-                                                        bookCover: book.image
+                                                        bookCover: book.image,
+                                                        coverpagePrompt: book.coverpagePrompt || ''
                                                     }));
 
 

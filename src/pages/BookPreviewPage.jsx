@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Sparkles, CheckCircle2, User, Calendar, Globe, Terminal, X, Check, ArrowRight, BookOpen, Clock, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { startReplicateSwap } from '../utils/replicate';
+import { startFaceSwap } from '../utils/faceswap';
 
 
 
@@ -20,8 +20,34 @@ export default function BookPreviewPage() {
 
     const getFinalAIInstruction = (data) => {
         if (!data) return "";
-        // Gemini Solution Prompt: Focus on replacing the character while preserving everything else.
-        return `A professional storybook illustration for child named ${data.name}. Keep all the book cover details, background elements, and dinosaurs exactly the same, but replace the main character with the child from this photo. Style: cinematic 3D render, vibrant magical lighting, high resolution, matching the original book art style perfectly.`;
+        const coverPrompt = data.coverpagePrompt
+            ? `\nBook-specific cover direction:\n${data.coverpagePrompt}`
+            : '';
+
+        return `Use the child reference image ONLY as the identity source.
+
+IMPORTANT:
+- Preserve facial identity as closely as possible
+- Do NOT create a new face or reinterpret facial structure
+- Keep eyes, nose, lips, jawline consistent with the reference image
+
+Expression:
+- Adapt expression to match the storybook cover scene
+- Do NOT copy expression from reference image
+
+Style:
+- Match the original book cover art style exactly
+- Natural integration into scene
+- High quality children's storybook illustration
+
+Scene:
+- Preserve the original cover composition, background, props, lighting, and text placement
+- Replace only the main child character identity with ${data.name || 'the child'}
+- Keep the book title and other cover design elements readable and in the same position
+${coverPrompt}
+
+Goal:
+The same child must be clearly recognizable in the personalized cover.`;
     };
 
 
@@ -91,8 +117,12 @@ export default function BookPreviewPage() {
 
             setProgress(20);
 
-            // Using our new Replicate utility
-            const data = await startReplicateSwap(photo, bookCover);
+            const data = await startFaceSwap({
+                photo,
+                bookCover,
+                prompt: getFinalAIInstruction(parsedData),
+                aspectRatio: '4:3'
+            });
             
             if (data && data.result) {
                 setProgress(85);

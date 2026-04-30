@@ -1,18 +1,37 @@
+import { clearAuthStorage, getValidCustomerAccessToken, refreshAccessToken } from './auth';
+
 export const domain = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN;
 export const storefrontToken = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN;
 export const shopId = import.meta.env.VITE_SHOPIFY_SHOP_ID;
 
+const isAuthError = (errors = []) => {
+  return errors.some((error) => {
+    const message = error?.message?.toLowerCase() || "";
+    const code = String(error?.extensions?.code || "").toLowerCase();
+
+    return (
+      message.includes("unauthorized") ||
+      message.includes("invalid token") ||
+      message.includes("expired") ||
+      code.includes("unauthorized") ||
+      code.includes("unauthenticated")
+    );
+  });
+};
+
+const isEmptyCustomerResponse = (body) => {
+  return Object.prototype.hasOwnProperty.call(body?.data || {}, "customer") && body.data.customer === null;
+};
+
 export async function customerAccountFetch({ query, variables = {} }) {
   const endpoint = `https://shopify.com/${shopId}/account/customer/api/2026-04/graphql`;
-  const token = localStorage.getItem('shopify_access_token')?.trim();
-  const authHeader = token || "";
 
-  try {
+  const fetchWithToken = async (token) => {
     const result = await fetch(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": authHeader,
+        "Authorization": token || "",
       },
       body: JSON.stringify({
         query,
@@ -20,7 +39,23 @@ export async function customerAccountFetch({ query, variables = {} }) {
       }),
     });
 
-    const body = await result.json();
+    return result.json();
+  };
+
+  try {
+    const token = await getValidCustomerAccessToken();
+    let body = await fetchWithToken(token);
+
+    if ((body.errors && isAuthError(body.errors)) || isEmptyCustomerResponse(body)) {
+      const refreshed = await refreshAccessToken();
+      body = await fetchWithToken(refreshed.access_token);
+    }
+
+    if (isEmptyCustomerResponse(body)) {
+      const error = new Error('Customer session expired');
+      error.name = 'AuthRefreshError';
+      throw error;
+    }
 
     if (body.errors) {
       console.error("Shopify Customer Account API Errors:", body.errors);
@@ -29,6 +64,11 @@ export async function customerAccountFetch({ query, variables = {} }) {
 
     return body.data;
   } catch (error) {
+    if (error.name === 'AuthRefreshError') {
+      clearAuthStorage();
+      window.dispatchEvent(new Event('magicwish-auth-expired'));
+    }
+
     console.error("Error fetching from Customer Account API:", error);
     throw error;
   }

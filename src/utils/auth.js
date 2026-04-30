@@ -1,5 +1,14 @@
 const CLIENT_ID = import.meta.env.VITE_SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID;
 const SHOP_ID = import.meta.env.VITE_SHOPIFY_SHOP_ID;
+const TOKEN_EXPIRY_BUFFER_MS = 60 * 1000;
+
+const TOKEN_STORAGE_KEYS = [
+    'shopify_access_token',
+    'shopify_id_token',
+    'shopify_refresh_token',
+    'shopify_token_expires_at',
+    'shopify_user',
+];
 
 // Helper to generate a random string for state and verifier
 const generateRandomString = (length) => {
@@ -91,10 +100,97 @@ export const exchangeCodeForToken = async (code) => {
     return data; // contains access_token, id_token, expires_in
 };
 
+export const getStoredTokenExpiry = () => {
+    const expiresAt = Number(localStorage.getItem('shopify_token_expires_at'));
+    return Number.isFinite(expiresAt) ? expiresAt : 0;
+};
+
+export const isAccessTokenExpired = () => {
+    const token = localStorage.getItem('shopify_access_token');
+    const expiresAt = getStoredTokenExpiry();
+
+    if (!token) return true;
+    if (!expiresAt) return false;
+
+    return Date.now() + TOKEN_EXPIRY_BUFFER_MS >= expiresAt;
+};
+
+export const persistAuthTokens = (tokens) => {
+    if (tokens.access_token) {
+        localStorage.setItem('shopify_access_token', tokens.access_token);
+    }
+
+    if (tokens.id_token) {
+        localStorage.setItem('shopify_id_token', tokens.id_token);
+    }
+
+    if (tokens.refresh_token) {
+        localStorage.setItem('shopify_refresh_token', tokens.refresh_token);
+    }
+
+    if (tokens.expires_in) {
+        localStorage.setItem('shopify_token_expires_at', String(Date.now() + tokens.expires_in * 1000));
+    }
+};
+
+export const clearAuthStorage = () => {
+    TOKEN_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
+};
+
+export const refreshAccessToken = async () => {
+    const refreshToken = localStorage.getItem('shopify_refresh_token');
+
+    if (!refreshToken) {
+        const error = new Error('No refresh token available');
+        error.name = 'AuthRefreshError';
+        throw error;
+    }
+
+    const body = new URLSearchParams();
+    body.append('grant_type', 'refresh_token');
+    body.append('client_id', CLIENT_ID);
+    body.append('refresh_token', refreshToken);
+
+    const response = await fetch(`https://shopify.com/authentication/${SHOP_ID}/oauth/token`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body.toString(),
+    });
+
+    if (!response.ok) {
+        let message = 'Failed to refresh access token';
+
+        try {
+            const error = await response.json();
+            message = error.error_description || error.error || message;
+        } catch {
+            // Keep the generic message when Shopify does not return JSON.
+        }
+
+        const error = new Error(message);
+        error.name = 'AuthRefreshError';
+        throw error;
+    }
+
+    const data = await response.json();
+    persistAuthTokens(data);
+
+    return data;
+};
+
+export const getValidCustomerAccessToken = async () => {
+    if (!isAccessTokenExpired()) {
+        return localStorage.getItem('shopify_access_token')?.trim() || '';
+    }
+
+    const tokens = await refreshAccessToken();
+    return tokens.access_token?.trim() || localStorage.getItem('shopify_access_token')?.trim() || '';
+};
+
 export const logout = () => {
-    localStorage.removeItem('shopify_access_token');
-    localStorage.removeItem('shopify_id_token');
-    localStorage.removeItem('shopify_user');
+    clearAuthStorage();
     localStorage.removeItem('magicwish_cart'); // Clear cart on logout
     window.location.href = '/';
 };

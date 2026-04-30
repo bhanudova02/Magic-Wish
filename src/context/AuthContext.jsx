@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { clearAuthStorage, getValidCustomerAccessToken, persistAuthTokens } from '../utils/auth';
 
 const AuthContext = createContext();
 
@@ -8,11 +9,50 @@ export const AuthProvider = ({ children }) => {
     const [accessToken, setAccessToken] = useState(localStorage.getItem('shopify_access_token'));
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('shopify_user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
-        setIsLoading(false);
+        let isMounted = true;
+
+        const restoreSession = async () => {
+            const storedUser = localStorage.getItem('shopify_user');
+
+            if (!storedUser) {
+                if (isMounted) setIsLoading(false);
+                return;
+            }
+
+            try {
+                const token = await getValidCustomerAccessToken();
+                const parsedUser = JSON.parse(storedUser);
+
+                if (isMounted) {
+                    setUser(parsedUser);
+                    setAccessToken(token);
+                }
+            } catch (error) {
+                console.error('Error restoring Shopify session:', error);
+                clearAuthStorage();
+
+                if (isMounted) {
+                    setUser(null);
+                    setAccessToken(null);
+                }
+            } finally {
+                if (isMounted) setIsLoading(false);
+            }
+        };
+
+        const handleAuthExpired = () => {
+            clearAuthStorage();
+            setUser(null);
+            setAccessToken(null);
+        };
+
+        restoreSession();
+        window.addEventListener('magicwish-auth-expired', handleAuthExpired);
+
+        return () => {
+            isMounted = false;
+            window.removeEventListener('magicwish-auth-expired', handleAuthExpired);
+        };
     }, []);
 
     const loginUser = (tokens) => {
@@ -30,8 +70,7 @@ export const AuthProvider = ({ children }) => {
             setUser(userData);
             setAccessToken(access_token);
             
-            localStorage.setItem('shopify_access_token', access_token);
-            localStorage.setItem('shopify_id_token', id_token);
+            persistAuthTokens(tokens);
             localStorage.setItem('shopify_user', JSON.stringify(userData));
         } catch (error) {
             console.error('Error decoding ID token:', error);
@@ -42,9 +81,7 @@ export const AuthProvider = ({ children }) => {
         const idToken = localStorage.getItem('shopify_id_token');
         setUser(null);
         setAccessToken(null);
-        localStorage.removeItem('shopify_access_token');
-        localStorage.removeItem('shopify_id_token');
-        localStorage.removeItem('shopify_user');
+        clearAuthStorage();
         // Removed: localStorage.removeItem('magicwish_cart'); 
         // We now use account-specific keys for persistence.
         

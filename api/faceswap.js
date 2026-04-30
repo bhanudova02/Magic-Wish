@@ -41,26 +41,35 @@ The same child must be clearly recognizable across the image.`;
 function normalizeCredentialsJson(value) {
   if (!value) return null;
 
-  const trimmed = value.trim();
+  let current = String(value).trim();
 
-  try {
-    const parsed = JSON.parse(trimmed);
-
-    if (typeof parsed === 'string') {
-      return parsed;
-    }
-
-    return JSON.stringify(parsed);
-  } catch {
-    const repaired = trimmed.replace(/\\"/g, '"');
-
+  for (let i = 0; i < 4; i += 1) {
     try {
-      JSON.parse(repaired);
-      return repaired;
+      const parsed = JSON.parse(current);
+
+      if (typeof parsed === 'string') {
+        current = parsed.trim();
+        continue;
+      }
+
+      if (parsed && typeof parsed === 'object') {
+        return JSON.stringify(parsed);
+      }
     } catch {
-      return trimmed;
+      const repaired = current
+        .replace(/^"([\s\S]*)"$/, '$1')
+        .replace(/^'([\s\S]*)'$/, '$1')
+        .replace(/\\"/g, '"');
+
+      if (repaired === current) {
+        break;
+      }
+
+      current = repaired.trim();
     }
   }
+
+  return null;
 }
 
 async function configureGoogleCredentials() {
@@ -84,9 +93,7 @@ async function configureGoogleCredentials() {
   if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
     const credentialsJson = normalizeCredentialsJson(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
 
-    try {
-      JSON.parse(credentialsJson);
-    } catch {
+    if (!credentialsJson) {
       throw new Error('GOOGLE_APPLICATION_CREDENTIALS_JSON is not valid JSON. Paste the full service account JSON value in Vercel.');
     }
 

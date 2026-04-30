@@ -1,11 +1,20 @@
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import dotenv from 'dotenv';
 import { GoogleGenAI, Modality } from '@google/genai';
+
+dotenv.config({ path: ['.env.local', '.env'], quiet: true });
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const LOCAL_CREDENTIALS = path.join(__dirname, '..', 'gen-lang-client-0355152847-bd97e863463b.json');
 
 const PROJECT_ID = process.env.GOOGLE_CLOUD_PROJECT || process.env.GCP_PROJECT_ID || 'gen-lang-client-0355152847';
 const LOCATION = process.env.GOOGLE_CLOUD_LOCATION || process.env.GCP_LOCATION || 'global';
 const MODEL = process.env.GEMINI_IMAGE_MODEL || 'gemini-3.1-flash-image-preview';
+const IMAGE_ASPECT_RATIO = '1:1';
 
 const DEFAULT_PROMPT = `Use the child reference image ONLY as the identity source.
 
@@ -43,26 +52,51 @@ function normalizeCredentialsJson(value) {
 
     return JSON.stringify(parsed);
   } catch {
-    return trimmed;
+    const repaired = trimmed.replace(/\\"/g, '"');
+
+    try {
+      JSON.parse(repaired);
+      return repaired;
+    } catch {
+      return trimmed;
+    }
   }
 }
 
 async function configureGoogleCredentials() {
-  if (process.env.GOOGLE_APPLICATION_CREDENTIALS || !process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+  if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    try {
+      await fs.access(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+      return;
+    } catch {
+      // Fall through to the local credential file used by the working script.
+    }
+  }
+
+  try {
+    await fs.access(LOCAL_CREDENTIALS);
+    process.env.GOOGLE_APPLICATION_CREDENTIALS = LOCAL_CREDENTIALS;
+    return;
+  } catch {
+    // Fall through to Vercel-style JSON credentials.
+  }
+
+  if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+    const credentialsJson = normalizeCredentialsJson(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+
+    try {
+      JSON.parse(credentialsJson);
+    } catch {
+      throw new Error('GOOGLE_APPLICATION_CREDENTIALS_JSON is not valid JSON. Paste the full service account JSON value in Vercel.');
+    }
+
+    const credentialsPath = path.join(os.tmpdir(), 'google-application-credentials.json');
+    await fs.writeFile(credentialsPath, credentialsJson);
+    process.env.GOOGLE_APPLICATION_CREDENTIALS = credentialsPath;
     return;
   }
 
-  const credentialsJson = normalizeCredentialsJson(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
-
-  try {
-    JSON.parse(credentialsJson);
-  } catch {
-    throw new Error('GOOGLE_APPLICATION_CREDENTIALS_JSON is not valid JSON. Paste the full service account JSON value in Vercel.');
-  }
-
-  const credentialsPath = path.join(os.tmpdir(), 'google-application-credentials.json');
-  await fs.writeFile(credentialsPath, credentialsJson);
-  process.env.GOOGLE_APPLICATION_CREDENTIALS = credentialsPath;
+  throw new Error(`Google credentials are not configured. Add ${path.basename(LOCAL_CREDENTIALS)} locally or set GOOGLE_APPLICATION_CREDENTIALS.`);
 }
 
 async function fetchImageAsInlineData(imageUrl, label) {
@@ -83,6 +117,19 @@ async function fetchImageAsInlineData(imageUrl, label) {
   };
 }
 
+function getApiErrorMessage(error) {
+  if (!error?.message) {
+    return 'Image generation failed.';
+  }
+
+  try {
+    const parsed = JSON.parse(error.message);
+    return parsed?.error?.message || error.message;
+  } catch {
+    return error.message;
+  }
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -96,7 +143,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { photo, bookCover, prompt, aspectRatio = '4:3' } = req.body;
+  const { photo, bookCover, prompt } = req.body;
 
   if (!photo || !bookCover) {
     return res.status(400).json({ error: 'Missing required parameters: photo and bookCover' });
@@ -133,7 +180,7 @@ export default async function handler(req, res) {
       config: {
         responseModalities: [Modality.IMAGE],
         imageConfig: {
-          aspectRatio
+          aspectRatio: IMAGE_ASPECT_RATIO
         }
       }
     });
@@ -158,6 +205,7 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error('FaceSwap Error:', error);
-    return res.status(500).json({ error: error.message || 'Image generation failed.' });
+    const status = Number(error.status) || 500;
+    return res.status(status).json({ error: getApiErrorMessage(error) });
   }
 }

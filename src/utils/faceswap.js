@@ -3,14 +3,14 @@
  * Calls the server API that runs the Google Vertex AI Gemini image editor.
  */
 
-export const startFaceSwap = async ({ photo, bookCover, prompt, aspectRatio = '4:3' }) => {
+export const startFaceSwap = async ({ photo, bookCover, prompt }) => {
     try {
         const response = await fetch('/api/faceswap', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ photo, bookCover, prompt, aspectRatio })
+            body: JSON.stringify({ photo, bookCover, prompt })
         });
 
         const responseText = await response.text();

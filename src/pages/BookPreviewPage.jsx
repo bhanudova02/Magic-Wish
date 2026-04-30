@@ -53,6 +53,24 @@ The same child must be clearly recognizable in the personalized cover.`;
 
     const finalAIInstruction = personalization ? getFinalAIInstruction(personalization) : "";
 
+    const updateStoredPersonalization = (patch) => {
+        const stored = localStorage.getItem('last_personalization');
+        const currentData = stored ? JSON.parse(stored) : {};
+        const nextData = {
+            ...currentData,
+            ...patch
+        };
+
+        localStorage.setItem('last_personalization', JSON.stringify(nextData));
+        return nextData;
+    };
+
+    const hasCloudinaryConfig = () => (
+        Boolean(import.meta.env.VITE_CLOUDINARY_CLOUD_NAME && import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET)
+    );
+
+    const isDataImageUrl = (url) => typeof url === 'string' && url.startsWith('data:image/');
+
     useEffect(() => {
         let interval;
         if (isGenerating || isUploading) {
@@ -85,15 +103,22 @@ The same child must be clearly recognizable in the personalized cover.`;
             const parsedData = JSON.parse(stored);
             setPersonalization(parsedData);
             
-            // Check if we already have a generated image (either Cloudinary or Pollinations)
+            // Reuse an existing generated image so refresh/direct /preview does not generate again.
             if (parsedData.generatedImage) {
+                const storedCoverUrl = parsedData.cloudinaryUrl || parsedData.generatedCoverUrl || parsedData.generatedImage;
+                const shouldUploadStoredImage = isDataImageUrl(storedCoverUrl) && hasCloudinaryConfig();
+
                 setGeneratedImage(parsedData.generatedImage);
-                if (parsedData.generatedImage.includes('cloudinary')) {
-                    setCloudinaryUrl(parsedData.generatedImage);
-                }
+                setCloudinaryUrl(shouldUploadStoredImage ? null : storedCoverUrl);
                 setIsGenerating(false);
-                setIsUploading(false);
-                setProgress(100);
+
+                if (shouldUploadStoredImage) {
+                    setProgress(85);
+                    uploadToCloudinary(parsedData.generatedImage);
+                } else {
+                    setIsUploading(false);
+                    setProgress(100);
+                }
             } else {
                 startGeneration(parsedData);
             }
@@ -120,13 +145,17 @@ The same child must be clearly recognizable in the personalized cover.`;
             const data = await startFaceSwap({
                 photo,
                 bookCover,
-                prompt: getFinalAIInstruction(parsedData),
-                aspectRatio: '4:3'
+                prompt: getFinalAIInstruction(parsedData)
             });
             
             if (data && data.result) {
                 setProgress(85);
                 setGeneratedImage(data.result);
+                setCloudinaryUrl(data.result);
+                updateStoredPersonalization({
+                    generatedImage: data.result,
+                    generatedCoverUrl: data.result
+                });
                 await uploadToCloudinary(data.result);
             } else {
                 throw new Error(data.error || "Generation failed to return a result.");
@@ -145,39 +174,45 @@ The same child must be clearly recognizable in the personalized cover.`;
             setIsUploading(true);
             const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
             const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-            
-            if (cloudName && preset) {
-                const response = await fetch(imageUrl);
-                const blob = await response.blob();
-                const uploadData = new FormData();
-                uploadData.append('file', blob);
-                uploadData.append('upload_preset', preset);
-                
-                const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-                    method: 'POST',
-                    body: uploadData
-                });
-                
-                const cloudResult = await cloudRes.json();
-                if (cloudResult.secure_url) {
-                    const finalUrl = cloudResult.secure_url;
-                    setCloudinaryUrl(finalUrl);
-                    setGeneratedImage(finalUrl);
-                    setIsUploading(false);
-                    setIsGenerating(false);
-                    setProgress(100);
-                    
-                    const currentData = JSON.parse(localStorage.getItem('last_personalization'));
-                    localStorage.setItem('last_personalization', JSON.stringify({
-                        ...currentData,
-                        generatedImage: finalUrl
-                    }));
-                }
+
+            if (!cloudName || !preset) {
+                setCloudinaryUrl(imageUrl);
+                setIsUploading(false);
+                setIsGenerating(false);
+                setProgress(100);
+                return;
             }
+
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            const uploadData = new FormData();
+            uploadData.append('file', blob);
+            uploadData.append('upload_preset', preset);
+
+            const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                method: 'POST',
+                body: uploadData
+            });
+
+            const cloudResult = await cloudRes.json();
+            if (!cloudResult.secure_url) {
+                throw new Error(cloudResult.error?.message || "Preview upload failed");
+            }
+
+            const finalUrl = cloudResult.secure_url;
+            setCloudinaryUrl(finalUrl);
+            setGeneratedImage(finalUrl);
+            setIsUploading(false);
+            setIsGenerating(false);
+            setProgress(100);
+            updateStoredPersonalization({
+                generatedImage: finalUrl,
+                generatedCoverUrl: finalUrl,
+                cloudinaryUrl: finalUrl
+            });
         } catch (err) {
             console.warn("Cloudinary upload failed:", err);
             setIsUploading(false);
-            // Even if Cloudinary fails, we can still use the Magic Hour URL
             setCloudinaryUrl(imageUrl);
             setIsGenerating(false);
             setProgress(100);
@@ -289,7 +324,7 @@ The same child must be clearly recognizable in the personalized cover.`;
                         <div className="relative">
                             <div className="absolute -inset-10 bg-[#624da0]/10 blur-[100px] rounded-sm -z-10"></div>
                             
-                            <div className="relative aspect-[4/5] bg-white rounded-sm shadow-[0_30px_60px_-12px_rgba(37,99,235,0.25)] border-l-[12px] border-white overflow-hidden group">
+                            <div className="relative aspect-square bg-white rounded-sm shadow-[0_30px_60px_-12px_rgba(37,99,235,0.25)] border-l-[12px] border-white overflow-hidden group">
                                 {(isGenerating || isUploading) && (
                                     <div className="absolute inset-0 z-20 bg-white flex flex-col items-center justify-center text-center p-8">
                                         <div className="relative mb-8">
@@ -332,7 +367,7 @@ The same child must be clearly recognizable in the personalized cover.`;
 
                             {/* Floating elements for depth */}
                             {!isGenerating && !isUploading && generatedImage && (
-                                <div className="hidden lg:block absolute -top-8 -right-8 w-32 h-40 bg-white p-2 rounded-sm shadow-2xl rotate-6 border border-gray-50 animate-in fade-in slide-in-from-top-4 duration-700 delay-500">
+                                <div className="hidden lg:block absolute -top-8 -right-8 w-32 aspect-square bg-white p-2 rounded-sm shadow-2xl rotate-6 border border-gray-50 animate-in fade-in slide-in-from-top-4 duration-700 delay-500">
                                     <div className="w-full h-full bg-[#FDE2FF] rounded-sm overflow-hidden shadow-inner">
                                         <img src={generatedImage} className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity" alt="Mini Preview" />
                                     </div>

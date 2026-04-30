@@ -42,6 +42,7 @@ const AuthCallback = () => {
                     localStorage.removeItem('shopify_auth_nonce');
 
                     const redirectTo = localStorage.getItem('magicwish_post_login_redirect') || '/';
+                    localStorage.removeItem('magicwish_post_login_redirect');
                     navigate(redirectTo);
                 } catch (err) {
                     console.error('Token exchange failed:', err);

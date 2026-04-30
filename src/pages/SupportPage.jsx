@@ -106,7 +106,7 @@ export default function SupportPage() {
                         <button 
                             onClick={async () => {
                                 try {
-                                    const url = await getAuthorizeUrl();
+                                    const url = await getAuthorizeUrl('/support');
                                     window.location.href = url;
                                 } catch (err) {
                                     console.error("Login redirect failed:", err);

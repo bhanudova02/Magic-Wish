@@ -42,7 +42,9 @@ export const generateCodeChallenge = async (codeVerifier) => {
     return base64urlencode(hashed);
 };
 
-export const getAuthorizeUrl = async () => {
+const getCurrentReturnPath = () => `${window.location.pathname}${window.location.search}`;
+
+export const getAuthorizeUrl = async (returnTo = getCurrentReturnPath()) => {
     const codeVerifier = generateCodeVerifier();
     const state = generateRandomString(32);
     const nonce = generateRandomString(32);
@@ -51,6 +53,7 @@ export const getAuthorizeUrl = async () => {
     localStorage.setItem('shopify_code_verifier', codeVerifier);
     localStorage.setItem('shopify_auth_state', state);
     localStorage.setItem('shopify_auth_nonce', nonce);
+    localStorage.setItem('magicwish_post_login_redirect', returnTo || '/');
 
     const codeChallenge = await generateCodeChallenge(codeVerifier);
     

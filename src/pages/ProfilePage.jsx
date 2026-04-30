@@ -4,8 +4,7 @@ import { Navigate, Link, useSearchParams } from 'react-router-dom';
 import { 
     customerAccountFetch, 
     getCustomerProfileQuery, 
-    getCustomerOrdersQuery, 
-    customerAddressCreateMutation
+    getCustomerOrdersQuery
 } from '../utils/shopify';
 import { Package, User as UserIcon, LogOut, X } from 'lucide-react';
 

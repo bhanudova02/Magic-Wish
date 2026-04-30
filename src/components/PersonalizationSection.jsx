@@ -7,7 +7,7 @@ import { getAuthorizeUrl } from '../utils/auth';
 
 export default function PersonalizationSection({ book }) {
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { isAuthenticated } = useAuth();
     const [uploadedPhoto, setUploadedPhoto] = React.useState(null);
     const [isValidating, setIsValidating] = React.useState(false);
     const [showWarning, setShowWarning] = React.useState(false);
@@ -21,6 +21,11 @@ export default function PersonalizationSection({ book }) {
     });
     
     const fileInputRef = React.useRef(null);
+    const hasHandledPendingPreviewRef = useRef(false);
+
+    const pendingPreviewKey = 'magicwish_pending_preview';
+    const pendingRedirectKey = 'magicwish_post_login_redirect';
+    const pendingPreviewAutoSubmitKey = 'magicwish_pending_preview_autosubmit';
 
     // Load models on mount
     useEffect(() => {
@@ -173,6 +178,140 @@ export default function PersonalizationSection({ book }) {
         }
     };
 
+    const savePendingPreview = () => {
+        if (!uploadedPhoto || !book?.image) return;
+
+        localStorage.setItem(pendingPreviewKey, JSON.stringify({
+            uploadedPhoto,
+            formData,
+            book: {
+                id: book.id,
+                variantId: book.variantId,
+                title: book.title,
+                description: book.description,
+                image: book.image,
+                coverpagePrompt: book.coverpagePrompt || ''
+            }
+        }));
+        localStorage.setItem(pendingRedirectKey, `${window.location.pathname}${window.location.search}`);
+    };
+
+    const openLoginModal = () => {
+        savePendingPreview();
+        localStorage.setItem(pendingPreviewAutoSubmitKey, 'true');
+        setShowLoginModal(true);
+    };
+
+    useEffect(() => {
+        if (!isAuthenticated || !book?.id) return;
+
+        const pendingRaw = localStorage.getItem(pendingPreviewKey);
+        if (!pendingRaw) return;
+
+        try {
+            const pending = JSON.parse(pendingRaw);
+            if (pending?.book?.id !== book.id) return;
+
+            if (pending.uploadedPhoto) {
+                setUploadedPhoto(pending.uploadedPhoto);
+            }
+
+            if (pending.formData) {
+                setFormData((prev) => ({
+                    ...prev,
+                    ...pending.formData
+                }));
+            }
+
+            localStorage.removeItem(pendingPreviewKey);
+        } catch (error) {
+            console.warn('Failed to restore pending preview:', error);
+            localStorage.removeItem(pendingPreviewKey);
+        }
+    }, [isAuthenticated, book?.id]);
+
+    const handlePreviewSubmit = async () => {
+        const nameRegex = /^[a-zA-Z]/;
+        const newErrors = {};
+
+        if (!uploadedPhoto) {
+            alert("Please upload a photo first.");
+            return;
+        }
+
+        if (!formData.name || formData.name.length < 2) {
+            newErrors.name = "Min 2 characters required";
+        } else if (!nameRegex.test(formData.name)) {
+            newErrors.name = "Must start with a letter";
+        }
+
+        if (!formData.age) {
+            newErrors.age = "Required";
+        } else if (parseInt(formData.age) > 10) {
+            newErrors.age = "Max age is 10 years";
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        try {
+            setIsValidating(true);
+
+            const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+            const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+            if (!cloudName || !preset) {
+                throw new Error("Cloudinary configuration missing in environment variables.");
+            }
+
+            const uploadData = new FormData();
+            uploadData.append('file', uploadedPhoto);
+            uploadData.append('upload_preset', preset);
+
+            const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                method: 'POST',
+                body: uploadData
+            });
+
+            const result = await response.json();
+
+            if (!result.secure_url) {
+                throw new Error(result.error?.message || "Upload failed");
+            }
+
+            localStorage.setItem('last_personalization', JSON.stringify({
+                ...formData,
+                photo: result.secure_url,
+                productId: book.id,
+                variantId: book.variantId,
+                title: book.title,
+                description: book.description,
+                bookCover: book.image,
+                coverpagePrompt: book.coverpagePrompt || ''
+            }));
+
+            localStorage.removeItem(pendingPreviewKey);
+            localStorage.removeItem(pendingPreviewAutoSubmitKey);
+            navigate('/preview');
+        } catch (err) {
+            console.error("Cloudinary Error Detail:", err);
+            alert(`Upload Error: ${err.message || 'Check your connection'}`);
+        } finally {
+            setIsValidating(false);
+        }
+    };
+
+    useEffect(() => {
+        if (!isAuthenticated || !uploadedPhoto || !book?.id) return;
+        if (localStorage.getItem(pendingPreviewAutoSubmitKey) !== 'true') return;
+        if (hasHandledPendingPreviewRef.current) return;
+
+        hasHandledPendingPreviewRef.current = true;
+        handlePreviewSubmit();
+    }, [isAuthenticated, uploadedPhoto, book?.id]);
+
     if (!book?.image) {
         return null;
     }
@@ -201,6 +340,7 @@ export default function PersonalizationSection({ book }) {
                             <button 
                                 onClick={async () => {
                                     try {
+                                        savePendingPreview();
                                         const url = await getAuthorizeUrl();
                                         window.location.href = url;
                                     } catch (err) {
@@ -454,81 +594,11 @@ export default function PersonalizationSection({ book }) {
                                         <button 
                                             disabled={isValidating}
                                             onClick={async () => {
-                                                // if (!user) {
-                                                //     setShowLoginModal(true);
-                                                //     return;
-                                                // }
-
-                                                const nameRegex = /^[a-zA-Z]/;
-                                                const newErrors = {};
-
-                                                if (!uploadedPhoto) {
-                                                    alert("Please upload a photo first.");
+                                                if (!isAuthenticated) {
+                                                    openLoginModal();
                                                     return;
                                                 }
-                                                
-                                                if (!formData.name || formData.name.length < 2) {
-                                                    newErrors.name = "Min 2 characters required";
-                                                } else if (!nameRegex.test(formData.name)) {
-                                                    newErrors.name = "Must start with a letter";
-                                                }
-
-                                                if (!formData.age) {
-                                                    newErrors.age = "Required";
-                                                } else if (parseInt(formData.age) > 10) {
-                                                    newErrors.age = "Max age is 10 years";
-                                                }
-
-                                                if (Object.keys(newErrors).length > 0) {
-                                                    setErrors(newErrors);
-                                                    return;
-                                                }
-
-                                                try {
-                                                    setIsValidating(true);
-                                                    
-                                                    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-                                                    const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-                                                    
-                                                    if (!cloudName || !preset) {
-                                                        throw new Error("Cloudinary configuration missing in environment variables.");
-                                                    }
-
-                                                    const uploadData = new FormData();
-                                                    uploadData.append('file', uploadedPhoto);
-                                                    uploadData.append('upload_preset', preset);
-                                                    
-                                                    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-                                                        method: 'POST',
-                                                        body: uploadData
-                                                    });
-                                                    
-                                                    const result = await response.json();
-                                                    console.log("Cloudinary Response:", result);
-
-                                                    if (!result.secure_url) {
-                                                        throw new Error(result.error?.message || "Upload failed");
-                                                    }
-
-                                                    localStorage.setItem('last_personalization', JSON.stringify({
-                                                        ...formData,
-                                                        photo: result.secure_url,
-                                                        productId: book.id,
-                                                        variantId: book.variantId,
-                                                        title: book.title,
-                                                        description: book.description,
-                                                        bookCover: book.image,
-                                                        coverpagePrompt: book.coverpagePrompt || ''
-                                                    }));
-
-
-                                                    navigate('/preview');
-                                                } catch (err) {
-                                                    console.error("Cloudinary Error Detail:", err);
-                                                    alert(`Upload Error: ${err.message || 'Check your connection'}`);
-                                                } finally {
-                                                    setIsValidating(false);
-                                                }
+                                                handlePreviewSubmit();
                                             }}
                                             className="w-full bg-[#2563EB] hover:bg-[#1d4ed8] text-white py-5 px-6 rounded-sm font-black text-xl flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-blue-100 mt-4 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                                         >

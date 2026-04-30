@@ -41,8 +41,8 @@ const AuthCallback = () => {
                     localStorage.removeItem('shopify_code_verifier');
                     localStorage.removeItem('shopify_auth_nonce');
 
-                    // Redirect back to home after successful login
-                    navigate('/');
+                    const redirectTo = localStorage.getItem('magicwish_post_login_redirect') || '/';
+                    navigate(redirectTo);
                 } catch (err) {
                     console.error('Token exchange failed:', err);
                     setError('Failed to complete login. Please try again.');

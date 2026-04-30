@@ -184,15 +184,13 @@ const ProfilePage = () => {
                                 </div>
                             </div>
                             <div className="p-5 space-y-4">
-                                {order.lineItems?.edges?.map(({ node: item }, idx) => (
-                                    {
-                                        (() => {
-                                            const generatedCoverImage = getAttributeValue(item.customAttributes, 'AI Cover URL');
-                                            const displayImage = generatedCoverImage || item.image?.url;
-                                            const childName = getAttributeValue(item.customAttributes, 'Child Name');
-                                            const language = getAttributeValue(item.customAttributes, 'Language');
+                                {order.lineItems?.edges?.map(({ node: item }, idx) => {
+                                    const generatedCoverImage = getAttributeValue(item.customAttributes, 'AI Cover URL');
+                                    const displayImage = generatedCoverImage || item.image?.url;
+                                    const childName = getAttributeValue(item.customAttributes, 'Child Name');
+                                    const language = getAttributeValue(item.customAttributes, 'Language');
 
-                                            return (
+                                    return (
                                     <div key={idx} className="flex gap-4 items-center border-b border-gray-100 last:border-b-0 pb-4 last:pb-0">
                                         <div className="w-16 h-20 bg-white border-2 border-gray-200 rounded-sm flex-shrink-0 p-1">
                                             {displayImage ? <img src={displayImage} alt={item.title} className="w-full h-full object-cover rounded-[2px]" /> : <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-200 uppercase">img</div>}
@@ -206,10 +204,8 @@ const ProfilePage = () => {
                                             </div>
                                         </div>
                                     </div>
-                                            );
-                                        })()
-                                    }
-                                ))}
+                                    );
+                                })}
                                 <div className="pt-2">
                                     <Link to="/support" className="inline-flex text-xs font-bold uppercase tracking-widest text-purple-700 hover:text-black underline underline-offset-4">
                                         Need help with {displayOrderName}?

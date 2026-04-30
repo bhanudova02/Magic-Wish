@@ -240,6 +240,10 @@ export const getCustomerOrdersQuery = `
                 node {
                   title
                   quantity
+                  customAttributes {
+                    key
+                    value
+                  }
                   image {
                     url
                     altText

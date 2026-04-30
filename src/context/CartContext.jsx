@@ -13,6 +13,10 @@ const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
+const getAttributeValue = (attributes = [], key) => {
+    return attributes.find((attr) => attr.key === key)?.value || '';
+};
+
 export const CartProvider = ({ children }) => {
     const { user, accessToken } = useAuth();
     const [cartItems, setCartItems] = useState([]);
@@ -28,17 +32,20 @@ export const CartProvider = ({ children }) => {
     const formatCartLines = (lines) => {
         return lines.edges.map(({ node }) => {
             const variant = node.merchandise;
+            const generatedCoverImage = getAttributeValue(node.attributes, 'AI Cover URL');
+
             return {
                 id: node.id, // We use the lineId for updates/removes
                 productId: variant.product.handle, 
                 variantId: variant.id,
                 title: variant.product.title,
-                image: variant.product.images.edges[0]?.node?.url || '',
+                image: generatedCoverImage || variant.product.images.edges[0]?.node?.url || '',
                 price: `$${variant.price.amount}`,
                 priceAmount: parseFloat(variant.price.amount),
                 currencyCode: variant.price.currencyCode,
                 quantity: node.quantity,
-                handle: variant.product.handle
+                handle: variant.product.handle,
+                attributes: node.attributes || []
             };
         });
     };

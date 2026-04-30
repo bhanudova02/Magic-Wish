@@ -6,7 +6,7 @@ import {
     getCustomerProfileQuery, 
     getCustomerOrdersQuery
 } from '../utils/shopify';
-import { Package, User as UserIcon, LogOut, X } from 'lucide-react';
+import { Calendar, Check, Copy, CreditCard, Hash, Package, Truck, User as UserIcon, LogOut, X } from 'lucide-react';
 
 // Reusable Modal Component
 const Modal = ({ isOpen, onClose, title, children }) => {
@@ -57,6 +57,24 @@ const AddressFormFields = ({ address, setAddress, isSaving, onSave, submitLabel 
     </form>
 );
 
+const getDisplayOrderName = (name) => {
+    if (!name) return 'Order';
+    return name.startsWith('#') ? name : `#${name}`;
+};
+
+const formatDate = (date) => {
+    if (!date) return 'Pending';
+    return new Date(date).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    });
+};
+
+const getAttributeValue = (attributes = [], key) => {
+    return attributes.find((attr) => attr.key === key)?.value || '';
+};
+
 const ProfilePage = () => {
     const { isAuthenticated, isLoading: authLoading, logoutUser } = useAuth();
     const [searchParams, setSearchParams] = useSearchParams();
@@ -64,6 +82,7 @@ const ProfilePage = () => {
     const [customerData, setCustomerData] = useState(null);
     const [orders, setOrders] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [copiedOrderName, setCopiedOrderName] = useState(null);
 
     useEffect(() => {
         const tab = searchParams.get('tab');
@@ -87,6 +106,17 @@ const ProfilePage = () => {
             setIsLoading(false);
         }
     };
+
+    const copyOrderName = async (orderName) => {
+        try {
+            await navigator.clipboard.writeText(orderName);
+            setCopiedOrderName(orderName);
+            window.setTimeout(() => setCopiedOrderName(null), 1600);
+        } catch (error) {
+            console.error('Unable to copy order ID:', error);
+        }
+    };
+
     if (authLoading) return <div className="min-h-screen flex items-center justify-center bg-white"><div className="w-8 h-8 border-2 border-black border-t-transparent animate-spin"></div></div>;
     if (!isAuthenticated) return <Navigate to="/" replace />;
 
@@ -100,33 +130,95 @@ const ProfilePage = () => {
                 </div>
             ) : (
                 <div className="space-y-6">
-                    {orders.map((order) => (
-                        <div key={order.id} className="border-2 border-gray-200 rounded-sm">
-                            <div className="p-4 bg-gray-50/50 flex justify-between items-center border-b-2 border-gray-200">
-                                <div className="flex gap-4 text-[10px] font-bold uppercase tracking-widest text-gray-400 italic">
-                                    <span>#{order.name}</span>
-                                    <span>{new Date(order.processedAt).toLocaleDateString()}</span>
-                                </div>
-                                <div className="flex items-center gap-4">
-                                    <span className="font-bold text-sm tracking-tight">{order.totalPrice.amount} {order.totalPrice.currencyCode}</span>
-                                    <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 border-2 ${order.financialStatus === 'PAID' ? 'border-green-100 text-green-600 bg-green-50' : 'border-gray-200 text-gray-400'}`}>{order.financialStatus}</span>
-                                </div>
-                            </div>
-                            <div className="p-4 space-y-4">
-                                {order.lineItems?.edges?.map(({ node: item }, idx) => (
-                                    <div key={idx} className="flex gap-4 items-center">
-                                        <div className="w-12 h-16 bg-white border-2 border-gray-200 rounded-sm flex-shrink-0 p-1">
-                                            {item.image ? <img src={item.image.url} alt={item.title} className="w-full h-full object-contain" /> : <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-200 uppercase">img</div>}
-                                        </div>
-                                        <div>
-                                            <div className="text-sm font-bold leading-tight line-clamp-2">{item.title}</div>
-                                            <div className="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-tighter">Qty: {item.quantity}</div>
+                    {orders.map((order) => {
+                        const displayOrderName = getDisplayOrderName(order.name);
+                        const itemCount = order.lineItems?.edges?.reduce((total, { node: item }) => total + (item.quantity || 0), 0) || 0;
+                        const isCopied = copiedOrderName === displayOrderName;
+
+                        return (
+                        <div key={order.id} className="border-2 border-gray-200 rounded-sm overflow-hidden">
+                            <div className="p-5 bg-gray-50/70 border-b-2 border-gray-200 space-y-4">
+                                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                    <div>
+                                        <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Order ID for support</div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="inline-flex items-center gap-2 text-lg font-black tracking-tight text-gray-950">
+                                                <Hash className="w-4 h-4 text-purple-600" />
+                                                {displayOrderName.replace(/^#/, '')}
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => copyOrderName(displayOrderName)}
+                                                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 border-2 border-gray-200 bg-white text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:border-black hover:text-black transition-colors"
+                                                aria-label={`Copy ${displayOrderName}`}
+                                            >
+                                                {isCopied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
+                                                {isCopied ? 'Copied' : 'Copy'}
+                                            </button>
                                         </div>
                                     </div>
+
+                                    <div className="text-left md:text-right">
+                                        <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Order total</div>
+                                        <div className="font-black text-lg tracking-tight">{order.totalPrice.amount} {order.totalPrice.currencyCode}</div>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                    <div className="flex items-center gap-2 text-xs font-bold text-gray-600">
+                                        <Calendar className="w-4 h-4 text-gray-400" />
+                                        {formatDate(order.processedAt)}
+                                    </div>
+                                    <div className="flex items-center gap-2 text-xs font-bold text-gray-600">
+                                        <Package className="w-4 h-4 text-gray-400" />
+                                        {itemCount} {itemCount === 1 ? 'item' : 'items'}
+                                    </div>
+                                    <div className="flex items-center gap-2 text-xs font-bold text-gray-600">
+                                        <CreditCard className="w-4 h-4 text-gray-400" />
+                                        <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 border-2 ${order.financialStatus === 'PAID' ? 'border-green-100 text-green-600 bg-green-50' : 'border-gray-200 text-gray-500 bg-white'}`}>{order.financialStatus || 'Payment pending'}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-xs font-bold text-gray-600">
+                                        <Truck className="w-4 h-4 text-gray-400" />
+                                        <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 border-2 border-gray-200 text-gray-500 bg-white">{order.fulfillmentStatus || 'Processing'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="p-5 space-y-4">
+                                {order.lineItems?.edges?.map(({ node: item }, idx) => (
+                                    {
+                                        (() => {
+                                            const generatedCoverImage = getAttributeValue(item.customAttributes, 'AI Cover URL');
+                                            const displayImage = generatedCoverImage || item.image?.url;
+                                            const childName = getAttributeValue(item.customAttributes, 'Child Name');
+                                            const language = getAttributeValue(item.customAttributes, 'Language');
+
+                                            return (
+                                    <div key={idx} className="flex gap-4 items-center border-b border-gray-100 last:border-b-0 pb-4 last:pb-0">
+                                        <div className="w-16 h-20 bg-white border-2 border-gray-200 rounded-sm flex-shrink-0 p-1">
+                                            {displayImage ? <img src={displayImage} alt={item.title} className="w-full h-full object-cover rounded-[2px]" /> : <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-200 uppercase">img</div>}
+                                        </div>
+                                        <div className="min-w-0 flex-1">
+                                            <div className="text-sm font-bold leading-tight line-clamp-2">{item.title}</div>
+                                            <div className="flex flex-wrap gap-2 mt-2">
+                                                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Qty: {item.quantity}</div>
+                                                {childName && <div className="text-[10px] font-bold text-purple-700 uppercase tracking-widest">Child: {childName}</div>}
+                                                {language && <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Language: {language}</div>}
+                                            </div>
+                                        </div>
+                                    </div>
+                                            );
+                                        })()
+                                    }
                                 ))}
+                                <div className="pt-2">
+                                    <Link to="/support" className="inline-flex text-xs font-bold uppercase tracking-widest text-purple-700 hover:text-black underline underline-offset-4">
+                                        Need help with {displayOrderName}?
+                                    </Link>
+                                </div>
                             </div>
                         </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>
